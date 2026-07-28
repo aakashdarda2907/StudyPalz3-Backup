@@ -1,48 +1,243 @@
 <style>
+    /* Color Variables (Ensuring consistency with the Revision Hub) */
+    :root {
+        --dark-blue-bg: #0f172a;
+        --text-light: #f8fafc;
+        --teal-primary: #06b6d4;
+        --teal-light: #67e8f9;
+        --text-muted-dark: #94a3b8;
+        --red-heart: #ef4444;
+        --link-hover: #ffffff;
+        --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        --border-radius-md: 10px;
+    }
+
     .main-footer {
-        background-color: #0f172a; /* --dark-blue */
-        color: #ffffff;
-        padding: 3rem 2rem;
-        text-align: center;
+        background-color: var(--dark-blue-bg);
+        color: var(--text-light);
+        padding: 4rem 2rem 2rem;
         font-family: 'Inter', sans-serif;
+        /* Increased margin top for definitive separation */
         margin-top: 6rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        position: relative;
+        z-index: 10;
     }
-    .footer-credits {
-        font-size: 1.1rem;
-        font-weight: 500;
-        margin-bottom: 2rem;
-        opacity: 0.9;
-    }
-    .footer-subjects {
-        max-width: 800px;
+
+    .footer-container {
+        max-width: 1200px;
         margin: 0 auto;
-        opacity: 0.7;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
-    .footer-subjects h4 {
+
+    /* Main Content Grid */
+    .footer-main-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr; /* Brand/Motto | Team | Branches */
+        gap: 2.5rem 5rem;
+        margin-bottom: 4rem;
+        width: 100%;
+    }
+
+    /* 1. Brand & Motto Section */
+    .footer-brand-col {
+        max-width: 380px;
+    }
+
+    .footer-logo {
         font-family: 'Plus Jakarta Sans', sans-serif;
+        font-weight: 800;
+        font-size: 1.8rem;
+        color: var(--text-light);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .footer-logo span {
+        color: var(--teal-primary);
+        font-size: 2rem;
+    }
+
+    .footer-motto {
+        font-size: 1.2rem;
+        color: var(--teal-light);
         font-weight: 600;
-        margin-bottom: 1rem;
+        margin-top: 1rem;
+        margin-bottom: 1.5rem;
+        font-style: italic; /* Emphasize motto */
+    }
+
+    .footer-tagline {
+        color: var(--text-muted-dark);
+        font-size: 0.95rem;
+        line-height: 1.7;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        color: var(--text-light);
+        background: var(--teal-primary);
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius-md);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 600;
+        margin-top: 2rem;
+        transition: var(--transition);
+        box-shadow: 0 4px 12px rgba(6, 182, 212, 0.25);
+    }
+
+    .social-link:hover {
+        background: var(--teal-light);
+        color: var(--dark-blue-bg);
+        transform: translateY(-2px);
+    }
+
+    /* 2 & 3. Column Headers and Lists */
+    .footer-col h4 {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        color: var(--teal-light);
+        font-size: 0.85rem;
+        font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
-        font-size: 0.9rem;
-        color: #67e8f9; /* --primary-teal-light */
+        margin-bottom: 1.2rem;
     }
-    .footer-subjects p {
-        margin: 0.5rem 0;
-        line-height: 1.5;
+
+    .footer-col ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .footer-col li {
+        margin-bottom: 0.8rem;
+        font-size: 0.95rem;
+    }
+
+    .footer-col li a {
+        color: #cbd5e1;
+        text-decoration: none;
+        transition: var(--transition);
+        display: inline-block;
+        padding: 0.1rem 0; /* clickable area */
+    }
+
+    .footer-col li a:hover {
+        color: var(--link-hover);
+        transform: translateX(3px);
+    }
+
+    /* Bottom Credits */
+    .footer-bottom {
+        border-top: 1px solid rgba(255, 255, 255, 0.15);
+        width: 100%;
+        padding-top: 2rem;
         font-size: 0.9rem;
+        color: var(--text-muted-dark);
+        font-weight: 500;
+        text-align: center;
+    }
+
+    .heart-icon {
+        color: var(--red-heart);
+        display: inline-block;
+        animation: heartbeat 1.5s infinite;
+    }
+
+    @keyframes heartbeat {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 900px) {
+        .footer-main-grid {
+            grid-template-columns: 1fr 1fr; /* Brand/Motto | Columns stacked */
+            gap: 3rem 2.5rem;
+        }
+        .footer-brand-col {
+            grid-column: span 2; /* Full width for the main brand block */
+            text-align: center;
+            max-width: none;
+        }
+        .footer-col {
+            text-align: left;
+        }
+    }
+
+    @media (max-width: 550px) {
+        .footer-main-grid {
+            grid-template-columns: 1fr; /* Stack all columns */
+            gap: 3rem;
+        }
+        .footer-col {
+            text-align: center;
+        }
+        .footer-col ul {
+            /* Ensures list items are centered if they are small */
+            display: inline-block;
+            text-align: left;
+        }
     }
 </style>
 
 <footer class="main-footer">
-    <div class="footer-credits">
-        Made with ❤️ - Aakash Darda - Palz
-    </div>
-    <div class="footer-subjects">
-        <h4>Subjects Covered</h4>
-        <p>Digital Systems and Microprocessor</p>
-        <p>Object Oriented Programming</p>
-        <p>Database Management</p>
-        <p>Fundamentals of Data Structures</p>
+    <div class="footer-container">
+
+        <div class="footer-main-grid">
+
+            <div class="footer-brand-col">
+                <div class="footer-logo">StudyPalz</div>
+                <h3 class="footer-motto">"Learn Smarter, Not Harder."</h3>
+                <p class="footer-tagline">
+                    Your personalized revision assistant, simplifying VIT Pune's complex Semester 3 & 4 curriculum to help you achieve mastery.
+                </p>
+                <a href="https://www.linkedin.com/company/studypalz" target="_blank" class="social-link">
+                    StudyPalz LinkedIn →
+                </a>
+            </div>
+
+            <div class="footer-col">
+                <h4>Core Team Leads</h4>
+                <ul>
+                    <li>
+                        <a href="https://www.linkedin.com/in/aakash-darda-20059334a/" target="_blank">Aakash Darda (CSAI Head)</a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/in/vira-shah-b7b64132b/" target="_blank">Vira Shah (AIDS Head)</a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/in/divija-shah-801455332/" target="_blank">Divija Shah (CSIoT Head)</a>
+                    </li>
+                    <li>
+                        <a href="https://www.linkedin.com/in/alesha-mulla-263827329/" target="_blank">Alesha Mulla (CS-Core Head)</a>
+                    </li>
+                    <li>
+                     <a href= "https://www.linkedin.com/in/nandikasharma07/" target="_blank">Nandika Sharma (CSAIML Head)</a>
+                     </li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4>Supported Branches</h4>
+                <ul>
+                    <li>CSAI</li>
+                    <li>AIDS</li>
+                    <li>CSIOT</li>
+                    <li>CS-CORE</li>
+                    <li>CSAIML</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            &copy; {% now "Y" %} StudyPalz. All rights reserved. Designed and developed with <span class="heart-icon">❤️</span> by <strong>Aakash Darda</strong>
+        </div>
     </div>
 </footer>

@@ -1,581 +1,815 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ subject.name }} Syllabus</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>{{ subject.name }} — StudyPalz</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-teal: #06b6d4;
-            --primary-teal-dark: #0891b2;
-            --primary-teal-light: #67e8f9;
-            --light-teal: #f0fdff;
-            --dark-blue: #0f172a;
-            --medium-blue: #334155;
-            --light-blue: #64748b;
-            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            --success-gradient: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            --warning-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            --purple-gradient: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            --white: #ffffff;
-            --light-gray: #f8fafc;
-            --border-light: #e2e8f0;
-            --shadow-soft: 0 8px 25px rgba(0,0,0,0.1);
-            --shadow-medium: 0 15px 35px rgba(0,0,0,0.12);
-            --shadow-large: 0 25px 50px rgba(0,0,0,0.15);
-            --border-radius: 24px;
-            --border-radius-small: 12px;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --teal:          #06b6d4;
+            --teal-dark:     #0891b2;
+            --teal-dim:      rgba(6,182,212,0.10);
+            --teal-glow:     rgba(6,182,212,0.20);
+            --blue:          #3b82f6;
+            --ink:           #0f172a;
+            --ink-mid:       #334155;
+            --ink-muted:     #64748b;
+            --surface:       #ffffff;
+            --surface-2:     #f8fafc;
+            --border:        #e2e8f0;
+            --border-strong: #cbd5e1;
+            --green:         #10b981;
+            --amber:         #f59e0b;
+            --amber-bg:      rgba(254,243,199,0.40);
+            --amber-border:  #fbbf24;
+            --violet:        #7c3aed;
+            --radius-sm:     8px;
+            --radius-md:     14px;
+            --radius-lg:     20px;
+            --ease:          cubic-bezier(0.4,0,0.2,1);
+            --shadow-sm:     0 1px 3px rgba(15,23,42,0.06), 0 1px 2px rgba(15,23,42,0.04);
+            --shadow-md:     0 4px 16px rgba(15,23,42,0.07), 0 2px 4px rgba(15,23,42,0.04);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; }
 
         body {
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
-            color: var(--dark-blue);
-            background: linear-gradient(135deg, var(--light-teal) 0%, var(--white) 50%, #f0f9ff 100%);
+            color: var(--ink);
+            background: #f0f9ff;
             min-height: 100vh;
-            padding-top: 120px;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 2rem;
+        .bg-layer {
+            position: fixed; inset: 0; z-index: 0; pointer-events: none;
+            background:
+                radial-gradient(ellipse 70% 50% at 0% 0%, rgba(6,182,212,0.07) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 100% 100%, rgba(59,130,246,0.06) 0%, transparent 60%),
+                #f0f9ff;
         }
 
-        h1, h2, h3 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
+        .page-wrap { position: relative; z-index: 1; padding-top: 10px; padding-bottom: 80px; }
+
+        .container { max-width: 1100px; margin: 0 auto; padding: 0 1.5rem; }
+
+        .nav-row {
+            display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;
         }
 
-        /* Subject Header */
-        .subject-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
-            gap: 1.5rem;
+        .btn-back {
+            display: inline-flex; align-items: center; gap: 0.45rem;
+            padding: 0.55rem 1.1rem; background: var(--surface);
+            border: 1px solid var(--border); border-radius: 50px;
+            color: var(--ink-mid); font-size: 0.875rem; font-weight: 600;
+            text-decoration: none; transition: all 0.22s var(--ease);
+            box-shadow: var(--shadow-sm);
+        }
+        .btn-back svg { transition: transform 0.22s var(--ease); }
+        .btn-back:hover { color: var(--teal-dark); border-color: var(--teal); background: var(--teal-dim); box-shadow: 0 0 0 3px var(--teal-dim); }
+        .btn-back:hover svg { transform: translateX(-3px); }
+
+        /* ── Premium banner ── */
+        .premium-strip {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
+            color: #fff;
+            border-radius: 16px;
+            padding: 0.9rem 1.3rem;
+            margin-bottom: 1.5rem;
+            display: flex; align-items: center; gap: 0.7rem;
+            font-size: 0.85rem; font-weight: 600;
+            box-shadow: 0 8px 20px rgba(217,119,6,0.2);
+        }
+        .premium-strip svg { flex-shrink: 0; }
+
+        .search-box { position: relative; width: 280px; max-width: 100%; }
+        .search-box .ico-search {
+            position: absolute; left: 0.95rem; top: 50%; transform: translateY(-50%);
+            color: var(--ink-muted); pointer-events: none; transition: color 0.2s;
+        }
+        .search-input {
+            width: 100%; padding: 0.65rem 2.4rem 0.65rem 2.4rem;
+            border: 1.5px solid var(--border); border-radius: 50px;
+            background: var(--surface); font-family: inherit; font-size: 0.875rem;
+            color: var(--ink); outline: none; transition: all 0.22s var(--ease);
+            box-shadow: var(--shadow-sm);
+        }
+        .search-input::placeholder { color: var(--ink-muted); }
+        .search-input:focus { border-color: var(--teal); box-shadow: 0 0 0 4px var(--teal-dim); }
+        .search-box.has-text .ico-search { color: var(--teal); }
+        .btn-clear {
+            position: absolute; right: 0.7rem; top: 50%; transform: translateY(-50%);
+            background: var(--border); border: none; border-radius: 50%;
+            width: 20px; height: 20px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--ink-mid); opacity: 0; visibility: hidden; transition: all 0.18s;
+        }
+        .btn-clear:hover { background: var(--border-strong); }
+        .search-box.has-text .btn-clear { opacity: 1; visibility: visible; }
+
+        .sort-select {
+            padding: 0.62rem 1rem;
+            border-radius: 50px;
+            border: 1.5px solid var(--border);
+            background: var(--surface);
+            font-family: inherit;
+            font-weight: 600;
+            font-size: 0.82rem;
+            color: var(--ink-mid);
+            cursor: pointer;
+            outline: none;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.22s var(--ease);
+        }
+        .sort-select:focus { border-color: var(--teal); box-shadow: 0 0 0 4px var(--teal-dim); }
+        .sort-select.is-active { border-color: var(--teal); color: var(--teal-dark); background: var(--teal-dim); }
+
+        .sort-group {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--surface); border: 1.5px solid var(--border);
+            border-radius: 50px; padding: 0.3rem 0.3rem 0.3rem 1rem;
+            box-shadow: var(--shadow-sm);
+        }
+        .sort-group .sort-label {
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; color: var(--ink-muted); white-space: nowrap;
+        }
+        .sort-group .sort-select { border: none; box-shadow: none; background: transparent; padding: 0.32rem 1.6rem 0.32rem 0.2rem; }
+        .sort-group .sort-select:focus { box-shadow: none; }
+
+        .subject-hero {
+            text-align: center; margin-bottom: 2rem; background: var(--surface);
+            border: 1.5px solid var(--border); border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-md); padding: 2.75rem 2rem 2.25rem;
+        }
+
+        .subject-eyebrow {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            background: var(--teal-dim); border: 1px solid rgba(6,182,212,0.22);
+            border-radius: 50px; padding: 0.35rem 1rem; font-size: 0.72rem;
+            font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase;
+            color: var(--teal-dark); margin-bottom: 1rem;
         }
 
         .subject-title {
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-teal) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(2.2rem, 5vw, 3.2rem); font-weight: 800;
+            line-height: 1.1; letter-spacing: -0.03em; color: var(--ink);
+            margin-bottom: 1.5rem;
         }
 
-        .progress-summary {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(25px);
-            border-radius: var(--border-radius-small);
-            padding: 1.2rem 2rem;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            position: relative;
+        /* ── Gamified level strip ── */
+        .level-strip {
+            display: flex; align-items: center; justify-content: center;
+            gap: 0.6rem; flex-wrap: wrap; margin-bottom: 1.5rem;
+        }
+        .level-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: linear-gradient(135deg, var(--ink) 0%, #1e293b 100%);
+            color: #fff; padding: 0.45rem 0.9rem 0.45rem 0.6rem;
+            border-radius: 50px; box-shadow: 0 4px 14px rgba(15,23,42,0.18);
+        }
+        .level-badge .level-num {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 26px; height: 26px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--teal), var(--blue));
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.72rem; font-weight: 800;
+        }
+        .level-badge .level-name { font-size: 0.8rem; font-weight: 700; letter-spacing: 0.01em; }
+        .xp-chip {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: var(--amber-bg); border: 1px solid var(--amber-border);
+            color: #92400e; padding: 0.45rem 0.9rem; border-radius: 50px;
+            font-size: 0.8rem; font-weight: 700;
+        }
+        .streak-chip {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: #ecfeff; border: 1px solid rgba(6,182,212,0.3);
+            color: var(--teal-dark); padding: 0.45rem 0.9rem; border-radius: 50px;
+            font-size: 0.8rem; font-weight: 700;
+        }
+
+        .mastery-banner {
+            display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+            background: linear-gradient(135deg, #059669 0%, #0891b2 100%);
+            color: #fff; border-radius: 14px; padding: 0.75rem 1.1rem;
+            font-size: 0.85rem; font-weight: 700; margin-bottom: 1.5rem;
+            box-shadow: 0 6px 18px rgba(5,150,105,0.25);
+        }
+
+        .hero-stats { display: flex; flex-direction: column; align-items: center; gap: 1.75rem; }
+        .hero-progress-card { width: 100%; max-width: 480px; }
+        .progress-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.6rem; }
+        .progress-header-label {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            font-size: 0.78rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.05em; color: var(--ink-muted);
+        }
+        .progress-header-pct {
+            font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.05rem; font-weight: 800;
+            background: linear-gradient(120deg, var(--teal) 20%, var(--blue));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-progress-track {
+            position: relative; width: 100%; height: 16px; background: var(--surface-2);
+            border: 1px solid var(--border); border-radius: 50px; overflow: visible;
+        }
+        .hero-progress-fill {
+            position: relative; height: 100%; width: 0%; border-radius: 50px;
+            background: linear-gradient(90deg, var(--teal) 0%, var(--blue) 100%);
+            box-shadow: 0 0 10px var(--teal-glow);
+            transition: width 1.1s cubic-bezier(0.4,0,0.2,1);
             overflow: hidden;
         }
+        .hero-progress-fill::after {
+            content: ''; position: absolute; inset: 0;
+            background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.45) 45%, transparent 60%);
+            background-size: 220% 100%;
+            animation: shine 2.6s linear infinite;
+        }
+        @keyframes shine { 0% { background-position: 140% 0; } 100% { background-position: -60% 0; } }
 
-        .progress-summary::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--accent-gradient);
+        .milestone-track { position: relative; width: 100%; height: 0; }
+        .milestone {
+            position: absolute; top: -21px; transform: translateX(-50%);
+            width: 22px; height: 22px; border-radius: 50%;
+            background: var(--surface); border: 2px solid var(--border-strong);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--ink-muted); font-size: 0.62rem; font-weight: 800;
+            transition: all 0.3s var(--ease); z-index: 2;
+        }
+        .milestone.reached {
+            background: linear-gradient(135deg, var(--teal), var(--blue));
+            border-color: var(--teal); color: #fff;
+            box-shadow: 0 0 0 4px var(--teal-dim);
         }
 
-        .progress-text {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--medium-blue);
+        .stat-pills { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+        .stat-pill {
+            display: flex; flex-direction: column; align-items: center;
+            background: var(--surface-2); border: 1px solid var(--border);
+            border-radius: var(--radius-md); padding: 0.85rem 1.4rem; min-width: 92px;
+            transition: all 0.2s var(--ease);
+        }
+        .stat-pill:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+        .stat-pill .val { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.55rem; font-weight: 800; color: var(--ink); line-height: 1; }
+        .stat-pill .lbl { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-muted); margin-top: 0.35rem; }
+        .stat-pill.s-done .val { color: var(--green); }
+        .stat-pill.s-left .val { color: var(--teal); }
+
+        .controls-row {
+            display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap;
+            margin-bottom: 1.25rem;
         }
 
-        .progress-numbers {
-            font-size: 1.3rem;
-            font-weight: 800;
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .filter-bar { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem; flex-wrap: wrap; }
+        .filter-tab {
+            display: inline-flex; align-items: center; gap: 0.4rem;
+            padding: 0.42rem 1rem; border: 1.5px solid var(--border);
+            border-radius: 50px; background: var(--surface); font-size: 0.8rem;
+            font-weight: 600; color: var(--ink-muted); cursor: pointer;
+            transition: all 0.18s var(--ease); user-select: none;
+        }
+        .filter-tab .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; opacity: 0.45; flex-shrink: 0; }
+        .filter-tab:hover { border-color: var(--teal); color: var(--teal); }
+        .filter-tab.active { background: var(--teal); border-color: var(--teal); color: white; box-shadow: 0 2px 8px var(--teal-glow); }
+        .filter-tab.active .dot { opacity: 1; background: white; }
+
+        .table-wrap {
+            background: var(--surface); border: 1.5px solid var(--border);
+            border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden;
+        }
+        .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+        .syllabus-table { width: 100%; border-collapse: collapse; }
+
+        .syllabus-table thead th {
+            padding: 1rem 1.2rem; text-align: left; font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.06em; color: var(--ink-muted);
+            background: var(--surface-2); border-bottom: 1.5px solid var(--border);
         }
 
-        /* Section Cards */
-        .section-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(25px);
-            border-radius: var(--border-radius);
-            padding: 3rem;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            margin-bottom: 2.5rem;
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
+        .syllabus-table tbody tr { border-bottom: 1px solid rgba(226,232,240,0.7); transition: background 0.18s var(--ease); }
+        .syllabus-table tbody tr:last-child { border-bottom: none; }
+        .syllabus-table tbody tr:hover { background: rgba(248,250,252,0.9); }
+
+        .syllabus-table tbody tr.row-premium { background: var(--amber-bg); }
+        .syllabus-table tbody tr.row-premium:hover { background: rgba(254,243,199,0.65); }
+        .syllabus-table tbody tr.row-premium td:first-child { box-shadow: inset 3px 0 0 var(--amber-border); }
+        .syllabus-table tbody tr.row-done td:first-child { box-shadow: inset 3px 0 0 var(--green); }
+
+        .syllabus-table td { padding: 0.95rem 1.2rem; vertical-align: middle; font-size: 0.9rem; }
+        .hidden-row { display: none !important; }
+
+        .unit-pill {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 30px; height: 30px; padding: 0 0.5rem;
+            border-radius: 8px; background: var(--surface-2);
+            border: 1px solid var(--border); color: var(--ink-mid);
+            font-weight: 700; font-size: 0.8rem;
         }
+        .unit-pill.no-unit { color: var(--ink-muted); font-weight: 500; font-size: 0.75rem; }
 
-        .section-card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-medium);
+        .status-btn { background: none; border: none; cursor: pointer; padding: 0; display: flex; align-items: center; transition: transform 0.18s var(--ease); }
+        .status-btn:hover { transform: scale(1.2); }
+        .ico-off { color: var(--border-strong); transition: color 0.2s; }
+        .ico-on { color: var(--green); }
+
+        .topic-cell { display: flex; align-items: center; gap: 0.55rem; flex-wrap: wrap; }
+        .topic-title { font-weight: 600; color: var(--ink); }
+
+        .badge {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            font-size: 0.68rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;
+            padding: 0.22rem 0.6rem; border-radius: var(--radius-sm);
         }
+        .badge-theory { background: #ecfeff; color: #0e7490; border: 1px solid rgba(6,182,212,0.2); }
+        .badge-lab { background: #f3e8ff; color: #6d28d9; border: 1px solid rgba(139,92,246,0.2); }
+        .badge-premium { background: linear-gradient(135deg, #fef3c7, #fde68a); border: 1px solid #fbbf24; color: #92400e; }
+        .badge-unlocked { background: #d1fae5; border: 1px solid #34d399; color: #065f46; }
 
-        .section-title {
-            font-size: 1.9rem;
-            color: var(--dark-blue);
-            margin-bottom: 2rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 2px solid var(--border-light);
+        .date-text { color: var(--ink-muted); font-size: 0.85rem; }
+
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center;
+            gap: 0.38rem; padding: 0.5rem 1.1rem; border-radius: 50px; font-size: 0.82rem;
+            font-weight: 700; text-decoration: none; border: none; cursor: pointer;
+            transition: all 0.22s var(--ease);
         }
-
-        .section-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            background: var(--accent-gradient);
-            color: white;
-            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
+        .btn-learn {
+            background: linear-gradient(135deg, var(--teal) 0%, var(--blue) 100%);
+            color: white; box-shadow: 0 2px 8px var(--teal-glow);
         }
+        .btn-learn:hover { transform: translateY(-1px); box-shadow: 0 5px 18px var(--teal-glow); opacity: 0.92; }
 
-        /* Syllabus Topics */
-        .syllabus-list {
-            list-style: none;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1rem;
+        .btn-unlock {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white; box-shadow: 0 2px 8px rgba(245,158,11,0.22);
         }
+        .btn-unlock:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(245,158,11,0.32); opacity: 0.92; }
 
-        .syllabus-item {
-            background: var(--light-gray);
-            border-radius: var(--border-radius-small);
-            padding: 1rem 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.8rem;
-            transition: var(--transition);
-            border: 2px solid transparent;
+        .btn-revise {
+            background: var(--surface-2); border: 1.5px solid var(--border); color: var(--ink-muted);
+            padding: 0.5rem 0.9rem; border-radius: 50px; font-size: 0.78rem; font-weight: 600;
+            cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem;
+            transition: all 0.22s var(--ease); white-space: nowrap;
         }
+        .btn-revise:hover { border-color: var(--teal); color: var(--teal); background: var(--teal-dim); }
+        .btn-revise.active { background: #d1fae5; border-color: #34d399; color: #059669; font-weight: 700; }
 
-        .syllabus-item.completed {
-            background: rgba(16, 185, 129, 0.1);
-            border-color: #10b981;
-            color: var(--medium-blue);
+        .no-results-row { display: none; }
+        .no-results-row td { text-align: center; padding: 3rem 2rem; color: var(--ink-muted); font-size: 0.95rem; }
+        .no-results-row td span { display: block; font-size: 2rem; margin-bottom: 0.5rem; }
+
+        .empty-state {
+            text-align: center; padding: 4rem 2rem; background: var(--surface);
+            border: 1.5px dashed var(--border); border-radius: var(--radius-lg); color: var(--ink-muted);
         }
+        .empty-state h3 { font-size: 1.1rem; font-weight: 700; color: var(--ink); margin-bottom: 0.5rem; }
 
-        .syllabus-item.completed .topic-text {
-            text-decoration: line-through;
-            opacity: 0.7;
-        }
+        .fade-up { opacity: 0; transform: translateY(16px); animation: fadeUp 0.5s var(--ease) forwards; }
+        @keyframes fadeUp { to { opacity: 1; transform: none; } }
 
-        .syllabus-item:hover {
-            transform: translateX(5px);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .status-icon {
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.9rem;
-            flex-shrink: 0;
-        }
-
-        .status-icon.completed {
-            background: var(--success-gradient);
-            color: white;
-        }
-
-        .status-icon.pending {
-            background: var(--border-light);
-            color: var(--light-blue);
-            border: 2px solid var(--border-light);
-        }
-
-        .topic-text {
-            font-weight: 500;
-            color: var(--dark-blue);
-        }
-
-        .no-content-message {
-            text-align: center;
-            padding: 3rem;
-            color: var(--light-blue);
-            font-size: 1.1rem;
-            background: var(--light-gray);
-            border-radius: var(--border-radius-small);
-        }
-
-        /* Content Table */
-        .content-table-container {
-            overflow-x: auto;
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .content-table {
-            width: 100%;
-            border-collapse: collapse;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(25px);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-        }
-
-        .content-table th {
-            background: var(--light-gray);
-            color: var(--dark-blue);
-            padding: 1.5rem 1.8rem;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-            letter-spacing: 0.3px;
-            border-bottom: 2px solid var(--border-light);
-        }
-
-        .content-table th:first-child {
-            border-top-left-radius: var(--border-radius);
-        }
-
-        .content-table th:last-child {
-            border-top-right-radius: var(--border-radius);
-        }
-
-        .content-table td {
-            padding: 1.5rem 1.8rem;
-            border-bottom: 1px solid var(--border-light);
-            transition: var(--transition);
-            vertical-align: middle;
-        }
-
-        .content-table tr:hover td {
-            background: rgba(6, 182, 212, 0.05);
-        }
-
-        .content-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .content-table tr:last-child td:first-child {
-            border-bottom-left-radius: var(--border-radius);
-        }
-
-        .content-table tr:last-child td:last-child {
-            border-bottom-right-radius: var(--border-radius);
-        }
-
-        /* Form Elements */
-        .checkbox-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .custom-checkbox {
-            appearance: none;
-            width: 20px;
-            height: 20px;
-            border: 2px solid var(--border-light);
-            border-radius: 4px;
-            background: white;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-        }
-
-        .custom-checkbox:checked {
-            background: var(--success-gradient);
-            border-color: #10b981;
-        }
-
-        .custom-checkbox:checked::before {
-            content: '✓';
-            position: absolute;
-            color: white;
-            font-size: 12px;
-            font-weight: bold;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-
-        .action-btn {
-            background: var(--accent-gradient);
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.9rem;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(6, 182, 212, 0.3);
-            text-decoration: none;
-            color: white;
-        }
-
-        .revision-btn {
-            background: var(--border-light);
-            color: var(--medium-blue);
-        }
-
-        .revision-btn.marked {
-            background: var(--success-gradient);
-            color: white;
-        }
-
-        .revision-btn:hover {
-            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
-        }
-
-        .content-type-badge {
-            color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 6px;
-            font-size: 0.8rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .content-type-badge.lab {
-            background: var(--purple-gradient);
-            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
-        }
-
-        .content-type-badge.default {
-            background: var(--warning-gradient);
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-        }
-
-        .date-text {
-            color: var(--light-blue);
-            font-size: 0.9rem;
-        }
-
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .container {
-                padding: 0 1rem;
-            }
-
-            .subject-header {
-                flex-direction: column;
-                align-items: stretch;
-                text-align: center;
-                gap: 1rem;
-            }
-
-            .section-card {
-                padding: 1.8rem;
-            }
-
-            .syllabus-list {
-                grid-template-columns: 1fr;
-            }
-
-            .content-table-container {
-                font-size: 0.9rem;
-            }
-
-            .content-table th,
-            .content-table td {
-                padding: 0.8rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .content-table th,
-            .content-table td {
-                padding: 0.6rem 0.4rem;
-                font-size: 0.8rem;
-            }
-
-            .action-btn {
-                padding: 0.4rem 0.8rem;
-                font-size: 0.8rem;
-            }
-        }
-
-        /* Animation */
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .divider {
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--border-light), transparent);
-            margin: 2rem 0;
+        @media (max-width: 900px) { .col-date { display: none; } }
+        @media (max-width: 600px) {
+            .col-type { display: none; }
+            .container { padding: 0 1rem; }
+            .nav-row { flex-direction: column; align-items: stretch; }
+            .search-box { width: 100%; }
+            .subject-title { font-size: 1.9rem; }
+            .syllabus-table { min-width: 460px; }
+            .controls-row { flex-direction: column; align-items: stretch; }
+            .sort-group { justify-content: space-between; }
         }
     </style>
 </head>
 <body>
     {% include 'core/navbar.html' %}
 
-    <div class="container">
-        <!-- Subject Header -->
-        <div class="subject-header fade-in-up">
-            <h1 class="subject-title">{{ subject.name }}</h1>
-            <div class="progress-summary">
-                <div class="progress-text">Progress</div>
-                <div class="progress-numbers">{{ completed_content_count }} / {{ total_content_count }}</div>
-                <div style="font-size: 0.9rem; color: var(--light-blue); margin-top: 0.2rem;">topics completed</div>
-            </div>
-        </div>
+    <div class="bg-layer" aria-hidden="true"></div>
 
-        <!-- Official Syllabus Section -->
-        <div class="section-card fade-in-up">
-            <h2 class="section-title">
-                <div class="section-icon">📋</div>
-                Official Syllabus View
-            </h2>
-            
-            {% if syllabus_topics %}
-                <ul class="syllabus-list">
-                    {% for topic in syllabus_topics %}
-                        <li class="syllabus-item {% if topic in completed_content_titles %}completed{% endif %}">
-                            <div class="status-icon {% if topic in completed_content_titles %}completed{% else %}pending{% endif %}">
-                                {% if topic in completed_content_titles %}✓{% else %}○{% endif %}
-                            </div>
-                            <div class="topic-text">{{ topic }}</div>
-                            {% if topic in completed_content_titles %}
-                                <span style="margin-left: auto; font-size: 0.8rem; color: #10b981; font-weight: 600;">DONE</span>
-                            {% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <div class="no-content-message">
-                    📚 The official syllabus hasn't been added by the admin yet.
+    <div class="page-wrap">
+        <div class="container">
+
+            <div class="nav-row fade-up">
+                <a href="{% url 'dashboard' %}" class="btn-back">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    Dashboard
+                </a>
+                <div class="search-box" id="searchBox">
+                    <svg class="ico-search" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <input type="text" id="topicSearch" class="search-input" placeholder="Search topics or unit no…" autocomplete="off">
+                    <button id="clearSearch" class="btn-clear" title="Clear">
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                 </div>
+            </div>
+
+            {% if is_premium_user %}
+            <div class="premium-strip fade-up">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M4 20l1-11 5 4 2-8 2 8 5-4 1 11"/></svg>
+                Premium unlocked — every topic in this subject, including 🔒 marked ones, is fully accessible to you.
+            </div>
             {% endif %}
-        </div>
 
-        <div class="divider"></div>
+            <div class="subject-hero fade-up" style="animation-delay:.08s">
+                <div class="subject-eyebrow">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                    Your Syllabus
+                </div>
+                <h1 class="subject-title">{{ subject.name }}</h1>
 
-        <!-- Daily Content Checklist Section -->
-        <div class="section-card fade-in-up">
-            <h2 class="section-title">
-                <div class="section-icon">📝</div>
-                Daily Content Checklist
-            </h2>
+                {% widthratio completed_content_count total_content_count 100 as progress_percent_raw %}
+                {% widthratio completed_content_count 1 10 as xp_points %}
+                {% with progress_percent=progress_percent_raw|add:0 %}
+
+                <!-- Gamified level + XP strip, driven entirely by existing progress data -->
+                <div class="level-strip">
+                    <div class="level-badge">
+                        <span class="level-num">
+                            {% if progress_percent >= 100 %}6
+                            {% elif progress_percent >= 80 %}5
+                            {% elif progress_percent >= 60 %}4
+                            {% elif progress_percent >= 40 %}3
+                            {% elif progress_percent >= 20 %}2
+                            {% else %}1{% endif %}
+                        </span>
+                        <span class="level-name">
+                            {% if progress_percent >= 100 %}Champion
+                            {% elif progress_percent >= 80 %}Master
+                            {% elif progress_percent >= 60 %}Expert
+                            {% elif progress_percent >= 40 %}Achiever
+                            {% elif progress_percent >= 20 %}Explorer
+                            {% else %}Rookie{% endif %}
+                        </span>
+                    </div>
+                    <div class="xp-chip">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.9 6.26L22 9.27l-5 4.87L18.2 21 12 17.27 5.8 21 7 14.14l-5-4.87 7.1-1.01z"/></svg>
+                        {{ xp_points }} XP
+                    </div>
+                    {% if remaining_count == 0 and total_content_count > 0 %}
+                    <div class="streak-chip">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2s6 5.5 6 11a6 6 0 0 1-12 0c0-2 1-3.5 2-5 .3 1.2 1 2 1 2s-.5-3 3-8z"/></svg>
+                        All topics cleared
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if progress_percent >= 100 %}
+                <div class="mastery-banner">
+                    🏆 Subject mastered — every topic in {{ subject.name }} is complete!
+                </div>
+                {% endif %}
+
+                <div class="hero-stats">
+                    <div class="hero-progress-card">
+                        <div class="progress-header">
+                            <span class="progress-header-label">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="M18.4 8.6 12 15l-3-3-4 4"/></svg>
+                                Overall Progress
+                            </span>
+                            <span class="progress-header-pct" id="progressPctLabel">{{ progress_percent|default:0 }}%</span>
+                        </div>
+                        <div class="hero-progress-track">
+                            <div class="hero-progress-fill" id="heroProgressFill" data-pct="{{ progress_percent|default:0 }}"></div>
+                            <div class="milestone-track">
+                                <div class="milestone {% if progress_percent >= 25 %}reached{% endif %}" style="left:25%;" title="25%">
+                                    {% if progress_percent >= 25 %}
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                                    {% else %}1{% endif %}
+                                </div>
+                                <div class="milestone {% if progress_percent >= 50 %}reached{% endif %}" style="left:50%;" title="50%">
+                                    {% if progress_percent >= 50 %}
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                                    {% else %}2{% endif %}
+                                </div>
+                                <div class="milestone {% if progress_percent >= 75 %}reached{% endif %}" style="left:75%;" title="75%">
+                                    {% if progress_percent >= 75 %}
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                                    {% else %}3{% endif %}
+                                </div>
+                                <div class="milestone {% if progress_percent >= 100 %}reached{% endif %}" style="left:100%;" title="100%">
+                                    {% if progress_percent >= 100 %}
+                                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                                    {% else %}🏁{% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="stat-pills">
+                        <div class="stat-pill">
+                            <span class="val">{{ total_content_count }}</span>
+                            <span class="lbl">Total</span>
+                        </div>
+                        <div class="stat-pill s-done">
+                            <span class="val">{{ completed_content_count }}</span>
+                            <span class="lbl">Completed</span>
+                        </div>
+                        <div class="stat-pill s-left">
+                            <span class="val">{{ remaining_count }}</span>
+                            <span class="lbl">Remaining</span>
+                        </div>
+                    </div>
+                </div>
+                {% endwith %}
+            </div>
 
             {% if content_list %}
-                <div class="content-table-container">
-                    <table class="content-table">
+
+            <div class="controls-row fade-up" style="animation-delay:.10s">
+                <div class="sort-group">
+                    <span class="sort-label">Unit</span>
+                    <select id="unitSort" class="sort-select is-active">
+                        <option value="unit_asc" selected>Lowest First</option>
+                        <option value="unit_desc">Highest First</option>
+                    </select>
+                </div>
+                <div class="sort-group">
+                    <span class="sort-label">Date Added</span>
+                    <select id="dateSort" class="sort-select">
+                        <option value="date_desc" selected>Newest First</option>
+                        <option value="date_asc">Oldest First</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="filter-bar fade-up" style="animation-delay:.12s" id="filterBar">
+                <button class="filter-tab active" data-filter="all"><span class="dot"></span>All</button>
+                <button class="filter-tab" data-filter="theory"><span class="dot"></span>Theory</button>
+                <button class="filter-tab" data-filter="lab"><span class="dot"></span>Lab</button>
+                <button class="filter-tab" data-filter="completed"><span class="dot"></span>Completed</button>
+                <button class="filter-tab" data-filter="notdone"><span class="dot"></span>Not Done</button>
+                <button class="filter-tab" data-filter="revision"><span class="dot"></span>Revision</button>
+            </div>
+
+            <div class="table-wrap fade-up" style="animation-delay:.16s">
+                <div class="table-scroll">
+                    <table class="syllabus-table" id="syllabusTable">
                         <thead>
                             <tr>
-                                <th style="width: 80px; text-align: center;">Status</th>
-                                <th style="width: 35%;">Topic Name</th>
-                                <th style="width: 120px; text-align: center;">Type</th>
-                                <th style="width: 140px; text-align: center;">Date Added</th>
-                                <th style="width: 100px; text-align: center;">Action</th>
-                                <th style="width: 140px; text-align: center;">Revision</th>
+                                <th style="width:5%;"></th>
+                                <th style="width:8%;">Unit</th>
+                                <th style="width:32%;">Topic</th>
+                                <th style="width:13%; text-align:center;">Learn</th>
+                                <th class="col-type" style="width:12%;">Type</th>
+                                <th class="col-date" style="width:14%;">Added</th>
+                                <th style="width:16%; text-align:center;">Revision</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for content in content_list %}
-                            <tr>
-                                <td style="text-align: center;">
-                                    <form method="post" action="{% url 'toggle_complete' content.id %}" style="margin: 0;">
+                            <tr class="{% if content.is_premium %}row-premium{% endif %} {% if content.is_completed %}row-done{% endif %}"
+                                data-title="{{ content.title|lower }}"
+                                data-unit="{{ content.unit_number|default:'' }}"
+                                data-type="{{ content.content_type|lower }}"
+                                data-completed="{% if content.is_completed %}1{% else %}0{% endif %}"
+                                data-revision="{% if content.marked_for_revision %}1{% else %}0{% endif %}"
+                                data-date="{{ content.created_at|date:'U' }}">
+
+                                <td style="text-align:center;">
+                                    <form method="post" action="{% url 'toggle_complete' content.id %}" style="display:inline;">
                                         {% csrf_token %}
-                                        <div class="checkbox-container">
-                                            <input type="checkbox" class="custom-checkbox" onchange="this.form.submit()" {% if content.is_completed %}checked{% endif %}>
-                                        </div>
-                                    </form>
-                                </td>
-                                <td><strong style="color: var(--dark-blue);">{{ content.title }}</strong></td>
-                                <td style="text-align: center;">
-                                    <span class="content-type-badge {% if 'lab' in content.content_type|lower %}lab{% else %}default{% endif %}">
-                                        {{ content.content_type }}
-                                    </span>
-                                </td>
-                                <td style="text-align: center;"><span class="date-text">{{ content.created_at|date:"d-M-Y" }}</span></td>
-                                <td style="text-align: center;"><a href="{% url 'content_detail' content.id %}" class="action-btn">View</a></td>
-                                <td style="text-align: center;">
-                                    <form method="post" action="{% url 'toggle_revision' content.id %}" style="margin: 0;">
-                                        {% csrf_token %}
-                                        <button type="submit" class="action-btn revision-btn {% if content.marked_for_revision %}marked{% endif %}">
-                                            {% if content.marked_for_revision %} Marked ✓ {% else %} Mark {% endif %}
+                                        <button type="submit" class="status-btn" title="Toggle complete">
+                                            {% if content.is_completed %}
+                                            <svg class="ico-on" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                                            {% else %}
+                                            <svg class="ico-off" width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8z"/></svg>
+                                            {% endif %}
                                         </button>
                                     </form>
                                 </td>
+
+                                <td>
+                                    {% if content.unit_number %}
+                                        <span class="unit-pill">{{ content.unit_number }}</span>
+                                    {% else %}
+                                        <span class="unit-pill no-unit">—</span>
+                                    {% endif %}
+                                </td>
+
+                                <td>
+                                    <div class="topic-cell">
+                                        <span class="topic-title">{{ content.title }}</span>
+                                        {% if content.is_premium %}
+                                            {% if is_premium_user %}
+                                            <span class="badge badge-unlocked">
+                                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                                                Unlocked
+                                            </span>
+                                            {% else %}
+                                            <span class="badge badge-premium">
+                                                <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                                Premium
+                                            </span>
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                </td>
+
+                                <td style="text-align:center;">
+                                    {% if content.is_premium and not is_premium_user %}
+                                    <a href="{% url 'content_detail' content.id %}" class="btn btn-unlock">
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+                                        Unlock
+                                    </a>
+                                    {% else %}
+                                    <a href="{% url 'content_detail' content.id %}" class="btn btn-learn">
+                                        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                                        Learn
+                                    </a>
+                                    {% endif %}
+                                </td>
+
+                                <td class="col-type">
+                                    <span class="badge {% if 'lab' in content.content_type|lower %}badge-lab{% else %}badge-theory{% endif %}">
+                                        {{ content.content_type }}
+                                    </span>
+                                </td>
+
+                                <td class="col-date">
+                                    <span class="date-text">{{ content.created_at|date:"M d, Y" }}</span>
+                                </td>
+
+                                <td style="text-align:center;">
+                                    <form method="post" action="{% url 'toggle_revision' content.id %}" style="display:inline;">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn-revise {% if content.marked_for_revision %}active{% endif %}">
+                                            {% if content.marked_for_revision %}
+                                                ✓ Marked
+                                            {% else %}
+                                                Mark for Revision
+                                            {% endif %}
+                                        </button>
+                                    </form>
+                                </td>
+
                             </tr>
                             {% endfor %}
+
+                            <tr class="no-results-row" id="noResultsRow">
+                                <td colspan="7">
+                                    <span>🔍</span>
+                                    No matching topics found. Try a different keyword or unit number.
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
+            </div>
+
             {% else %}
-                <div class="no-content-message">
-                    📖 No content has been added for this subject yet.
-                </div>
+            <div class="empty-state fade-up" style="animation-delay:.16s">
+                <h3>No content yet 📚</h3>
+                <p>Topics will appear here once they're added. Check back soon.</p>
+            </div>
             {% endif %}
+
         </div>
     </div>
 
     {% include 'core/footer.html' %}
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // Staggered animation for cards
-            const cards = document.querySelectorAll('.fade-in-up');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.2}s`;
-            });
+    (function () {
+        const fill = document.getElementById('heroProgressFill');
+        if (fill) {
+            const pct = Math.max(0, Math.min(100, parseFloat(fill.dataset.pct) || 0));
+            setTimeout(() => { fill.style.width = pct + '%'; }, 250);
+        }
 
-            // Enhanced checkbox interactions
-            const checkboxes = document.querySelectorAll('.custom-checkbox');
-            checkboxes.forEach(checkbox => {
-                checkbox.addEventListener('change', function() {
-                    if (this.checked) {
-                        this.style.transform = 'scale(1.1)';
-                        setTimeout(() => {
-                            this.style.transform = 'scale(1)';
-                        }, 150);
+        const searchInput  = document.getElementById('topicSearch');
+        const clearBtn     = document.getElementById('clearSearch');
+        const searchBox    = document.getElementById('searchBox');
+        const unitSort     = document.getElementById('unitSort');
+        const dateSort     = document.getElementById('dateSort');
+        const tbody        = document.querySelector('#syllabusTable tbody');
+        const noResultsRow = document.getElementById('noResultsRow');
+        const filterTabs   = document.querySelectorAll('.filter-tab');
+        let currentFilter  = 'all';
+
+        // Two independent sort controls (Unit and Date). Whichever the person
+        // last touched becomes the active sort key; the other stays remembered
+        // but idle until it's used again.
+        let activeSortKey = 'unit';
+
+        function getRows() {
+            return Array.from(document.querySelectorAll('#syllabusTable tbody tr:not(.no-results-row)'));
+        }
+
+        function levenshtein(a, b) {
+            const m = [];
+            for (let i = 0; i <= b.length; i++) m[i] = [i];
+            for (let j = 0; j <= a.length; j++) m[0][j] = j;
+            for (let i = 1; i <= b.length; i++)
+                for (let j = 1; j <= a.length; j++)
+                    m[i][j] = b[i-1] === a[j-1] ? m[i-1][j-1] :
+                        1 + Math.min(m[i-1][j-1], m[i][j-1], m[i-1][j]);
+            return m[b.length][a.length];
+        }
+
+        function applySort() {
+            const rows = getRows();
+
+            if (unitSort) unitSort.classList.toggle('is-active', activeSortKey === 'unit');
+            if (dateSort) dateSort.classList.toggle('is-active', activeSortKey === 'date');
+
+            if (activeSortKey === 'unit') {
+                const mode = unitSort ? unitSort.value : 'unit_asc';
+                rows.sort((a, b) => {
+                    const aUnit = a.dataset.unit === '' ? null : parseInt(a.dataset.unit, 10);
+                    const bUnit = b.dataset.unit === '' ? null : parseInt(b.dataset.unit, 10);
+                    // rows without a unit number sink to the bottom regardless of direction
+                    if (aUnit === null && bUnit === null) return 0;
+                    if (aUnit === null) return 1;
+                    if (bUnit === null) return -1;
+                    return mode === 'unit_asc' ? aUnit - bUnit : bUnit - aUnit;
+                });
+            } else {
+                const mode = dateSort ? dateSort.value : 'date_desc';
+                rows.sort((a, b) => {
+                    const aDate = parseInt(a.dataset.date, 10) || 0;
+                    const bDate = parseInt(b.dataset.date, 10) || 0;
+                    return mode === 'date_asc' ? aDate - bDate : bDate - aDate;
+                });
+            }
+
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        function applyFilters() {
+            const q = searchInput.value.toLowerCase().trim();
+            searchBox.classList.toggle('has-text', q.length > 0);
+            let visible = 0;
+
+            getRows().forEach(row => {
+                const title    = row.dataset.title    || '';
+                const unit     = row.dataset.unit     || '';
+                const type     = row.dataset.type     || '';
+                const isDone   = row.dataset.completed === '1';
+                const isRevise = row.dataset.revision  === '1';
+
+                let tabOk = true;
+                if (currentFilter === 'theory')    tabOk = type.includes('theory');
+                if (currentFilter === 'lab')        tabOk = type.includes('lab');
+                if (currentFilter === 'completed')  tabOk = isDone;
+                if (currentFilter === 'notdone')    tabOk = !isDone;
+                if (currentFilter === 'revision')   tabOk = isRevise;
+
+                let searchOk = true;
+                if (q) {
+                    const qIsUnit = /^\d+$/.test(q);
+                    if (qIsUnit && unit === q) {
+                        searchOk = true;
+                    } else if (title.includes(q)) {
+                        searchOk = true;
+                    } else if (q.length > 3) {
+                        searchOk = false;
+                        for (const word of title.split(' ')) {
+                            if (Math.abs(word.length - q.length) <= 2) {
+                                if (levenshtein(q, word) <= (q.length > 6 ? 2 : 1)) {
+                                    searchOk = true; break;
+                                }
+                            }
+                        }
+                    } else {
+                        searchOk = false;
                     }
-                });
+                }
+
+                const show = tabOk && searchOk;
+                row.classList.toggle('hidden-row', !show);
+                if (show) visible++;
             });
 
-            // Button hover effects
-            const buttons = document.querySelectorAll('.action-btn');
-            buttons.forEach(btn => {
-                btn.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px) scale(1.02)';
-                });
-                btn.addEventListener('mouseleave', function() {
-                    this.style.transform = 'translateY(0) scale(1)';
-                });
+            noResultsRow.style.display = visible === 0 ? 'table-row' : 'none';
+        }
+
+        searchInput.addEventListener('input', applyFilters);
+        clearBtn.addEventListener('click', () => { searchInput.value = ''; applyFilters(); searchInput.focus(); });
+
+        if (unitSort) {
+            unitSort.addEventListener('change', () => { activeSortKey = 'unit'; applySort(); applyFilters(); });
+        }
+        if (dateSort) {
+            dateSort.addEventListener('change', () => { activeSortKey = 'date'; applySort(); applyFilters(); });
+        }
+
+        filterTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                filterTabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentFilter = tab.dataset.filter;
+                applyFilters();
             });
         });
+
+        applySort();
+        applyFilters();
+    })();
     </script>
 </body>
 </html>

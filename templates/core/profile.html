@@ -1,0 +1,660 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ user.first_name }} — StudyPalz</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --teal:        #06b6d4;
+            --teal-soft:   #ecfeff;
+            --blue:        #3b82f6;
+            --dark:        #0f172a;
+            --mid:         #64748b;
+            --soft:        #94a3b8;
+            --surface:     #ffffff;
+            --bg:          radial-gradient(ellipse at 15% 0%, #e0f7fa 0%, #f0f9ff 30%, #f8fafc 100%);
+            --glass:       rgba(255,255,255,0.80);
+            --glass-bdr:   1px solid rgba(255,255,255,0.88);
+            --glass-hi:    inset 0 1px 0 rgba(255,255,255,0.7);
+            --sh-sm:       0 2px 8px rgba(15,23,42,0.04);
+            --sh-md:       0 12px 28px -4px rgba(15,23,42,0.08);
+            --sh-lg:       0 24px 48px -8px rgba(15,23,42,0.13);
+            --r:           26px;
+            --r-sm:        16px;
+            --accent-g:    linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --fire-g:      linear-gradient(135deg, #fbbf24 0%, #ea580c 100%);
+        }
+
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; overflow-x: hidden; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            background-attachment: fixed;
+            color: var(--dark);
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Ambient depth */
+        body::before {
+            content: '';
+            position: fixed; top: -120px; left: -120px;
+            width: 560px; height: 560px;
+            background: radial-gradient(circle, rgba(6,182,212,0.10) 0%, transparent 65%);
+            border-radius: 50%; pointer-events: none; z-index: 0;
+            filter: blur(40px);
+        }
+        body::after {
+            content: '';
+            position: fixed; bottom: -80px; right: -80px;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(59,130,246,0.07) 0%, transparent 65%);
+            border-radius: 50%; pointer-events: none; z-index: 0;
+            filter: blur(40px);
+        }
+
+        /* ── LAYOUT ─────────────────────────────────── */
+        .page-wrap {
+            position: relative; z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem 5rem;
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        /* ── SIDEBAR (identity column) ──────────────── */
+        .sidebar {
+            position: sticky;
+            top: 100px;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* Identity Card */
+        .identity-card {
+            background: var(--glass);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: var(--glass-bdr);
+            border-radius: var(--r);
+            box-shadow: var(--sh-md), var(--glass-hi);
+            padding: 2.25rem 2rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 0;
+            position: relative;
+            overflow: hidden;
+        }
+        /* Subtle teal wash at top */
+        .identity-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0;
+            height: 90px;
+            background: linear-gradient(180deg, rgba(6,182,212,0.07) 0%, transparent 100%);
+            pointer-events: none;
+        }
+
+        /* Avatar ring */
+        .avatar-ring {
+            position: relative;
+            width: 106px; height: 106px;
+            margin-bottom: 1.25rem;
+            flex-shrink: 0;
+        }
+        .avatar-ring::before {
+            content: '';
+            position: absolute; inset: -4px;
+            border-radius: 50%;
+            background: var(--accent-g);
+            z-index: 0;
+            animation: ringRotate 6s linear infinite;
+            /* clip to visible arc */
+            mask-image: conic-gradient(from 0deg, black 75%, transparent 100%);
+            -webkit-mask-image: conic-gradient(from 0deg, black 75%, transparent 100%);
+        }
+        @keyframes ringRotate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+        .avatar-img {
+            position: relative; z-index: 1;
+            width: 100%; height: 100%;
+            border-radius: 50%;
+            border: 4px solid var(--surface);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.10);
+            object-fit: cover;
+            background: #f8fafc;
+            display: block;
+        }
+        /* Streak badge on avatar */
+        .avatar-streak-badge {
+            position: absolute; bottom: 2px; right: 2px;
+            z-index: 2;
+            background: var(--fire-g);
+            color: #fff;
+            font-size: 0.6rem; font-weight: 800;
+            padding: 3px 7px;
+            border-radius: 20px;
+            border: 2px solid #fff;
+            letter-spacing: 0.04em;
+            white-space: nowrap;
+        }
+
+        .identity-name {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.55rem; font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--dark);
+            line-height: 1.15;
+            margin-bottom: 0.4rem;
+        }
+        .identity-handle {
+            font-size: 0.8rem; font-weight: 600;
+            color: var(--mid); margin-bottom: 0.3rem;
+        }
+        .identity-dept {
+            display: inline-flex; align-items: center; gap: 0.35rem;
+            background: linear-gradient(135deg, rgba(6,182,212,0.08), rgba(59,130,246,0.07));
+            color: var(--teal);
+            font-size: 0.78rem; font-weight: 700;
+            padding: 0.35rem 0.9rem;
+            border-radius: 20px;
+            border: 1px solid rgba(6,182,212,0.2);
+            margin-top: 0.5rem;
+            letter-spacing: 0.03em;
+        }
+
+        /* Divider */
+        .sidebar-divider {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(100,116,139,0.12), transparent);
+            margin: 1.5rem 0 0;
+        }
+
+        /* Stat pills */
+        .stat-pills {
+            display: flex; flex-direction: column; gap: 0.75rem;
+            width: 100%; padding-top: 1.5rem;
+        }
+        .stat-pill {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(248,250,252,0.8);
+            border: 1px solid rgba(226,232,240,0.8);
+            border-radius: 14px;
+            padding: 0.85rem 1.1rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-pill:hover { transform: translateX(3px); box-shadow: var(--sh-sm); }
+        .stat-pill-left { display: flex; align-items: center; gap: 0.75rem; }
+        .stat-pill-icon {
+            width: 34px; height: 34px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .spi-fire { background: linear-gradient(135deg,#fff7ed,#ffedd5); box-shadow: 0 4px 10px rgba(234,88,12,0.12); }
+        .spi-book { background: linear-gradient(135deg,#ecfeff,#cffafe); box-shadow: 0 4px 10px rgba(6,182,212,0.12); }
+        .stat-pill-label {
+            font-size: 0.8rem; font-weight: 600; color: var(--mid);
+        }
+        .stat-pill-value {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.35rem; font-weight: 800; line-height: 1;
+        }
+        .val-fire { color: #ea580c; }
+        .val-book { color: var(--teal); }
+
+        /* Logout button */
+        .btn-logout {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            width: 100%;
+            background: #fff1f2;
+            color: #e11d48;
+            border: 1px solid #ffe4e6;
+            padding: 0.85rem 1rem;
+            border-radius: 14px;
+            font-weight: 700; font-size: 0.88rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            margin-top: 0.25rem;
+        }
+        .btn-logout:hover {
+            background: #ffe4e6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(225,29,72,0.12);
+        }
+
+        /* ── MAIN CONTENT ───────────────────────────── */
+        .main-col {
+            display: flex; flex-direction: column; gap: 1.75rem;
+        }
+
+        /* Generic glass card */
+        .glass-card {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: var(--glass-bdr);
+            border-radius: var(--r);
+            box-shadow: var(--sh-md), var(--glass-hi);
+            padding: 2.25rem 2.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-eyebrow {
+            display: flex; align-items: center; gap: 0.55rem;
+            margin-bottom: 1.5rem;
+        }
+        .eyebrow-icon {
+            width: 32px; height: 32px; border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            flex-shrink: 0;
+        }
+        .ei-teal  { background: var(--teal-soft); color: var(--teal); }
+        .ei-fire  { background: #fff7ed; color: #ea580c; }
+        .ei-book  { background: #eff6ff; color: var(--blue); }
+
+        .card-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.15rem; font-weight: 800;
+            color: var(--dark);
+        }
+
+        /* ── EDIT FORM ──────────────────────────────── */
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.1rem 1.5rem;
+        }
+        .form-group { display: flex; flex-direction: column; gap: 0.45rem; }
+        .form-group.full { grid-column: 1 / -1; }
+
+        .form-label {
+            font-size: 0.8rem; font-weight: 700;
+            color: var(--mid);
+            text-transform: uppercase; letter-spacing: 0.07em;
+        }
+        .form-input {
+            width: 100%;
+            padding: 0.9rem 1.1rem;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem; font-weight: 500;
+            background: var(--surface);
+            color: var(--dark);
+            transition: border-color 0.2s, box-shadow 0.2s;
+            appearance: none;
+        }
+        .form-input::placeholder { color: var(--soft); }
+        .form-input:focus {
+            outline: none;
+            border-color: var(--teal);
+            box-shadow: 0 0 0 4px rgba(6,182,212,0.10);
+        }
+        .form-input:hover:not(:focus) { border-color: #cbd5e1; }
+
+        .btn-save {
+            display: flex; align-items: center; justify-content: center; gap: 0.5rem;
+            width: 100%;
+            background: var(--accent-g);
+            color: white;
+            border: none;
+            padding: 0.95rem;
+            border-radius: 13px;
+            font-weight: 700; font-size: 0.95rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 14px rgba(6,182,212,0.25);
+            margin-top: 0.5rem;
+        }
+        .btn-save:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(6,182,212,0.30); }
+        .btn-save:active { transform: translateY(0); }
+
+        /* Success toast */
+        #save-toast {
+            display: none;
+            align-items: center; gap: 0.6rem;
+            background: linear-gradient(135deg,#10b981,#059669);
+            color: #fff;
+            font-size: 0.85rem; font-weight: 600;
+            padding: 0.65rem 1rem;
+            border-radius: 10px;
+            margin-top: 0.75rem;
+            animation: toastIn 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        #save-toast.visible { display: flex; }
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(8px) scale(0.96); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        /* ── LEADERBOARDS ───────────────────────────── */
+        .lb-columns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .lb-section-title {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.9rem; font-weight: 800;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            margin-bottom: 1.1rem;
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+
+        /* Podium rows */
+        .lb-list { display: flex; flex-direction: column; gap: 0.6rem; }
+
+        .lb-row {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0.75rem 0.9rem;
+            border-radius: var(--r-sm);
+            background: rgba(255,255,255,0.85);
+            border: 1px solid rgba(226,232,240,0.7);
+            transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .lb-row:hover {
+            transform: translateX(4px);
+            box-shadow: var(--sh-sm);
+            border-color: rgba(203,213,225,0.9);
+        }
+
+        /* You highlight */
+        .lb-row.is-you {
+            background: linear-gradient(135deg, rgba(6,182,212,0.07), rgba(59,130,246,0.05));
+            border-color: rgba(6,182,212,0.25);
+        }
+        .lb-row.is-you::after {
+            content: 'You';
+            position: absolute; top: 6px; right: 8px;
+            font-size: 0.58rem; font-weight: 800;
+            color: var(--teal); background: rgba(6,182,212,0.12);
+            padding: 1px 6px; border-radius: 6px;
+            letter-spacing: 0.06em; text-transform: uppercase;
+        }
+
+        /* Gold / Silver / Bronze rows */
+        .lb-row.pos-1 { background: linear-gradient(135deg,rgba(251,191,36,0.08),rgba(253,230,138,0.05)); border-color: rgba(251,191,36,0.25); }
+        .lb-row.pos-2 { background: linear-gradient(135deg,rgba(148,163,184,0.07),transparent); border-color: rgba(148,163,184,0.2); }
+        .lb-row.pos-3 { background: linear-gradient(135deg,rgba(180,83,9,0.06),transparent); border-color: rgba(180,83,9,0.15); }
+
+        .lb-left { display: flex; align-items: center; gap: 0.7rem; }
+
+        .lb-medal {
+            width: 26px; text-align: center; flex-shrink: 0;
+            font-weight: 900; font-size: 1.05rem; line-height: 1;
+        }
+        .medal-1 { color: #f59e0b; filter: drop-shadow(0 1px 3px rgba(245,158,11,0.5)); }
+        .medal-2 { color: #94a3b8; }
+        .medal-3 { color: #b45309; }
+        .medal-n { color: var(--soft); font-size: 0.8rem; font-weight: 700; }
+
+        .lb-avatar {
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            background: #f8fafc;
+            flex-shrink: 0;
+        }
+        .lb-name {
+            font-size: 0.88rem; font-weight: 700; color: #1e293b;
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+            max-width: 100px;
+        }
+
+        .lb-score {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 0.8rem; font-weight: 800;
+            padding: 0.3rem 0.7rem;
+            border-radius: 8px;
+            white-space: nowrap;
+        }
+        .score-fire { color: #ea580c; background: rgba(234,88,12,0.08); border: 1px solid rgba(234,88,12,0.15); }
+        .score-teal { color: var(--teal); background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.15); }
+
+        .lb-empty {
+            font-size: 0.85rem; color: var(--mid); font-style: italic;
+            padding: 0.5rem 0;
+        }
+
+        /* ── RESPONSIVE ─────────────────────────────── */
+        @media (max-width: 900px) {
+            .page-wrap {
+                grid-template-columns: 1fr;
+                padding: 1.5rem 1rem 4rem;
+            }
+            .sidebar { position: static; }
+            .identity-card { flex-direction: row; text-align: left; padding: 1.75rem; gap: 1.5rem; align-items: flex-start; }
+            .avatar-ring { flex-shrink: 0; }
+            .stat-pills { padding-top: 0; }
+            .sidebar-divider { margin: 1rem 0 0; }
+        }
+        @media (max-width: 640px) {
+            .identity-card { flex-direction: column; align-items: center; text-align: center; }
+            .form-grid { grid-template-columns: 1fr; }
+            .lb-columns { grid-template-columns: 1fr; }
+            .glass-card { padding: 1.75rem 1.5rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .avatar-ring::before { animation: none; }
+            * { transition: none !important; animation: none !important; }
+        }
+    </style>
+</head>
+<body>
+    {% include 'core/navbar.html' %}
+
+    <div class="page-wrap">
+
+        <!-- ── SIDEBAR ─────────────────────────── -->
+        <aside class="sidebar">
+            <div class="identity-card">
+                <!-- Avatar with animated ring -->
+                <div class="avatar-ring">
+                    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed={{ user.username }}"
+                         class="avatar-img" alt="{{ user.username }}'s avatar">
+                    <span class="avatar-streak-badge">🔥 {{ profile.current_streak }}d</span>
+                </div>
+
+                <!-- Name & meta -->
+                <h1 class="identity-name">
+                    {% if user.first_name %}{{ user.first_name }} {{ user.last_name }}{% else %}{{ user.username }}{% endif %}
+                </h1>
+                <p class="identity-handle">@{{ user.username }}</p>
+                <span class="identity-dept">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                    {{ profile.department.name|default:"No Department" }}
+                </span>
+
+                <div class="sidebar-divider"></div>
+
+                <!-- Stats -->
+                <div class="stat-pills">
+                    <div class="stat-pill">
+                        <div class="stat-pill-left">
+                            <div class="stat-pill-icon spi-fire">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17C12.38 17 13.5 15.88 13.5 14.5C13.5 13.12 12.38 12 11 12C9.62 12 8.5 13.12 8.5 14.5Z" fill="#fde8d8"/><path d="M19.5 14C19.5 18.5 16 22 12 22C8 22 4.5 18.5 4.5 14C4.5 10.5 6 7 12 2C18 7 19.5 10.5 19.5 14Z"/></svg>
+                            </div>
+                            <span class="stat-pill-label">Day streak</span>
+                        </div>
+                        <span class="stat-pill-value val-fire">{{ profile.current_streak }}</span>
+                    </div>
+                    <div class="stat-pill">
+                        <div class="stat-pill-left">
+                            <div class="stat-pill-icon spi-book">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            </div>
+                            <span class="stat-pill-label">Topics mastered</span>
+                        </div>
+                        <span class="stat-pill-value val-book">{{ completed_topics_count }}</span>
+                    </div>
+                </div>
+
+                <!-- Logout -->
+                <a href="{% url 'logout' %}" class="btn-logout" style="margin-top:1.1rem;">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+                    Log out
+                </a>
+            </div>
+        </aside>
+
+        <!-- ── MAIN COLUMN ─────────────────────── -->
+        <main class="main-col">
+
+            <!-- Edit Profile -->
+            <div class="glass-card">
+                <div class="card-eyebrow">
+                    <div class="eyebrow-icon ei-teal">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </div>
+                    <span class="card-title">Edit Profile</span>
+                </div>
+
+                <form method="POST" action="{% url 'profile' %}" id="profile-form">
+                    {% csrf_token %}
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label class="form-label" for="id_first_name">First name</label>
+                            <input type="text" id="id_first_name" name="first_name" class="form-input"
+                                   value="{{ user.first_name }}" placeholder="e.g. Aakash">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="id_last_name">Last name</label>
+                            <input type="text" id="id_last_name" name="last_name" class="form-input"
+                                   value="{{ user.last_name }}" placeholder="e.g. Sharma">
+                        </div>
+                        <div class="form-group full">
+                            <label class="form-label" for="id_email">Email address</label>
+                            <input type="email" id="id_email" name="email" class="form-input"
+                                   value="{{ user.email }}" placeholder="you@example.com">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-save">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Save changes
+                    </button>
+
+                    <!-- Success toast (shown on ?saved=1 or via JS) -->
+                    <div id="save-toast">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                        Profile updated successfully!
+                    </div>
+                </form>
+            </div>
+
+            <!-- Leaderboards -->
+            <div class="glass-card">
+                <div class="card-eyebrow">
+                    <div class="eyebrow-icon ei-fire">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    </div>
+                    <span class="card-title">Leaderboard</span>
+                </div>
+
+                <div class="lb-columns">
+
+                    <!-- Top Streaks -->
+                    <div>
+                        <p class="lb-section-title">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="#ea580c"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17C12.38 17 13.5 15.88 13.5 14.5C13.5 13.12 12.38 12 11 12C9.62 12 8.5 13.12 8.5 14.5Z"/><path d="M19.5 14C19.5 18.5 16 22 12 22C8 22 4.5 18.5 4.5 14C4.5 10.5 6 7 12 2C18 7 19.5 10.5 19.5 14Z" fill="none" stroke="#ea580c" stroke-width="2"/></svg>
+                            Top Streaks
+                        </p>
+                        <div class="lb-list">
+                            {% for p in top_streak_users %}
+                            <div class="lb-row pos-{{ forloop.counter }}{% if p.user == user %} is-you{% endif %}">
+                                <div class="lb-left">
+                                    <span class="lb-medal {% if forloop.counter == 1 %}medal-1{% elif forloop.counter == 2 %}medal-2{% elif forloop.counter == 3 %}medal-3{% else %}medal-n{% endif %}">
+                                        {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}{{ forloop.counter }}{% endif %}
+                                    </span>
+                                    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed={{ p.user.username }}" class="lb-avatar" alt="">
+                                    <span class="lb-name">
+                                        {% if p.user.first_name %}{{ p.user.first_name }}{% else %}{{ p.user.username }}{% endif %}
+                                    </span>
+                                </div>
+                                <span class="lb-score score-fire">{{ p.current_streak }}d</span>
+                            </div>
+                            {% empty %}
+                            <p class="lb-empty">No streaks yet. Be the first! 🔥</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Top Learners -->
+                    <div>
+                        <p class="lb-section-title">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#06b6d4" stroke-width="2.5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+                            Top Learners
+                        </p>
+                        <div class="lb-list">
+                            {% for u in top_topics_users %}
+                            <div class="lb-row pos-{{ forloop.counter }}{% if u == user %} is-you{% endif %}">
+                                <div class="lb-left">
+                                    <span class="lb-medal {% if forloop.counter == 1 %}medal-1{% elif forloop.counter == 2 %}medal-2{% elif forloop.counter == 3 %}medal-3{% else %}medal-n{% endif %}">
+                                        {% if forloop.counter == 1 %}🥇{% elif forloop.counter == 2 %}🥈{% elif forloop.counter == 3 %}🥉{% else %}{{ forloop.counter }}{% endif %}
+                                    </span>
+                                    <img src="https://api.dicebear.com/9.x/adventurer/svg?seed={{ u.username }}" class="lb-avatar" alt="">
+                                    <span class="lb-name">
+                                        {% if u.first_name %}{{ u.first_name }}{% else %}{{ u.username }}{% endif %}
+                                    </span>
+                                </div>
+                                <span class="lb-score score-teal">{{ u.completed_count }} topics</span>
+                            </div>
+                            {% empty %}
+                            <p class="lb-empty">No completions yet. Start studying! 📚</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    {% include 'core/footer.html' %}
+
+    <script>
+        // Show save toast if URL has ?saved=1 (after Django POST redirect)
+        if (new URLSearchParams(window.location.search).get('saved') === '1') {
+            const toast = document.getElementById('save-toast');
+            if (toast) {
+                toast.classList.add('visible');
+                // Clean URL without reload
+                history.replaceState({}, '', window.location.pathname);
+                setTimeout(() => toast.classList.remove('visible'), 4000);
+            }
+        }
+
+        // Also intercept form submit for instant feedback (if you use JS redirect)
+        document.getElementById('profile-form')?.addEventListener('submit', function() {
+            // Small UX: disable button briefly to prevent double-submit
+            const btn = this.querySelector('.btn-save');
+            if (btn) {
+                btn.style.opacity = '0.7';
+                btn.style.pointerEvents = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -4,438 +4,251 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyPalz 3.0 - Stop Cramming, Start Learning</title>
-    
+    <title>StudyPalz 3.0 | VIT Pune - Second Year</title>
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    
     <style>
         :root {
             --primary-teal: #06b6d4;
             --primary-teal-dark: #0891b2;
             --primary-teal-light: #67e8f9;
-            --light-teal: #f0fdff;
+            --light-teal: #ecfeff;
             --dark-blue: #0f1729;
-            --medium-blue: #334155;
+            --medium-blue: #475569;
+            --text-muted: #64748b;
+            --hero-gradient: linear-gradient(135deg, var(--dark-blue) 20%, var(--primary-teal) 80%);
             --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --card-gradient: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+            --hover-gradient: linear-gradient(145deg, #ffffff 0%, #f0fdfa 100%);
+            --gold: #fbbf24; --silver: #94a3b8; --bronze: #b45309;
             --white: #ffffff;
-            --light-gray: #f8fafc;
+            --surface-light: #f8fafc;
             --border-light: #e2e8f0;
-            --shadow-glow: 0 0 50px rgba(6, 182, 212, 0.3);
-            --shadow-soft: 0 8px 25px rgba(0,0,0,0.1);
-            --shadow-medium: 0 15px 35px rgba(0,0,0,0.12);
-            --shadow-large: 0 25px 50px rgba(0,0,0,0.15);
-            --border-radius: 24px;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            --shadow-glow: 0 0 40px rgba(6, 182, 212, 0.15);
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+            /* Feedback Specific Colors */
+            --rose-bg: #fff1f2;
+            --rose-border: #fee2e2;
+            --rose-text: #e11d48;
         }
-        
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            line-height: 1.6; 
-            color: var(--dark-blue); 
-            background: var(--white); 
-            scroll-behavior: smooth; 
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--dark-blue);
+            background-color: var(--white);
+            scroll-behavior: smooth;
+            overflow-x: hidden;
         }
-        
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 2rem; }
-        
-        h1, h2, h3 { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            font-weight: 700; 
-            line-height: 1.2; 
-            letter-spacing: -0.02em; 
-        }
-        
-        h1 { 
-            font-size: clamp(3rem, 6vw, 4.5rem); 
-            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-teal) 100%); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            text-align: center; 
-            margin-bottom: 1.5rem;
-            
-        }
-        
-        h2 { 
-            font-size: clamp(2rem, 4vw, 3rem); 
-            text-align: center; 
-            margin-bottom: 4rem; 
-            color: var(--dark-blue); 
-            position: relative;
-        }
-        
-        h2::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: var(--accent-gradient);
-            border-radius: 2px;
-        }
-        
-        h3 { font-size: 1.5rem; margin-bottom: 1rem; color: var(--dark-blue); }
-        p { color: var(--medium-blue); line-height: 1.7; }
-        
-        .subtitle { 
-            font-size: clamp(1.1rem, 2.5vw, 1.3rem); 
-            color: var(--medium-blue); 
-            text-align: center; 
-            max-width: 700px; 
-            margin: 0 auto 3rem; 
-        }
-        
-        .btn { 
-            display: inline-flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 1rem 2rem; 
-            border-radius: 16px; 
-            text-decoration: none; 
-            font-weight: 600; 
-            font-size: 1rem; 
-            transition: var(--transition); 
-            border: none; 
-            cursor: pointer; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            position: relative; 
-            overflow: hidden; 
-        }
-        
-        .btn-primary { 
-            background: var(--accent-gradient); 
-            color: var(--white); 
-            box-shadow: var(--shadow-soft);
-        }
-        
-        .btn-primary:hover { 
-            transform: translateY(-3px) scale(1.02); 
-            box-shadow: var(--shadow-glow);
-        }
-        
-        .btn-secondary { 
-            background: rgba(255, 255, 255, 0.9); 
-            color: var(--primary-teal); 
-            border: 2px solid var(--primary-teal);
-            backdrop-filter: blur(10px);
-        }
-        
-        .btn-secondary:hover { 
-            background: var(--primary-teal); 
-            color: var(--white); 
-            box-shadow: var(--shadow-medium);
-        }
-        
-        .btn::before { 
-            content: ''; 
-            position: absolute; 
-            top: 0; 
-            left: -100%; 
-            width: 100%; 
-            height: 100%; 
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent); 
-            transition: left 0.6s; 
-        }
-        .btn:hover::before { left: 100%; }
-        
-        .header { 
-            background: rgba(255, 255, 255, 0.15); 
-            backdrop-filter: blur(40px); 
-            -webkit-backdrop-filter: blur(40px); 
-            padding: 1.2rem 0; 
-            position: fixed; 
-            top: 1.5rem; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: calc(100% - 6rem); 
-            max-width: 1100px; 
-            z-index: 1000; 
-            border: 1px solid rgba(255, 255, 255, 0.4); 
-            border-radius: var(--border-radius); 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-        }
-        
-        .header .container { 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
-            padding: 0 2.5rem; 
-        }
-        
-        .logo { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            font-size: 1.8rem; 
-            font-weight: 800; 
-            background: var(--accent-gradient); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-            text-decoration: none; 
-        }
-        
-        .nav { display: flex; gap: 2.5rem; }
-        
-        .nav-link { 
-            color: var(--medium-blue); 
-            text-decoration: none; 
-            font-weight: 500; 
-            transition: var(--transition); 
-            padding: 0.5rem 1rem; 
-            border-radius: 12px; 
-        }
-        
-        .nav-link:hover { 
-            color: var(--primary-teal); 
-            background: rgba(6, 182, 212, 0.1); 
-            transform: translateY(-1px);
-        }
-        
-        .auth-buttons { display: flex; gap: 0.8rem; }
-        .auth-buttons .btn { padding: 0.7rem 1.5rem; font-size: 0.9rem; }
+        .container { max-width: 1140px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 2; }
+        h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; letter-spacing: -0.02em; color: var(--dark-blue); }
+        h1 { font-size: clamp(3rem, 6vw, 4.5rem); line-height: 1.1; margin-bottom: 1.5rem; background: var(--hero-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        h2 { font-size: clamp(2rem, 4vw, 2.75rem); text-align: center; margin-bottom: 0.75rem; }
+        .section-desc { text-align: center; max-width: 540px; margin: 0 auto 2.5rem; color: var(--text-muted); font-size: 1.05rem; }
 
-        .hero-section { 
-            background: linear-gradient(135deg, var(--light-teal) 0%, var(--white) 50%, #f0f9ff 100%); 
-            padding: 14rem 0 10rem; 
-            text-align: center; 
-            position: relative; 
-            overflow: hidden; 
-        }
-        
-        .hero-content { position: relative; z-index: 2; }
-        
-        .hero-buttons { 
-            display: flex; 
-            gap: 1.5rem; 
-            justify-content: center; 
-            margin-top: 3rem; 
-        }
-        
-        .pond-ripple { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            width: 100%; 
-            height: 100%; 
-            background: 
-                radial-gradient(circle at 20% 30%, rgba(6, 182, 212, 0.2) 0%, transparent 35%), 
-                radial-gradient(circle at 80% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
-                radial-gradient(circle at 60% 80%, rgba(6, 182, 212, 0.1) 0%, transparent 30%); 
-            animation: pondRipple 12s ease-in-out infinite; 
-            opacity: 0.9; 
-        }
-        
-        @keyframes pondRipple { 
-            0%, 100% { transform: scale(1) rotate(0deg); opacity: 0.9; } 
-            33% { transform: scale(1.1) rotate(2deg); opacity: 0.6; }
-            66% { transform: scale(1.05) rotate(-1deg); opacity: 0.8; }
-        }
+        /* Buttons */
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.9rem 2rem; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 0.95rem; transition: var(--transition); border: none; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .btn-primary { background: var(--accent-gradient); color: var(--white); box-shadow: 0 4px 14px 0 rgba(6, 182, 212, 0.35); }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(6, 182, 212, 0.3); }
+        .btn-secondary { background: var(--card-gradient); color: var(--dark-blue); border: 1px solid var(--border-light); }
+        .btn-secondary:hover { border-color: var(--primary-teal); color: var(--primary-teal); background: var(--hover-gradient); box-shadow: var(--shadow-glow); }
 
-        .steps-section { 
-            padding: 8rem 0; 
-            background: linear-gradient(135deg, var(--white) 0%, var(--light-teal) 100%); 
-        }
-        
-        .steps-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
-            gap: 2.5rem; 
-        }
-        
-        .step-card { 
-            background: rgba(255, 255, 255, 0.95); 
-            backdrop-filter: blur(25px); 
-            padding: 2.5rem 2rem; 
-            border-radius: var(--border-radius); 
-            box-shadow: var(--shadow-soft); 
-            text-align: center; 
-            transition: var(--transition); 
-            border: 1px solid rgba(255,255,255,0.3);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .step-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: var(--accent-gradient);
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-        
-        .step-card:hover::before {
-            transform: scaleX(1);
-        }
-        
-        .step-card:hover { 
-            transform: translateY(-15px) scale(1.03); 
-            box-shadow: var(--shadow-large);
-        }
-        
-        .step-icon { 
-            width: 80px; 
-            height: 80px; 
-            background: var(--accent-gradient); 
-            border-radius: 50%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            font-size: 1.8rem; 
-            font-weight: 800; 
-            color: var(--white); 
-            margin: 0 auto 1.5rem; 
-            box-shadow: var(--shadow-glow);
-            transition: var(--transition);
-        }
-        
-        .step-card:hover .step-icon {
-            transform: scale(1.1) rotate(10deg);
-        }
-        
-        .step-card h3 { font-size: 1.4rem; }
+        /* Header */
+        .header { position: fixed; top: 1.25rem; left: 50%; transform: translateX(-50%); width: calc(100% - 3rem); max-width: 1060px; z-index: 1000; background: rgba(255,255,255,0.85); backdrop-filter: blur(16px); border: 1px solid rgba(226,232,240,0.8); border-radius: 100px; padding: 0.7rem 1.75rem; box-shadow: 0 4px 20px rgba(0,0,0,0.04); }
+        .header .container { padding: 0; display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.35rem; font-weight: 800; color: var(--dark-blue); text-decoration: none; display: flex; align-items: center; gap: 0.4rem; }
+        .logo span { color: var(--primary-teal); }
+        .nav { display: flex; gap: 1.75rem; }
+        .nav-link { color: var(--medium-blue); text-decoration: none; font-weight: 500; font-size: 0.9rem; transition: var(--transition); }
+        .nav-link:hover { color: var(--primary-teal); }
 
-        .features-section { 
-            padding: 8rem 0; 
-            background: linear-gradient(135deg, var(--light-gray) 0%, #f0f9ff 100%); 
-        }
+        /* Hero */
+        .hero-section { padding: 11rem 0 5rem; text-align: center; position: relative; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.3; z-index: 0; pointer-events: none; }
+        .blob-1 { top: -5%; left: -5%; width: 400px; height: 400px; background: var(--primary-teal-light); }
+        .blob-2 { bottom: 15%; right: -5%; width: 450px; height: 450px; background: #dbeafe; }
+        .subtitle { font-size: 1.15rem; color: var(--medium-blue); max-width: 620px; margin: 0 auto 2.25rem; }
+        .hero-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+        /* Ticker */
+        .trusted-section { padding: 1.5rem 0; background: var(--surface-light); border-top: 1px solid var(--border-light); border-bottom: 1px solid var(--border-light); overflow: hidden; white-space: nowrap; }
+        .ticker-wrap { display: inline-block; animation: ticker 35s linear infinite; }
+        .ticker-item { display: inline-block; padding: 0 2.5rem; color: var(--text-muted); font-weight: 600; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 1px; }
+        .ticker-highlight { color: var(--primary-teal-dark); font-weight: 800; }
+        @keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* Leaderboard / Tabs */
+        .leaderboard-section { padding: 5rem 0; background: linear-gradient(to bottom, var(--white), var(--surface-light)); }
+        .tab-switcher { display: flex; justify-content: center; gap: 0.4rem; background: var(--surface-light); padding: 0.4rem; border-radius: 50px; border: 1px solid var(--border-light); width: fit-content; margin: 0 auto 3.5rem; position: relative; z-index: 10; }
+        .tab { padding: 0.65rem 1.5rem; border-radius: 25px; font-weight: 600; font-size: 0.9rem; cursor: pointer; transition: var(--transition); color: var(--text-muted); }
+        .tab.active { background: var(--accent-gradient); color: var(--white); box-shadow: 0 4px 10px rgba(6, 182, 212, 0.2); }
+        .sem-content { display: none; animation: fadeIn 0.4s ease-in-out; }
+        .sem-content.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Podium */
+        .podium-container { display: flex; justify-content: center; align-items: flex-end; gap: 1.25rem; margin-bottom: 3rem; padding-top: 2.5rem; }
+        .podium-card { background: var(--card-gradient); border: 1px solid var(--border-light); border-radius: var(--border-radius); padding: 1.75rem; text-align: center; box-shadow: var(--shadow-card); display: flex; flex-direction: column; align-items: center; position: relative; width: 250px; transition: var(--transition); }
+        .podium-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-glow); background: var(--hover-gradient); border-color: var(--primary-teal-light); }
+        .podium-card.rank-1 { height: 340px; order: 2; border: 2px solid var(--primary-teal); background: linear-gradient(180deg, var(--white) 0%, #f0fdfa 100%); z-index: 2; }
+        .podium-card.rank-2 { height: 290px; order: 1; border-bottom: 5px solid var(--silver); }
+        .podium-card.rank-3 { height: 270px; order: 3; border-bottom: 5px solid var(--bronze); }
+        .rank-badge { width: 44px; height: 44px; border-radius: 50%; background: var(--dark-blue); color: var(--white); font-weight: 800; font-size: 1.1rem; display: flex; align-items: center; justify-content: center; position: absolute; top: -22px; box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+        .rank-1 .rank-badge { background: linear-gradient(135deg, var(--gold), #d97706); width: 56px; height: 56px; top: -28px; font-size: 1.4rem; }
+        .rank-2 .rank-badge { background: linear-gradient(135deg, var(--silver), #64748b); }
+        .rank-3 .rank-badge { background: linear-gradient(135deg, #d97706, #92400e); }
+        .avatar-circle { width: 52px; height: 52px; background: #e2e8f0; border-radius: 50%; margin: 1.25rem auto 0.4rem; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; }
+        .rank-1 .avatar-circle { width: 68px; height: 68px; border: 3px solid var(--gold); font-size: 1.6rem; background: #fffbeb; }
+        .student-name { font-size: 1.15rem; font-weight: 700; color: var(--dark-blue); }
+        .student-branch { font-size: 0.85rem; color: var(--text-muted); margin: 0.15rem 0 0.5rem; font-weight: 600; }
+        .student-score { font-weight: 700; font-size: 0.9rem; color: var(--primary-teal-dark); background: rgba(6,182,212,0.1); padding: 0.25rem 0.9rem; border-radius: 20px; border: 1px solid rgba(6,182,212,0.2); }
+
+        .list-container { background: var(--card-gradient); border: 1px solid var(--border-light); border-radius: var(--border-radius); overflow: hidden; box-shadow: var(--shadow-card); max-width: 720px; margin: 0 auto; }
+        .list-header { display: grid; grid-template-columns: 0.5fr 2fr 1fr; padding: 1rem 1.75rem; background: var(--surface-light); border-bottom: 1px solid var(--border-light); font-weight: 600; color: var(--text-muted); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; }
+        .list-item { display: grid; grid-template-columns: 0.5fr 2fr 1fr; padding: 1rem 1.75rem; border-bottom: 1px solid var(--border-light); align-items: center; transition: var(--transition); }
+        .list-item:last-child { border-bottom: none; }
+        .list-item:hover { background: var(--hover-gradient); }
+        .list-rank { font-weight: 700; color: var(--text-muted); }
+        .list-user { display: flex; align-items: center; gap: 0.75rem; font-weight: 600; color: var(--dark-blue); font-size: 0.95rem; }
+        .list-score { font-weight: 800; color: var(--primary-teal-dark); text-align: right; font-family: 'Plus Jakarta Sans', sans-serif; }
+
+        /* Other Sections */
+        .steps-section { padding: 6rem 0; background: var(--white); }
+        .steps-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; }
+        .step-card { background: var(--card-gradient); padding: 2.5rem 1.75rem; border-radius: var(--border-radius); border: 1px solid var(--border-light); text-align: center; transition: var(--transition); }
+        .step-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-soft); border-color: var(--primary-teal-light); background: var(--hover-gradient); }
+        .step-number { width: 52px; height: 52px; background: linear-gradient(135deg, var(--light-teal), #cffafe); color: var(--primary-teal-dark); border-radius: 50%; font-size: 1.3rem; font-weight: 800; display: flex; align-items: center; justify-content: center; margin: 0 auto 1.25rem; box-shadow: 0 4px 10px rgba(6,182,212,0.1); }
+        .step-card h3 { font-size: 1.25rem; margin-bottom: 0.6rem; }
+        .step-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+        .features-section { padding: 6rem 0; background: var(--surface-light); }
+        .bento-grid { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(2, minmax(240px, auto)); gap: 1.25rem; }
+        .bento-card { background: var(--card-gradient); border: 1px solid var(--border-light); border-radius: var(--border-radius); padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; transition: var(--transition); }
+        .bento-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); border-color: var(--primary-teal-light); background: var(--hover-gradient); }
+        .bento-card.wide { grid-column: span 2; flex-direction: row; align-items: center; background: linear-gradient(145deg, #ffffff 0%, #f0fdfa 100%); }
+        .bento-card.tall { grid-row: span 2; background: linear-gradient(180deg, var(--white) 0%, #f0fdfa 100%); }
+        .icon-box { width: 46px; height: 46px; background: var(--light-teal); color: var(--primary-teal-dark); border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+        .bento-card h3 { font-size: 1.2rem; margin-bottom: 0.4rem; }
+        .bento-card p { font-size: 0.95rem; color: var(--text-muted); }
+        .bento-visual-right { margin-left: auto; padding-left: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 0.6rem; min-width: 140px; }
+        .play-button-mock { width: 56px; height: 56px; background: var(--accent-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 20px rgba(6, 182, 212, 0.25); transition: var(--transition); }
+        .bento-card:hover .play-button-mock { transform: scale(1.08); }
+        .time-tag { background: var(--dark-blue); color: white; padding: 0.25rem 0.7rem; border-radius: 100px; font-size: 0.75rem; font-weight: 600; }
+
+        /* Chart Visual */
+        .chart-visual { display: flex; align-items: flex-end; justify-content: center; gap: 14px; height: 160px; margin-top: 1.5rem; padding-bottom: 8px; border-bottom: 2px solid var(--border-light); }
+        .bar-container { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; width: 26px; }
+        .chart-bar { width: 100%; background: #cbd5e1; border-radius: 4px 4px 0 0; transition: height 0.3s ease; }
+        .chart-bar.active { background: var(--accent-gradient); }
+        .bar-text { font-size: 0.7rem; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; }
+        .bar-container.highlight .bar-text { color: var(--primary-teal-dark); }
+        .bar-container:hover .chart-bar { background: var(--primary-teal-light); }
+
+        /* Feedback Grid */
+        .feedback-section { padding: 6rem 0; background: var(--white); }
+        .feedback-grid { display: grid; grid-template-columns: repeat(4, 1fr); grid-template-rows: auto auto auto; gap: 1.5rem; max-width: 1140px; margin: 0 auto; }
+        .fb-card { background: var(--card-gradient); border: 1px solid var(--border-light); border-radius: var(--border-radius); padding: 2rem; display: flex; flex-direction: column; justify-content: space-between; transition: var(--transition); position: relative; overflow: hidden; }
+        .fb-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-soft); border-color: var(--primary-teal-light); background: var(--hover-gradient); }
+        .fb-tall { grid-row: span 2; }
+        .fb-wide { grid-column: span 2; }
+        .fb-square { grid-column: span 1; }
+
+        .fb-card.rose-card { background: linear-gradient(135deg, var(--rose-bg) 0%, #fff 100%); border-color: var(--rose-border); align-items: center; justify-content: center; text-align: center; }
+        .fb-card.rose-card:hover { box-shadow: 0 10px 30px rgba(190, 18, 60, 0.05); border-color: #fda4af; }
+        .heart-score { font-size: 3.5rem; font-weight: 800; color: var(--rose-text); line-height: 1; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .heart-visuals { display: flex; gap: 6px; margin-bottom: 0.5rem; }
+        .heart-icon { width: 24px; height: 24px; }
+        .fb-quote { font-size: 1.1rem; line-height: 1.6; color: var(--dark-blue); font-weight: 450; }
+        .marker-highlight { background: linear-gradient(to top, rgba(165, 243, 252, 0.7) 40%, transparent 40%); font-weight: 700; color: var(--dark-blue); padding: 0 2px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
         
-        .feature-item { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 5rem; 
-            align-items: center; 
-            margin-bottom: 8rem; 
-        }
-        
-        .feature-item:nth-child(even) { direction: rtl; }
-        .feature-item:nth-child(even) > * { direction: ltr; }
-        
-        .feature-item-content h3 { 
-            font-size: 2.2rem; 
-            background: linear-gradient(135deg, var(--dark-blue), var(--primary-teal)); 
-            -webkit-background-clip: text; 
-            -webkit-text-fill-color: transparent; 
-        }
-        
-        .feature-item-content p { font-size: 1.15rem; }
-        
-        .feature-item-media img { 
-            width: 100%; 
-            border-radius: 20px; 
-            box-shadow: var(--shadow-large); 
-            transition: var(--transition); 
-        }
-        
-        .feature-item-media:hover img { 
-            transform: scale(1.05) translateY(-8px) rotate(1deg); 
-            box-shadow: var(--shadow-glow);
-        }
-        
-        .cta-section { 
-            padding: 8rem 0; 
-            text-align: center; 
-            background: linear-gradient(135deg, var(--light-teal) 0%, var(--white) 50%, #f0f9ff 100%); 
-            position: relative;
-        }
-        
-        .cta-section::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at center, rgba(6, 182, 212, 0.1) 0%, transparent 70%);
-        }
-        
-        .footer { 
-            background: linear-gradient(135deg, var(--dark-blue) 0%, #1e293b 100%); 
-            color: var(--white); 
-            padding: 4rem 0 2rem; 
-            position: relative;
-        }
-        
-        .footer-content {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 2rem;
-        }
-        
-        .footer-section h4 {
-            color: var(--primary-teal-light);
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
-        }
-        
-        .footer-section p, .footer-section a {
-            color: #cbd5e1;
-            text-decoration: none;
-            line-height: 1.8;
-            transition: var(--transition);
-        }
-        
-        .footer-section a:hover {
-            color: var(--primary-teal-light);
-            padding-left: 5px;
-        }
-        
-        .footer-bottom {
-            border-top: 1px solid #334155;
-            padding-top: 2rem;
-            text-align: center;
-            color: #94a3b8;
-        }
-        
-        .fade-in-up { 
-            opacity: 0; 
-            transform: translateY(40px); 
-            transition: opacity 0.8s ease-out, transform 0.8s ease-out; 
-        }
+        .fb-user-row { display: flex; align-items: center; gap: 12px; margin-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1rem; }
+        .fb-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--surface-light); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: var(--medium-blue); border: 1px solid var(--border-light); }
+        .fb-info h5 { margin: 0; font-size: 0.9rem; font-weight: 700; }
+        .fb-info span { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+
+        .score-big { font-size: 2.5rem; font-weight: 800; color: var(--dark-blue); font-family: 'Plus Jakarta Sans', sans-serif; }
+        .score-sub { font-size: 3rem; color: var(--text-muted); font-weight: 400; opacity: 0.5; }
+        .score-label { color: var(--text-muted); font-size: 0.9rem; font-weight: 500; margin-bottom: 1rem; }
+        .score-bar-bg { width: 100%; height: 8px; background: #e2e8f0; border-radius: 10px; overflow: hidden; }
+        .score-bar-fill { height: 100%; background: var(--accent-gradient); border-radius: 10px; }
+
+        .fb-card.users-stat-card { background: var(--white); color: var(--dark-blue); justify-content: center; border: 1px solid var(--border-light); }
+        .users-num { font-size: 4rem; font-weight: 800; line-height: 1; letter-spacing: -1px; background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 0.5rem; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .users-label { font-size: 1.1rem; color: var(--dark-blue); font-weight: 700; }
+        .fb-keywords-card { justify-content: center; align-items: center; text-align: center; }
+        .keyword-cloud { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; align-items: baseline; }
+        .kw { font-family: 'Plus Jakarta Sans', sans-serif; line-height: 1.2; color: var(--text-muted); }
+        .kw.big { font-size: 1.8rem; font-weight: 800; color: var(--dark-blue); }
+        .kw.med { font-size: 1.4rem; font-weight: 700; color: var(--primary-teal-dark); }
+        .kw.small { font-size: 1rem; font-weight: 600; opacity: 0.7; }
+
+        /* FAQ */
+        .faq-section { padding: 5rem 0; background: var(--surface-light); }
+        .faq-container { max-width: 700px; margin: 0 auto; }
+        .faq-item { border-bottom: 1px solid var(--border-light); }
+        .faq-question { padding: 1.25rem 0; font-size: 1.05rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--dark-blue); transition: var(--transition); }
+        .faq-question:hover { color: var(--primary-teal-dark); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; color: var(--text-muted); }
+        .faq-answer p { padding-bottom: 1.25rem; font-size: 0.95rem; }
+        .faq-icon { transition: transform 0.3s; font-size: 0.8rem; color: var(--text-muted); }
+        .faq-item.active .faq-icon { transform: rotate(180deg); color: var(--primary-teal); }
+        .faq-item.active .faq-answer { max-height: 200px; }
+
+        .cta-section { padding: 5rem 0; text-align: center; background: var(--white); }
+        .cta-section h2 { font-size: 2.5rem; margin-bottom: 1rem; }
+        .cta-section p { color: var(--text-muted); margin-bottom: 2rem; }
+
+        .fade-in-up { opacity: 0; transform: translateY(25px); transition: opacity 0.5s ease, transform 0.5s ease; }
         .fade-in-up.visible { opacity: 1; transform: translateY(0); }
-        
-        @media (max-width: 992px) {
-            .nav { display: none; }
-            .header .container { justify-content: space-between; }
+
+        @media (max-width: 900px) {
+            .feedback-grid { grid-template-columns: repeat(2, 1fr); }
+            .fb-tall { grid-row: span 1; }
         }
         @media (max-width: 768px) {
-            .auth-buttons { display: none; }
-            .header .container { justify-content: center; }
-            .feature-item, .feature-item:nth-child(even) { grid-template-columns: 1fr; direction: ltr; }
-            .feature-item-media { order: -1; margin-bottom: 2rem; }
-            .footer-content { grid-template-columns: 1fr; text-align: center; }
+            .header { width: 100%; top: 0; border-radius: 0; padding: 0.8rem 1rem; }
+            .nav, .auth-buttons { display: none; }
+            .podium-container { flex-direction: column; align-items: center; gap: 3rem; }
+            .podium-card { width: 100%; max-width: 280px; order: unset !important; height: auto !important; }
+            .steps-grid, .bento-grid, .stats-container, .testimonials-grid, .footer-grid { grid-template-columns: 1fr; }
+            .bento-card.wide { grid-column: span 1; flex-direction: column; align-items: flex-start; }
+            .bento-visual-right { margin: 1.5rem 0 0; width: 100%; }
+            .bento-card.tall { grid-row: span 1; }
+            .feedback-grid { grid-template-columns: 1fr; }
+            .fb-wide { grid-column: span 1; }
         }
     </style>
 </head>
 <body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
 
     <header class="header">
         <div class="container">
             <a href="{% url 'home' %}" class="logo">StudyPalz</a>
             <nav class="nav">
+                <a href="#hall-of-fame" class="nav-link">Leaderboard</a>
                 <a href="#how-it-works" class="nav-link">How It Works</a>
                 <a href="#features" class="nav-link">Features</a>
+                <a href="#faq" class="nav-link">FAQ</a>
             </nav>
-            <div class="auth-buttons">
-                <a href="{% url 'login' %}" class="btn btn-secondary">Log In</a>
-                <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+            <div class="auth-buttons" style="display: flex; gap: 0.75rem;">
+                <a href="{% url 'login' %}" class="btn btn-secondary" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">Log In</a>
+                <a href="{% url 'signup' %}" class="btn btn-primary" style="padding: 0.6rem 1.25rem; font-size: 0.85rem;">Sign Up</a>
             </div>
         </div>
     </header>
 
     <main>
         <section class="hero-section">
-            <div class="pond-ripple"></div>
             <div class="container">
-                <div class="hero-content">
-                    <h1>Stop Cramming, Start Learning.</h1>
-                    <p class="subtitle">Master your syllabus in just 10-12 minutes a day. We break down MI, OOP, DBMS, and FODS into daily, bite-sized lessons so you learn better and stress less.</p>
+                <div class="fade-in-up">
+                    <h1>Stop Cramming.<br>Start Learning.</h1>
+                    <p class="subtitle">Exclusive for <strong>VIT Pune Second Year</strong>. We cover all major subjects across CSAI, CS-Core, AIDS, IOT, and CSAIML. Master your syllabus in just 10 minutes a day.</p>
                     <div class="hero-buttons">
                         <a href="{% url 'signup' %}" class="btn btn-primary">Start for Free Today</a>
                         <a href="#features" class="btn btn-secondary">Explore Features</a>
@@ -444,24 +257,179 @@
             </div>
         </section>
 
+        <section class="trusted-section">
+            <div class="ticker-wrap">
+                <div class="ticker-item">VIT PUNE</div><div class="ticker-item ticker-highlight">SEMESTER 4 RESULTS OUT!</div><div class="ticker-item">CSAI</div><div class="ticker-item">CS-CORE</div><div class="ticker-item">AIDS</div><div class="ticker-item">CS-IOT</div><div class="ticker-item">CSAIML</div>
+                <div class="ticker-item">VIT PUNE</div><div class="ticker-item ticker-highlight">SEMESTER 4 RESULTS OUT!</div><div class="ticker-item">CSAI</div><div class="ticker-item">CS-CORE</div><div class="ticker-item">AIDS</div><div class="ticker-item">CS-IOT</div><div class="ticker-item">CSAIML</div>
+            </div>
+        </section>
+
+        <section id="hall-of-fame" class="leaderboard-section">
+            <div class="container">
+                <h2 class="fade-in-up">VIT Pune Hall of Fame</h2>
+                <p class="section-desc fade-in-up">Check the Academic Standings for Sem 3 & 4.</p>
+
+                <div class="tab-switcher fade-in-up">
+                    <div class="tab active" onclick="switchTab('sem4')">Semester 4 (Latest)</div>
+                    <div class="tab" onclick="switchTab('sem3')">Semester 3</div>
+                </div>
+
+                <div id="sem4" class="sem-content active">
+                    <h3 style="text-align: center; margin-bottom: 3rem; color: var(--dark-blue);">Overall College Rankings</h3>
+
+                    <div class="podium-container fade-in-up" style="margin-bottom: 3rem;">
+                        <div class="podium-card rank-2">
+                            <div class="rank-badge">2</div>
+                            <div class="avatar-circle">🥈</div>
+                            <div class="student-name">Aman Pathan</div>
+                            <p class="student-branch">CSAI</p>
+                            <div class="student-score">9.71 GPA</div>
+                        </div>
+                        <div class="podium-card rank-1">
+                            <div class="rank-badge">1</div>
+                            <div class="avatar-circle">🏆</div>
+                            <div class="student-name">Aakash Darda</div>
+                            <p class="student-branch" style="color: var(--primary-teal-dark);">CSAI</p>
+                            <div class="student-score">9.76 GPA</div>
+                        </div>
+                        <div class="podium-card rank-3">
+                            <div class="rank-badge">3</div>
+                            <div class="avatar-circle">🥉</div>
+                            <div class="student-name">Divija Shah</div>
+                            <p class="student-branch">IOT</p>
+                            <div class="student-score">9.67 GPA</div>
+                        </div>
+                    </div>
+
+                    <div class="list-container fade-in-up" style="max-width: 850px; margin-bottom: 5rem;">
+                        <div class="list-header"><span>Rank</span><span>Student (Branch)</span><span style="text-align: right;">GPA</span></div>
+                        <div class="list-item"><span class="list-rank">04</span><div class="list-user">Prachi Sameer Dudhankar (AIDS)</div><span class="list-score">9.57</span></div>
+                        <div class="list-item"><span class="list-rank">05</span><div class="list-user">Pranav Ranjitsinh Bhosale (CSAI)</div><span class="list-score">9.52</span></div>
+                        <div class="list-item"><span class="list-rank">05</span><div class="list-user">Saloni Tiwari (CSAI)</div><span class="list-score">9.52</span></div>
+                        <div class="list-item"><span class="list-rank">07</span><div class="list-user">Sarthak sharad Pawar (CS-CORE)</div><span class="list-score">9.43</span></div>
+                        <div class="list-item"><span class="list-rank">08</span><div class="list-user">Alesha Mulla (CS-CORE)</div><span class="list-score">9.38</span></div>
+                        <div class="list-item"><span class="list-rank">09</span><div class="list-user">Vira Shah (AIDS)</div><span class="list-score">9.33</span></div>
+                        <div class="list-item"><span class="list-rank">10</span><div class="list-user">Harshwardhan Patil (CS-CORE)</div><span class="list-score">9.30</span></div>
+                        <div class="list-item"><span class="list-rank">11</span><div class="list-user">Chirag Gandhi (AIDS)</div><span class="list-score">9.27</span></div>
+                        <div class="list-item"><span class="list-rank">12</span><div class="list-user">Nandika Sharma (CSAIML)</div><span class="list-score">9.21</span></div>
+                        <div class="list-item"><span class="list-rank">13</span><div class="list-user">Eklavya Puri (IOT)</div><span class="list-score">9.19</span></div>
+                        <div class="list-item"><span class="list-rank">14</span><div class="list-user">Samrudhi Narhari deshmukh (AIDS)</div><span class="list-score">9.14</span></div>
+                        <div class="list-item"><span class="list-rank">15</span><div class="list-user">Riya Thakur (AIDS)</div><span class="list-score">8.86</span></div>
+                        <div class="list-item"><span class="list-rank">16</span><div class="list-user">Ashikaa Verma (CSAI)</div><span class="list-score">8.76</span></div>
+                        <div class="list-item"><span class="list-rank">16</span><div class="list-user">Shruti Sonawane (AIDS)</div><span class="list-score">8.76</span></div>
+                    </div>
+
+                    <hr style="border: 0; border-top: 1px solid var(--border-light); margin: 4rem 0;">
+                    <h3 style="text-align: center; margin-bottom: 3rem; color: var(--primary-teal-dark);">Sem 4 Departmental Standings</h3>
+
+                    <div class="dept-group" style="margin-bottom: 5rem;">
+                        <h4 style="text-align: center; margin-bottom: 1.5rem;">CSAI</h4>
+                        <div class="podium-container fade-in-up" style="margin-bottom: 2rem;">
+                            <div class="podium-card rank-2"><div class="rank-badge">2</div><div class="student-name">Aman Pathan</div><div class="student-score">9.71</div></div>
+                            <div class="podium-card rank-1"><div class="rank-badge">1</div><div class="student-name">Aakash Darda</div><div class="student-score">9.76</div></div>
+                            <div class="podium-card rank-3"><div class="rank-badge">3</div><div class="student-name">Pranav Bhosale</div><div class="student-score">9.52</div></div>
+                        </div>
+                    </div>
+                    
+                    <div class="dept-group" style="margin-bottom: 5rem;">
+                        <h4 style="text-align: center; margin-bottom: 1.5rem;">AIDS</h4>
+                        <div class="podium-container fade-in-up" style="margin-bottom: 2rem;">
+                            <div class="podium-card rank-2"><div class="rank-badge">2</div><div class="student-name">Vira Shah</div><div class="student-score">9.33</div></div>
+                            <div class="podium-card rank-1"><div class="rank-badge">1</div><div class="student-name">Prachi Dudhankar</div><div class="student-score">9.57</div></div>
+                            <div class="podium-card rank-3"><div class="rank-badge">3</div><div class="student-name">Chirag Gandhi</div><div class="student-score">9.27</div></div>
+                        </div>
+                    </div>
+
+                    <div class="dept-group" style="margin-bottom: 5rem;">
+                        <h4 style="text-align: center; margin-bottom: 1.5rem;">CS-CORE</h4>
+                        <div class="podium-container fade-in-up" style="margin-bottom: 2rem;">
+                            <div class="podium-card rank-2"><div class="rank-badge">2</div><div class="student-name">Alesha Mulla</div><div class="student-score">9.38</div></div>
+                            <div class="podium-card rank-1"><div class="rank-badge">1</div><div class="student-name">Sarthak Pawar</div><div class="student-score">9.43</div></div>
+                            <div class="podium-card rank-3"><div class="rank-badge">3</div><div class="student-name">Harshwardhan Patil</div><div class="student-score">9.30</div></div>
+                        </div>
+                    </div>
+                    
+                    <div class="dept-group" style="margin-bottom: 5rem;">
+                        <h4 style="text-align: center; margin-bottom: 1.5rem;">IOT & CSAIML Top Performers</h4>
+                        <div class="podium-container fade-in-up" style="margin-bottom: 2rem;">
+                            <div class="podium-card rank-2"><div class="rank-badge">ML</div><div class="student-name">Nandika Sharma</div><p class="student-branch">CSAIML</p><div class="student-score">9.21</div></div>
+                            <div class="podium-card rank-1"><div class="rank-badge">IOT</div><div class="student-name">Divija Shah</div><p class="student-branch">IOT</p><div class="student-score">9.67</div></div>
+                            <div class="podium-card rank-3"><div class="rank-badge">IOT</div><div class="student-name">Eklavya Puri</div><p class="student-branch">IOT</p><div class="student-score">9.19</div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="sem3" class="sem-content">
+                    <h3 style="text-align: center; margin-bottom: 3rem; color: var(--dark-blue);">Overall College Rankings</h3>
+            
+                    <div class="podium-container" style="margin-bottom: 3rem;">
+                        <div class="podium-card rank-2">
+                            <div class="rank-badge">2</div>
+                            <div class="avatar-circle">🥈</div>
+                            <div class="student-name">Nandan S. Kabra</div>
+                            <p class="student-branch">AIDS</p>
+                            <div class="student-score">9.43 GPA</div>
+                        </div>
+                        <div class="podium-card rank-1">
+                            <div class="rank-badge">1</div>
+                            <div class="avatar-circle">🏆</div>
+                            <div class="student-name">Jatin Dhokla</div>
+                            <p class="student-branch" style="color: var(--primary-teal-dark);">CS-CORE</p>
+                            <div class="student-score">9.69 GPA</div>
+                        </div>
+                        <div class="podium-card rank-3">
+                            <div class="rank-badge">3</div>
+                            <div class="avatar-circle">🥉</div>
+                            <div class="student-name">Atul S. Dubey</div>
+                            <p class="student-branch">CS-CORE</p>
+                            <div class="student-score">9.43 GPA</div>
+                        </div>
+                    </div>
+            
+                    <div class="list-container" style="max-width: 850px; margin-bottom: 5rem;">
+                        <div class="list-header"><span>Rank</span><span>Student (Branch)</span><span style="text-align: right;">GPA</span></div>
+                        <div class="list-item"><span class="list-rank">04</span><div class="list-user">Aakash Darda (CSAI)</div><span class="list-score">9.38</span></div>
+                        <div class="list-item"><span class="list-rank">05</span><div class="list-user">Aman Pathan (CSAI)</div><span class="list-score">9.29</span></div>
+                        <div class="list-item"><span class="list-rank">06</span><div class="list-user">Angelina Anthony (CSAI)</div><span class="list-score">9.19</span></div>
+                        <div class="list-item"><span class="list-rank">07</span><div class="list-user">Anushka Virendra Jangaı (CS-CORE)</div><span class="list-score">9.14</span></div>
+                        <div class="list-item"><span class="list-rank">08</span><div class="list-user">Raghav Kumar (AIDS)</div><span class="list-score">9.1</span></div>
+                        <div class="list-item"><span class="list-rank">08</span><div class="list-user">Om Suhas Yadav (CSAI)</div><span class="list-score">9.1</span></div>
+                        <div class="list-item"><span class="list-rank">08</span><div class="list-user">Sayali Mahangade (CSAI)</div><span class="list-score">9.1</span></div>
+                        <div class="list-item"><span class="list-rank">11</span><div class="list-user">Saloni Tiwari (CSAI)</div><span class="list-score">9.05</span></div>
+                        <div class="list-item"><span class="list-rank">12</span><div class="list-user">Dhruti Vinay Mahadik (CS-CORE)</div><span class="list-score">8.98</span></div>
+                        <div class="list-item"><span class="list-rank">13</span><div class="list-user">Shravani Deepak Herle (AIDS)</div><span class="list-score">8.95</span></div>
+                        <div class="list-item"><span class="list-rank">14</span><div class="list-user">Vedanti ladam (AIDS)</div><span class="list-score">8.9</span></div>
+                        <div class="list-item"><span class="list-rank">15</span><div class="list-user">Divija Shah (IOT)</div><span class="list-score">8.86</span></div>
+                        <div class="list-item"><span class="list-rank">16</span><div class="list-user">Harshita K (CSAI)</div><span class="list-score">8.76</span></div>
+                        <div class="list-item"><span class="list-rank">17</span><div class="list-user">MEETAL KANTILAL GAIK (CSAI)</div><span class="list-score">8.69</span></div>
+                        <div class="list-item"><span class="list-rank">18</span><div class="list-user">Dnyaneshwar (CS-CORE)</div><span class="list-score">8.67</span></div>
+                        <div class="list-item"><span class="list-rank">19</span><div class="list-user">Vainteya Makarand Patol (CS-CORE)</div><span class="list-score">8.46</span></div>
+                        <div class="list-item"><span class="list-rank">20</span><div class="list-user">Shridhar Panigrahi (AIDS)</div><span class="list-score">8.33</span></div>
+                        <div class="list-item"><span class="list-rank">21</span><div class="list-user">Samiksha Mittewad (CS-CORE)</div><span class="list-score">8.19</span></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <section id="how-it-works" class="steps-section">
             <div class="container">
-                <h2>Your Path to Exam Confidence</h2>
+                <h2 class="fade-in-up">Your Path to a 9-Pointer</h2>
+                <p class="section-desc fade-in-up">Three simple steps to master the VIT Syllabus.</p>
                 <div class="steps-grid">
                     <div class="step-card fade-in-up">
-                        <div class="step-icon">1</div>
-                        <h3>Sign Up Free</h3>
-                        <p>Create your account in seconds. All four subjects are ready for you from day one, no credit card required.</p>
+                        <div class="step-number">1</div>
+                        <h3>Select Your Branch</h3>
+                        <p>Choose from CSAI, Core, AIDS, or IoT. We automatically filter the relevant subjects for you.</p>
                     </div>
                     <div class="step-card fade-in-up">
-                        <div class="step-icon">2</div>
-                        <h3>Learn Daily</h3>
-                        <p>Log in each day to find a new 5-min video, quick notes, and viva questions for each subject.</p>
+                        <div class="step-number">2</div>
+                        <h3>Daily 10-min Sprint</h3>
+                        <p>Watch one 5-minute concept video and read the quick notes. Consistency beats cramming.</p>
                     </div>
                     <div class="step-card fade-in-up">
-                        <div class="step-icon">3</div>
-                        <h3>Track & Revise</h3>
-                        <p>Mark topics as complete, flag them for revision, and watch your progress bars fill up as you master the syllabus.</p>
+                        <div class="step-number">3</div>
+                        <h3>Track & Ace</h3>
+                        <p>See your completion stats rise and walk into the exam hall with confidence.</p>
                     </div>
                 </div>
             </div>
@@ -469,32 +437,175 @@
 
         <section id="features" class="features-section">
             <div class="container">
-                <h2>Everything You Need, All in One Place</h2>
-                <div class="feature-item fade-in-up">
-                    <div class="feature-item-content">
-                        <h3>Daily Bite-Sized Content</h3>
-                        <p>No more long, boring lectures. We deliver daily content perfectly sized for your attention span—short videos, concise notes, and key viva questions. This micro-learning approach is proven to improve retention.</p>
+                <h2 class="fade-in-up">Tailored for Your Syllabus</h2>
+                <p class="section-desc fade-in-up">Designed specifically for VIT Pune's core subjects.</p>
+                <div class="bento-grid">
+                    <div class="bento-card wide fade-in-up">
+                        <div>
+                            <div class="icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg></div>
+                            <h3>Micro-Learning Modules</h3>
+                            <p>Lectures are boring. We use 5-minute videos and quick notes covering Microprocessors, DSA, and more.</p>
+                        </div>
+                        <div class="bento-visual-right">
+                            <div class="play-button-mock"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg></div>
+                            <div class="time-tag">5:00 min</div>
+                        </div>
                     </div>
-                    <div class="feature-item-media">
-                        <img src="https://placehold.co/600x400/f0fdff/0891b2?text=Daily+Lessons" alt="Daily Lessons">
+                    <div class="bento-card tall fade-in-up">
+                        <div>
+                            <div class="icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg></div>
+                            <h3>Visual Progress</h3>
+                            <p>Track coverage for all subjects in one smart dashboard.</p>
+                        </div>
+                        <div class="chart-visual">
+                            <div class="bar-container">
+                                <span class="bar-text">45%</span>
+                                <div class="chart-bar" style="height: 45%;"></div>
+                            </div>
+                            <div class="bar-container">
+                                <span class="bar-text">72%</span>
+                                <div class="chart-bar" style="height: 72%;"></div>
+                            </div>
+                            <div class="bar-container highlight">
+                                <span class="bar-text">94%</span>
+                                <div class="chart-bar active" style="height: 94%;"></div>
+                            </div>
+                            <div class="bar-container">
+                                <span class="bar-text">58%</span>
+                                <div class="chart-bar" style="height: 58%;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bento-card fade-in-up">
+                        <div class="icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg></div>
+                        <h3>Smart Revision Hub</h3>
+                        <p>Flag tough concepts in OS or Automata Theory and review them before exams.</p>
+                    </div>
+                    <div class="bento-card fade-in-up">
+                        <div class="icon-box"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="7"></circle><polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline></svg></div>
+                        <h3>Branch Rankings</h3>
+                        <p>See where you stand among your specific department batchmates.</p>
                     </div>
                 </div>
-                <div class="feature-item fade-in-up">
-                    <div class="feature-item-content">
-                        <h3>Visual Progress Tracking</h3>
-                        <p>Our dashboard gives you a clear, at-a-glance view of your completion for all subjects. The visual feedback and daily streak counter keep you motivated to build a consistent study habit.</p>
+            </div>
+        </section>
+
+        <section id="stories" class="feedback-section">
+            <div class="container">
+                <h2 class="fade-in-up">Wall of Love</h2>
+                <p class="section-desc fade-in-up">What your batchmates are saying.</p>
+
+                <div class="feedback-grid">
+
+                    <div class="fb-card rose-card fb-square fade-in-up">
+                        <div class="heart-score">4.6</div>
+                        <div class="heart-visuals">
+                            <svg class="heart-icon" viewBox="0 0 24 24" fill="#e11d48"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            <svg class="heart-icon" viewBox="0 0 24 24" fill="#e11d48"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            <svg class="heart-icon" viewBox="0 0 24 24" fill="#e11d48"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            <svg class="heart-icon" viewBox="0 0 24 24" fill="#e11d48"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                            <svg class="heart-icon" viewBox="0 0 24 24" fill="#e11d48"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+                        </div>
+                        <div style="font-size: 0.85rem; color: #9f1239; font-weight: 500;">Average Rating</div>
                     </div>
-                    <div class="feature-item-media">
-                        <img src="https://placehold.co/600x400/e0f2fe/0891b2?text=Progress+Dashboard" alt="Progress Dashboard">
+
+                    <div class="fb-card fb-tall fade-in-up" style="background: linear-gradient(180deg, #ffffff 0%, #f0fdfa 100%);">
+                        <div>
+                            <p class="fb-quote" style="font-size: 1.05rem;">
+                                "Absolutely awesome! The website was easy to use and well organized containing notes for all topics. <span class="marker-highlight">Yes, please do continue in next semester too.</span>"
+                            </p>
+                        </div>
+                        <div class="fb-user-row">
+                            <div class="fb-avatar">S</div>
+                            <div class="fb-info">
+                                <h5>VIT Student</h5>
+                                <span>Verified User</span>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="fb-card fb-wide users-stat-card fade-in-up">
+                        <div class="users-num">1300+</div>
+                        <div class="users-label">Active VITians Learning Daily</div>
+                        <div style="margin-top: 1rem; opacity: 0.7; font-size: 0.85rem; color: var(--text-muted);">Joining from CSAI, CS-Core, AIDS & IoT</div>
+                    </div>
+
+                    <div class="fb-card fb-square fade-in-up">
+                        <div class="score-label">Sharability Score</div>
+                        <div>
+                            <span class="score-big">9.8</span><span class="score-sub">/10</span>
+                        </div>
+                        <div style="margin-top: 1rem;">
+                            <div class="score-bar-bg">
+                                <div class="score-bar-fill" style="width: 98%;"></div>
+                            </div>
+                            <div style="text-align: right; font-size: 0.75rem; color: var(--text-muted); margin-top: 5px;">NPS Score</div>
+                        </div>
+                    </div>
+
+                    <div class="fb-card fb-wide fb-keywords-card fade-in-up">
+                        <div class="keyword-cloud">
+                            <span class="kw big">BEST EXPERIENCE</span>
+                            <span class="kw small">Organized Studies</span>
+                            <span class="kw med">REALLY HELPFUL</span>
+                            <span class="kw small">Structure</span>
+                            <span class="kw big">NEXT SEM PLEASE</span>
+                            <span class="kw med">AMAZING</span>
+                            <span class="kw small">Clear Topics</span>
+                        </div>
+                        <div style="margin-top: 1rem; font-size: 0.75rem; color: var(--text-muted);">Most frequent words in feedback</div>
+                    </div>
+
+                    <div class="fb-card fb-wide fade-in-up">
+                        <div>
+                            <p class="fb-quote" style="font-style: italic;">
+                                "It was great, <span class="marker-highlight" style="font-style: normal;">helped organize studies well.</span> Should be continued!"
+                            </p>
+                        </div>
+                        <div class="fb-user-row">
+                            <div class="fb-avatar">D</div>
+                            <div class="fb-info">
+                                <h5>IOT Student</h5>
+                                <span>Exam Prep</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="fb-card fb-wide fade-in-up">
+                        <div>
+                            <p class="fb-quote" style="font-size: 1.05rem;">
+                                "Absolutely the best !! The experience is good and <span class="marker-highlight">i want to continue for next sem.</span>"
+                            </p>
+                        </div>
+                        <div class="fb-user-row">
+                            <div class="fb-avatar">P</div>
+                            <div class="fb-info">
+                                <h5>CSAI Student</h5>
+                                <span>Course Feedback</span>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
-                <div class="feature-item fade-in-up">
-                    <div class="feature-item-content">
-                        <h3>Dedicated Revision Hub</h3>
-                        <p>Found a tricky concept? Mark any topic for revision with a single click. It's automatically added to your personal Revision Hub, creating a powerful, customized study guide for your exams.</p>
+            </div>
+        </section>
+
+        <section id="faq" class="faq-section">
+            <div class="container">
+                <h2 class="fade-in-up">Frequently Asked Questions</h2>
+                <p class="section-desc fade-in-up">Got questions? We've got answers.</p>
+                <div class="faq-container">
+                    <div class="faq-item">
+                        <div class="faq-question">Does this cover the entire VIT Pune Syllabus?<span class="faq-icon">▼</span></div>
+                        <div class="faq-answer"><p>Yes! We cover all subjects for Semester 3 and 4 across CSAI, Core, AIDS, IoT and CSAIML branches.</p></div>
                     </div>
-                    <div class="feature-item-media">
-                        <img src="https://placehold.co/600x400/f0f9ff/0891b2?text=Revision+Hub" alt="Revision Hub">
+                    <div class="faq-item">
+                        <div class="faq-question">Is it free for VIT students?<span class="faq-icon">▼</span></div>
+                        <div class="faq-answer"><p>Yes, basic access is free. You can access videos and notes immediately after signing up.</p></div>
+                    </div>
+                    <div class="faq-item">
+                        <div class="faq-question">How are the subjects organized?<span class="faq-icon">▼</span></div>
+                        <div class="faq-answer"><p>Subjects are grouped by your branch (e.g., CSAI specific subjects + Common subjects like DSA/OOP).</p></div>
                     </div>
                 </div>
             </div>
@@ -502,61 +613,31 @@
 
         <section class="cta-section">
             <div class="container">
-                <h2>Ready to Transform Your Studies?</h2>
-                <p class="subtitle">Join your classmates and start learning smarter, not harder. Sign up now and ace your exams with confidence.</p>
-                <a href="{% url 'signup' %}" class="btn btn-primary">Create My Free Account</a>
+                <h2 class="fade-in-up">Ready to Top Your Branch?</h2>
+                <p class="fade-in-up">Join 1300+ VIT Pune students learning smarter.</p>
+                <a href="{% url 'signup' %}" class="btn btn-primary fade-in-up">Create Free Account</a>
             </div>
         </section>
     </main>
 
-    <footer class="footer">
-        <div class="container">
-            <div class="footer-content">
-                <div class="footer-section">
-                    <h4>StudyPalz</h4>
-                    <p>Transforming how students learn with bite-sized, daily lessons designed for modern attention spans.</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Subjects</h4>
-                    <p>Digital Systems and Microprocessor</p>
-                    <p>Object Oriented Programming</p>
-                    <p>Database Management</p>
-                    <p>Fundamentals of Data Structures</p>
-                </div>
-                <div class="footer-section">
-                    <h4>Learn More</h4>
-                    <a href="#how-it-works">How It Works</a><br>
-                    <a href="#features">Features</a><br>
-                    <a href="{% url 'signup' %}">Get Started</a>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <p>2025 StudyPalz 3.0. Made for students, by a student. - Made with ❤️ - Aakash Darda - Palz</p>
-            </div>
-        </div>
-    </footer>
+    {% include 'core/footer.html' %}
 
     <script>
+        // Tab Switcher Logic
+        function switchTab(tabId) {
+            document.querySelectorAll('.sem-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
+                entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
             }, { threshold: 0.1 });
-
-            document.querySelectorAll('.fade-in-up').forEach(el => {
-                observer.observe(el);
-            });
-
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
+            document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.addEventListener('click', () => item.classList.toggle('active'));
             });
         });
     </script>

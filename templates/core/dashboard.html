@@ -5,415 +5,569 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Your Dashboard - StudyPalz</title>
-     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
+            /* Palette */
             --primary-teal: #06b6d4;
-            --primary-teal-dark: #0891b2;
-            --primary-teal-light: #67e8f9;
-            --light-teal: #f0fdff;
             --dark-blue: #0f172a;
-            --medium-blue: #334155;
-            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            --white: #ffffff;
-            --light-gray: #f8fafc;
-            --border-light: #e2e8f0;
-            --shadow-soft: 0 8px 25px rgba(0,0,0,0.1);
-            --shadow-medium: 0 15px 35px rgba(0,0,0,0.12);
-            --shadow-large: 0 25px 50px rgba(0,0,0,0.15);
-            --border-radius: 24px;
-            --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-        }
+            --medium-blue: #64748b;
 
+            /* Gradients */
+            --bg-gradient: radial-gradient(circle at top left, #f0f9ff 0%, #f8fafc 100%);
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --fire-gradient: linear-gradient(135deg, #fbbf24 0%, #ea580c 100%);
+            --blue-fire-gradient: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%);
+
+            /* Glass Effects */
+            --glass-bg: rgba(255, 255, 255, 0.75);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+            --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+
+            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+            /* Shadows */
+            --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.03);
+            --shadow-md: 0 12px 24px -4px rgba(15, 23, 42, 0.08);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
+html, body {
+            max-width: 100vw;
+            overflow-x: hidden;
+            position: relative;
+        }
         body {
             font-family: 'Inter', sans-serif;
-            line-height: 1.6;
             color: var(--dark-blue);
-            background: linear-gradient(135deg, var(--light-teal) 0%, var(--white) 50%, #f0f9ff 100%);
+            background: var(--bg-gradient);
+            background-attachment: fixed;
             min-height: 100vh;
-            padding-top: 120px;
+            padding-top: 80px;
+            -webkit-font-smoothing: antialiased;
+            overflow-x: hidden;
         }
-
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 2rem;
+            padding: 0 2rem 4rem;
         }
 
-        h1, h2, h3 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 700;
-            line-height: 1.2;
-            letter-spacing: -0.02em;
-        }
-
-        .dashboard-header {
+        /* ==================== PREMIUM MEMBER BANNER ==================== */
+        .premium-banner {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
+            border-radius: 20px;
+            padding: 1.25rem 1.75rem;
+            margin-bottom: 2rem;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            margin-bottom: 3rem;
-            flex-wrap: wrap;
             gap: 1rem;
-        }
-
-        .welcome-text {
-            font-size: clamp(2rem, 4vw, 2.8rem);
-            background: linear-gradient(135deg, var(--dark-blue) 0%, var(--primary-teal) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .streak-badge {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(25px);
-            border-radius: 16px;
-            padding: 0.8rem 1.5rem;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+            box-shadow: 0 10px 30px rgba(217, 119, 6, 0.25);
             position: relative;
             overflow: hidden;
+            flex-wrap: wrap;
         }
-
-        .streak-badge::before {
+        .premium-banner::before {
             content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: var(--accent-gradient);
+            position: absolute; inset: 0;
+            background: radial-gradient(circle at 15% 20%, rgba(255,255,255,0.18) 0%, transparent 45%),
+                        radial-gradient(circle at 85% 80%, rgba(251,191,36,0.25) 0%, transparent 50%);
+        }
+        .premium-banner-left { display: flex; align-items: center; gap: 0.9rem; position: relative; z-index: 1; }
+        .premium-crown {
+            width: 44px; height: 44px; border-radius: 12px;
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 14px rgba(245, 158, 11, 0.4);
+            flex-shrink: 0;
+        }
+        .premium-banner-title {
+            color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;
+            font-weight: 800; font-size: 1.05rem; margin-bottom: 0.15rem;
+        }
+        .premium-banner-sub { color: rgba(255,255,255,0.75); font-size: 0.85rem; }
+        .premium-pill {
+            position: relative; z-index: 1;
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: #fde68a;
+            font-size: 0.72rem; font-weight: 800;
+            text-transform: uppercase; letter-spacing: 0.06em;
+            padding: 0.45rem 1rem; border-radius: 50px;
+            display: flex; align-items: center; gap: 0.4rem;
+            white-space: nowrap;
         }
 
-        .streak-number {
-            font-size: 1.5rem;
+        /* ==================== WHATSAPP BANNER ==================== */
+        .whatsapp-banner {
+            background: linear-gradient(135deg, #ecfdf5 0%, #ffffff 100%);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 16px;
+            padding: 1rem 1.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.08);
+            position: relative;
+            overflow: hidden;
+            display: none;
+            animation: slideDown 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        .whatsapp-banner::before {
+            content: '';
+            position: absolute; top: 0; left: 0; width: 4px; height: 100%;
+            background: #25D366;
+        }
+
+        .wa-content { display: flex; align-items: center; gap: 1rem; }
+        .wa-icon-box {
+            width: 40px; height: 40px; background: rgba(37, 211, 102, 0.1);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: #25D366; flex-shrink: 0;
+        }
+        .wa-text { font-weight: 600; color: #14532d; font-size: 0.95rem; }
+        .wa-text strong { color: #15803d; }
+
+        .wa-actions { display: flex; align-items: center; gap: 0.75rem; }
+
+        .wa-btn-join {
+            background: #25D366; color: white;
+            padding: 0.6rem 1.2rem; border-radius: 10px;
+            text-decoration: none; font-weight: 600; font-size: 0.9rem;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 6px -1px rgba(37, 211, 102, 0.3);
+            display: flex; align-items: center; gap: 0.5rem;
+        }
+        .wa-btn-join:hover { transform: translateY(-2px); box-shadow: 0 8px 12px -1px rgba(37, 211, 102, 0.4); }
+
+        .wa-btn-dismiss {
+            background: transparent; border: 1px solid #15803d;
+            color: #15803d; padding: 0.6rem 1.2rem;
+            border-radius: 10px; font-weight: 600; font-size: 0.9rem;
+            cursor: pointer; transition: all 0.2s;
+        }
+        .wa-btn-dismiss:hover { background: rgba(21, 128, 61, 0.05); }
+
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        @media (max-width: 768px) {
+            .whatsapp-banner { flex-direction: column; text-align: center; gap: 1rem; padding: 1.25rem; }
+            .wa-content { flex-direction: column; }
+            .wa-actions { width: 100%; justify-content: center; }
+        }
+
+        /* ==================== LAYOUT GRID ==================== */
+        .dashboard-welcome-grid {
+            display: grid;
+            grid-template-columns: 1fr 280px;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+            align-items: stretch;
+        }
+        .daily-banner {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 2rem;
+            border: var(--glass-border);
+            box-shadow: var(--shadow-md), var(--glass-highlight);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .greeting-text {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: clamp(1.5rem, 3vw, 2rem);
             font-weight: 800;
             background: var(--accent-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+            line-height: 1.1;
         }
-
-        .streak-text {
+        .motivational-quote {
+            font-size: 0.95rem;
             color: var(--medium-blue);
-            font-weight: 600;
-            font-size: 0.9rem;
+            font-weight: 500;
         }
-
+        /* ==================== THE STREAK ENGINE ==================== */
+        .streak-card-wrapper { position: relative; z-index: 1; }
+        .streak-card {
+            background: linear-gradient(145deg, #ffffff 0%, #fff7ed 100%);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            border: 1px solid rgba(253, 186, 116, 0.4);
+            box-shadow: 0 10px 30px -5px rgba(234, 88, 12, 0.1), var(--glass-highlight);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.5rem;
+            position: relative;
+            overflow: hidden;
+            height: 100%;
+            z-index: 2;
+            transition: transform 0.3s ease;
+        }
+        .streak-card.premium-frame {
+            border: 1px solid rgba(251, 191, 36, 0.6);
+            box-shadow: 0 10px 30px -5px rgba(217, 119, 6, 0.25), var(--glass-highlight);
+        }
+        /* God Rays */
+        .god-rays {
+            position: absolute; top: 50%; left: 50%; width: 250%; height: 250%;
+            background: conic-gradient(from 0deg, transparent 0%, #fbbf24 10%, transparent 20%, #fbbf24 30%, transparent 40%);
+            transform: translate(-50%, -50%); opacity: 0; z-index: 1; pointer-events: none;
+            mix-blend-mode: overlay;
+            mask-image: radial-gradient(circle, transparent 30%, black 70%);
+            -webkit-mask-image: radial-gradient(circle, transparent 30%, black 70%);
+        }
+        .do-god-rays { animation: rotateRays 5s linear forwards; }
+        @keyframes rotateRays {
+            0% { transform: translate(-50%, -50%) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.5; } 80% { opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) rotate(180deg); opacity: 0; }
+        }
+        .flash-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; opacity: 0; pointer-events: none; z-index: 10;
+        }
+        .do-flash { animation: flashAnim 0.5s ease-out; }
+        @keyframes flashAnim { 0% { opacity: 0.9; } 100% { opacity: 0; } }
+        .tension-build { animation: tensionShake 1.5s ease-in forwards; }
+        @keyframes tensionShake {
+            0% { transform: scale(1); }
+            80% { transform: scale(0.97) rotate(-1deg); filter: brightness(0.98); }
+            100% { transform: scale(0.95) rotate(1deg); filter: brightness(0.95); }
+        }
+        .card-slam { animation: slamImpact 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        @keyframes slamImpact {
+            0% { transform: translateY(0) scale(0.95); }
+            20% { transform: translateY(10px) scale(1.05); }
+            40% { transform: translateY(-5px) scale(1.02); }
+            100% { transform: translateY(0) scale(1); }
+        }
+        .body-shake-active {
+            animation: earthquake 0.5s cubic-bezier(.36,.07,.19,.97) both;
+        }
+        @keyframes earthquake {
+            10%, 90% { transform: translate3d(-1px, 0, 0); }
+            20%, 80% { transform: translate3d(2px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+            40%, 60% { transform: translate3d(4px, 0, 0); }
+        }
+        .streak-icon-wrapper {
+            width: 56px; height: 56px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #fff 0%, #ffedd5 100%);
+            border: 1px solid rgba(251, 146, 60, 0.3);
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 8px 16px rgba(234, 88, 12, 0.15);
+            z-index: 2; transition: all 0.5s ease;
+        }
+        .fire-idle svg { animation: fireBreath 3s infinite ease-in-out; }
+        @keyframes fireBreath {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 2px 4px rgba(234, 88, 12, 0.2)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 6px 12px rgba(234, 88, 12, 0.4)); }
+        }
+        .fire-rapid-pulse svg { animation: rapidPulse 0.15s infinite alternate ease-in-out; }
+        @keyframes rapidPulse {
+            from { transform: scale(0.95); filter: drop-shadow(0 0 2px #ea580c); }
+            to { transform: scale(1.2); filter: drop-shadow(0 0 15px #fbbf24); }
+        }
+        .blue-mode-wrapper {
+            background: linear-gradient(135deg, #f0f9ff 0%, #dbeafe 100%) !important;
+            border-color: rgba(59, 130, 246, 0.3) !important;
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.2) !important;
+        }
+        .blue-mode-text {
+            background: var(--blue-fire-gradient) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+        }
+        .blue-mode-idle svg { animation: blueBreath 3s infinite ease-in-out; }
+        @keyframes blueBreath {
+            0%, 100% { transform: scale(1); filter: drop-shadow(0 2px 4px rgba(59, 130, 246, 0.3)); }
+            50% { transform: scale(1.1); filter: drop-shadow(0 6px 12px rgba(59, 130, 246, 0.6)); }
+        }
+        .cosmic-mode-wrapper {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%) !important;
+            border-color: rgba(217, 70, 239, 0.4) !important;
+            box-shadow: 0 10px 30px rgba(217, 70, 239, 0.3), inset 0 0 15px rgba(251, 191, 36, 0.2) !important;
+        }
+        .cosmic-mode-text {
+            background: linear-gradient(135deg, #f0abfc 0%, #fbbf24 100%) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            text-shadow: 0 2px 10px rgba(217, 70, 239, 0.2) !important;
+        }
+        .cosmic-mode-idle svg {
+            animation: cosmicBreath 2s infinite alternate ease-in-out;
+        }
+        @keyframes cosmicBreath {
+            0% { transform: scale(1) translateY(0); filter: drop-shadow(0 0 8px rgba(217, 70, 239, 0.8)); }
+            100% { transform: scale(1.2) translateY(-3px); filter: drop-shadow(0 0 20px rgba(251, 191, 36, 0.8)) drop-shadow(0 0 10px rgba(217, 70, 239, 1)); }
+        }
+        .streak-info { text-align: right; z-index: 2; position: relative; }
+        .streak-rank {
+            font-size: 0.7rem; font-weight: 800; color: #ea580c;
+            text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px;
+        }
+        .streak-label {
+            font-size: 0.7rem; font-weight: 600; color: #94a3b8;
+            text-transform: uppercase; letter-spacing: 0.1em;
+        }
+        .streak-count-container {
+            height: 48px; overflow: hidden;
+            display: flex; flex-direction: column; align-items: flex-end; position: relative;
+        }
+        .streak-number {
+            font-size: 3rem; font-weight: 800; line-height: 48px;
+            background: var(--fire-gradient);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            display: block;
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .slot-slide-out { transform: translateY(-100%); opacity: 0; }
+        .slot-slide-in { transform: translateY(0); }
+        .number-hidden { transform: translateY(100%); }
+        .floating-text {
+            position: absolute; top: -30px; right: 0;
+            font-size: 1.1rem; font-weight: 800; color: #fbbf24;
+            opacity: 0; pointer-events: none; width: 200px; text-align: right;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .animate-float { animation: floatUp 2s ease-out forwards; }
+        @keyframes floatUp {
+            0% { opacity: 0; transform: translateY(20px) scale(0.5); }
+            20% { opacity: 1; transform: translateY(-10px) scale(1.2); }
+            100% { opacity: 0; transform: translateY(-60px) scale(1); }
+        }
         .congrats-message {
             background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
-            padding: 1rem 2rem;
+            padding: 1rem;
             border-radius: 16px;
             font-weight: 600;
             text-align: center;
-            font-size: 1.1rem;
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
             margin-bottom: 2rem;
-            animation: slideInDown 0.6s ease;
+            display: flex; align-items: center; justify-content: center; gap: 0.75rem;
+            display: none;
+            opacity: 0; transform: translateY(-20px);
+            transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-
-        @keyframes slideInDown {
-            from {
-                opacity: 0;
-                transform: translateY(-20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .subjects-section h2 {
-            font-size: clamp(1.8rem, 3vw, 2.2rem);
-            margin-bottom: 2rem;
-            color: var(--dark-blue);
-        }
-
-        .subjects-container {
+        .congrats-message.show-msg {
             display: flex;
-            justify-content: center;
+            opacity: 1; transform: translateY(0);
+        }
+        .subjects-section h2 { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--dark-blue); font-weight: 800; }
+
+        /* ==================== SUBJECT CONTROLS ==================== */
+        .subject-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        .search-box {
+            position: relative;
+            flex: 1 1 240px;
+            max-width: 360px;
+        }
+        .search-box svg {
+            position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
+            width: 16px; height: 16px; color: var(--medium-blue); pointer-events: none;
+        }
+        .search-box input {
             width: 100%;
+            padding: 0.7rem 1rem 0.7rem 2.5rem;
+            border-radius: 12px;
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Inter', sans-serif;
+            font-size: 0.9rem;
+            color: var(--dark-blue);
+            outline: none;
+            transition: var(--transition);
+        }
+        .search-box input:focus {
+            border-color: var(--primary-teal);
+            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        }
+        .sort-select {
+            padding: 0.7rem 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--dark-blue);
+            cursor: pointer;
+            outline: none;
+        }
+        .toggle-hidden-btn {
+            padding: 0.7rem 1.1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(15, 23, 42, 0.1);
+            background: rgba(255, 255, 255, 0.8);
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: var(--medium-blue);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: var(--transition);
+        }
+        .toggle-hidden-btn svg { width: 16px; height: 16px; }
+        .toggle-hidden-btn:hover { background: rgba(255, 255, 255, 1); color: var(--dark-blue); }
+        .toggle-hidden-btn.active {
+            background: var(--accent-gradient);
+            color: white;
+            border-color: transparent;
+        }
+        .card-actions-top {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            display: flex;
+            gap: 0.4rem;
+            z-index: 3;
+        }
+        .icon-action-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--medium-blue);
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
+        }
+        .subject-card:hover .icon-action-btn,
+        .subject-card:focus-within .icon-action-btn { opacity: 1; }
+        .icon-action-btn.pin-btn.pinned { opacity: 1; color: #d97706; background: #fffbeb; border-color: #fbbf24; }
+        .icon-action-btn.pin-btn:hover { background: #fef3c7; color: #d97706; border-color: rgba(245, 158, 11, 0.3); }
+        .icon-action-btn.hide-btn:hover { background: #fee2e2; color: #dc2626; border-color: rgba(220, 38, 38, 0.2); }
+        .icon-action-btn svg { width: 15px; height: 15px; }
+        .subject-card.subject-is-hidden,
+        .subject-card.subject-search-hidden { display: none; }
+        .no-results-msg {
+            grid-column: 1/-1; text-align: center; padding: 3rem;
+            color: var(--medium-blue); background: rgba(255,255,255,0.5); border-radius: 16px;
+            display: none;
         }
 
         .subjects-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1.5rem;
-            max-width: 1200px;
-            width: 100%;
         }
-
-        @media (min-width: 1200px) {
-            .subjects-grid {
-                grid-template-columns: repeat(4, 1fr);
-            }
-        }
-
+        @media (min-width: 1100px) { .subjects-grid { grid-template-columns: repeat(4, 1fr); } }
         .subject-card {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(25px);
-            border-radius: var(--border-radius);
-            padding: 2.5rem;
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 1.75rem;
+            border: var(--glass-border);
+            box-shadow: var(--shadow-sm);
             text-decoration: none;
-            display: block;
+            position: relative;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100%;
         }
-
-        .subject-card.blue::before {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+        .subject-card.is-pinned-card {
+            border: 1px solid rgba(245, 158, 11, 0.45);
+            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.12);
         }
-
-        .subject-card.green::before {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-
-        .subject-card.orange::before {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        }
-
-        .subject-card.purple::before {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-        }
-
-        .subject-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            transform: scaleX(0);
-            transition: transform 0.4s ease;
-        }
-
-        .subject-card:hover::before {
-            transform: scaleX(1);
-        }
-
         .subject-card:hover {
             transform: translateY(-8px);
-            box-shadow: var(--shadow-large);
-            text-decoration: none;
-        }
-
-        .subject-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-        }
-
-        .subject-name {
-            font-size: 1.4rem;
-            color: var(--dark-blue);
-            font-weight: 700;
-            margin: 0;
-        }
-
-        .subject-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            font-weight: bold;
-        }
-
-        .blue .subject-icon {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            box-shadow: 0 10px 25px rgba(6, 182, 212, 0.3);
-        }
-
-        .green .subject-icon {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
-        }
-
-        .orange .subject-icon {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            box-shadow: 0 10px 25px rgba(245, 158, 11, 0.3);
-        }
-
-        .purple .subject-icon {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            box-shadow: 0 10px 25px rgba(139, 92, 246, 0.3);
-        }
-
-        .progress-section {
-            margin-bottom: 1rem;
-        }
-
-        .progress-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 0.8rem;
-        }
-
-        .completion-label {
-            color: var(--medium-blue);
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-
-        .completion-percentage {
-            font-weight: 700;
-            font-size: 1.1rem;
-        }
-
-        .blue .completion-percentage {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .green .completion-percentage {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .orange .completion-percentage {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .purple .completion-percentage {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 8px;
-            border-radius: 4px;
-            overflow: hidden;
-            appearance: none;
-        }
-
-        .blue .progress-bar::-webkit-progress-bar {
-            background: rgba(6, 182, 212, 0.1);
-            border-radius: 4px;
-        }
-
-        .blue .progress-bar::-webkit-progress-value {
-            background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
-
-        .green .progress-bar::-webkit-progress-bar {
-            background: rgba(16, 185, 129, 0.1);
-            border-radius: 4px;
-        }
-
-        .green .progress-bar::-webkit-progress-value {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
-
-        .orange .progress-bar::-webkit-progress-bar {
-            background: rgba(245, 158, 11, 0.1);
-            border-radius: 4px;
-        }
-
-        .orange .progress-bar::-webkit-progress-value {
-            background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
-
-        .purple .progress-bar::-webkit-progress-bar {
-            background: rgba(139, 92, 246, 0.1);
-            border-radius: 4px;
-        }
-
-        .purple .progress-bar::-webkit-progress-value {
-            background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
-            border-radius: 4px;
-            transition: width 0.8s ease;
-        }
-
-        .no-subjects {
-            text-align: center;
-            padding: 4rem 2rem;
+            box-shadow: var(--shadow-md);
             background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(25px);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-soft);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .subject-header {
+            display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2.5rem;
+        }
+        .subject-name {
+            font-size: 1.4rem; color: var(--dark-blue); font-weight: 700;
+            line-height: 1.25; padding-right: 15px;
+        }
+        .dept-badge {
+            display: inline-block;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             color: var(--medium-blue);
-            font-size: 1.1rem;
-            grid-column: 1 / -1;
+            background: rgba(100, 116, 139, 0.12);
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+            vertical-align: middle;
+            margin-left: 0.4rem;
         }
-
-        .fade-in-up {
-            opacity: 0;
-            transform: translateY(30px);
-            animation: fadeInUp 0.6s ease forwards;
+        .pinned-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.2rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #b45309;
+            background: #fef3c7;
+            padding: 0.15rem 0.5rem;
+            border-radius: 8px;
+            vertical-align: middle;
+            margin-left: 0.4rem;
         }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        .subject-icon-box {
+            width: 48px; height: 48px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; flex-shrink: 0;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-
-        @media (max-width: 992px) {
-            .subjects-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2rem;
-                margin-bottom: 2.5rem;
-            }
+        .subject-card:hover .subject-icon-box { transform: scale(1.15) rotate(6deg); }
+        .subject-icon-box svg { width: 24px; height: 24px; }
+        .card-blue .subject-icon-box { background: linear-gradient(135deg, #06b6d4, #3b82f6); box-shadow: 0 8px 16px rgba(59, 130, 246, 0.2); }
+        .card-green .subject-icon-box { background: linear-gradient(135deg, #10b981, #059669); box-shadow: 0 8px 16px rgba(16, 185, 129, 0.2); }
+        .card-orange .subject-icon-box { background: linear-gradient(135deg, #f59e0b, #d97706); box-shadow: 0 8px 16px rgba(245, 158, 11, 0.2); }
+        .card-purple .subject-icon-box { background: linear-gradient(135deg, #8b5cf6, #7c3aed); box-shadow: 0 8px 16px rgba(139, 92, 246, 0.2); }
+        .progress-container { width: 100%; }
+        .progress-labels {
+            display: flex; justify-content: space-between; margin-bottom: 0.5rem;
+            font-size: 0.8rem; font-weight: 600;
         }
-
+        .progress-txt { color: var(--medium-blue); }
+        .card-blue .percent { color: #0ea5e9; }
+        .card-green .percent { color: #10b981; }
+        .card-orange .percent { color: #f59e0b; }
+        .card-purple .percent { color: #8b5cf6; }
+        .custom-progress {
+            width: 100%; height: 8px; background: #e2e8f0; border-radius: 20px; overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%; border-radius: 20px; width: 0%; transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+        }
+        .card-blue .progress-fill { background: linear-gradient(90deg, #06b6d4, #3b82f6); }
+        .card-green .progress-fill { background: linear-gradient(90deg, #34d399, #10b981); }
+        .card-orange .progress-fill { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
+        .card-purple .progress-fill { background: linear-gradient(90deg, #a78bfa, #8b5cf6); }
+        @media (max-width: 900px) {
+            .dashboard-welcome-grid { grid-template-columns: 1fr; }
+        }
         @media (max-width: 768px) {
-            .container { padding: 0 1rem; }
-            .dashboard-header {
-                flex-direction: column;
-                align-items: flex-start;
-                text-align: center;
-                margin-bottom: 2.5rem;
-            }
-            .subjects-grid {
-                grid-template-columns: 1fr;
-                gap: 1.5rem;
-                margin-bottom: 2rem;
-            }
-            .subject-card {
-                padding: 1.8rem;
-                margin-bottom: 1rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .streak-badge {
-                padding: 0.6rem 1rem;
-            }
-            .streak-number {
-                font-size: 1.2rem;
-            }
-            .subject-header {
-                flex-direction: column;
-                gap: 1rem;
-                text-align: center;
-            }
+            .container { padding: 0 1rem 3rem; }
         }
     </style>
 </head>
@@ -421,78 +575,437 @@
     {% include 'core/navbar.html' %}
 
     <div class="container">
-        <div class="dashboard-header">
-            <h1 class="welcome-text">Hi, {{ user.first_name|default:user.username }}!</h1>
-            <div class="streak-badge">
-                <span style="font-size: 1.2rem;">🔥</span>
-                <div>
-                    <div class="streak-number">{{ current_streak }}</div>
-                    <div class="streak-text">day streak</div>
+
+        {% if is_premium_user %}
+        <div class="premium-banner">
+            <div class="premium-banner-left">
+                <div class="premium-crown">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 20h20M4 20l1-11 5 4 2-8 2 8 5-4 1 11"/></svg>
                 </div>
+                <div>
+                    <div class="premium-banner-title">You're a Premium Member ✨</div>
+                    <div class="premium-banner-sub">All premium content is unlocked across every subject. Thanks for supporting StudyPalz.</div>
+                </div>
+            </div>
+            <div class="premium-pill">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                Premium Active
+            </div>
+        </div>
+        {% endif %}
+
+        <div id="wa-banner" class="whatsapp-banner">
+            <div class="wa-content">
+                <div class="wa-icon-box">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </div>
+                <div class="wa-text">
+                    Join the <strong>StudyPalz WhatsApp Group</strong> for instant community updates & discussions!
+                </div>
+            </div>
+            <div class="wa-actions">
+                <a href="https://chat.whatsapp.com/JeDjkI7nDIl9g3O7REcSsJ" target="_blank" class="wa-btn-join">
+                    Join Now <span>→</span>
+                </a>
+                <button id="wa-dismiss-btn" class="wa-btn-dismiss">Joined already</button>
             </div>
         </div>
 
-        {% if streak_increased and current_streak > 1 %}
-            <div class="congrats-message">
-                🎉 Amazing! You kept your streak alive!
+        <div class="dashboard-welcome-grid">
+            <div class="daily-banner">
+                <div class="banner-content">
+                    <h2 class="greeting-text" id="greeting">Welcome Back</h2>
+                    <p class="motivational-quote" id="quote">Loading inspiration...</p>
+                </div>
             </div>
-        {% endif %}
-
+            <div class="streak-card-wrapper">
+                <div class="god-rays" id="godRays"></div>
+                <div class="streak-card {% if is_premium_user %}premium-frame{% endif %}" id="streakCard">
+                    <div class="flash-overlay" id="flashOverlay"></div>
+                    <div class="streak-icon-wrapper fire-idle" id="streakIconContainer"></div>
+                    <div class="streak-info">
+                        <div class="streak-count-container">
+                            <span class="streak-number" id="currentNumDisplay">0</span>
+                            <span class="streak-number number-hidden" id="nextNumDisplay" style="position: absolute; top: 0; right: 0;">0</span>
+                        </div>
+                        <div class="streak-rank" id="streakRank">Spark Starter</div>
+                        <div class="streak-label">Day Streak</div>
+                        <div class="floating-text" id="floatText">+1 DAY!</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="congrats-message" id="congratsMsg">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-5.82 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+            Amazing work! You kept your streak alive!
+        </div>
         <div class="subjects-section">
             <h2>Your Subjects</h2>
-            <div class="subjects-container">
-                <div class="subjects-grid">
-                    {% for item in subject_progress %}
-                        <a href="{% url 'subject_detail' item.subject.id %}" class="subject-card fade-in-up 
-                           {% cycle 'blue' 'green' 'orange' 'purple' %}">
-                            <div class="subject-header">
-                                <h3 class="subject-name">{{ item.subject.name }}</h3>
-                                <div class="subject-icon">
-                                    {% if 'MI' in item.subject.name or 'Machine' in item.subject.name %}🤖
-                                    {% elif 'OOP' in item.subject.name or 'Object' in item.subject.name %}💻
-                                    {% elif 'DBMS' in item.subject.name or 'Database' in item.subject.name %}🗄️
-                                    {% elif 'FODS' in item.subject.name or 'Data Science' in item.subject.name %}📊
-                                    {% else %}📚{% endif %}
-                                </div>
-                            </div>
-                            
-                            <div class="progress-section">
-                                <div class="progress-info">
-                                    <span class="completion-label">Progress</span>
-                                    <span class="completion-percentage">{{ item.percentage }}%</span>
-                                </div>
-                                <progress class="progress-bar" value="{{ item.percentage }}" max="100"></progress>
-                            </div>
-                        </a>
-                    {% empty %}
-                        <div class="no-subjects">
-                            <p>📚 No subjects available yet. Check back soon!</p>
-                        </div>
-                    {% endfor %}
+
+            <div class="subject-controls">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    <input type="text" id="subjectSearch" placeholder="Search subjects...">
                 </div>
+                <select id="subjectSort" class="sort-select">
+                    <option value="newest" selected>Newest First</option>
+                    <option value="oldest">Oldest First</option>
+                </select>
+                <button type="button" id="toggleHiddenBtn" class="toggle-hidden-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                    <span id="toggleHiddenLabel">Show Hidden (0)</span>
+                </button>
+                <button type="button" id="toggleAllDeptBtn" class="toggle-hidden-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
+                    <span id="toggleAllDeptLabel">Show All Departments</span>
+                </button>
+            </div>
+
+            <div class="subjects-grid" id="subjectsGrid">
+                {% for item in subject_progress %}
+                <div class="subject-card fade-in-up {% cycle 'card-blue' 'card-green' 'card-orange' 'card-purple' %} {% if item.is_pinned %}is-pinned-card{% endif %}"
+                     data-subject-id="{{ item.subject.id }}"
+                     data-order="{{ item.subject.id }}"
+                     data-name="{{ item.subject.name|lower }}"
+                     data-own-dept="{{ item.is_own_department|yesno:'true,false' }}"
+                     data-pinned="{{ item.is_pinned|yesno:'true,false' }}">
+
+                    <div class="card-actions-top">
+                        {% if not item.is_own_department %}
+                        <form method="post" action="{% url 'toggle_pin_subject' item.subject.id %}" style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="icon-action-btn pin-btn {% if item.is_pinned %}pinned{% endif %}"
+                                    title="{% if item.is_pinned %}Unpin from dashboard{% else %}Pin to dashboard{% endif %}">
+                                <svg viewBox="0 0 24 24" fill="{% if item.is_pinned %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M8 3h8l-1 6 3 3v2H6v-2l3-3-1-6z"/></svg>
+                            </button>
+                        </form>
+                        {% endif %}
+                        <button type="button" class="icon-action-btn hide-btn" data-hide-id="{{ item.subject.id }}" title="Hide this subject" aria-label="Hide subject">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.62 21.62 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-2.29 3.5M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
+                        </button>
+                    </div>
+
+                    <a href="{% url 'subject_detail' item.subject.id %}" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1;">
+                        <div class="subject-header">
+                            <h3 class="subject-name">
+                                {{ item.subject.name }}
+                                {% if not item.is_own_department %}<span class="dept-badge">{{ item.subject.department.name }}</span>{% endif %}
+                                {% if item.is_pinned %}<span class="pinned-badge">📌 Pinned</span>{% endif %}
+                            </h3>
+                            <div class="subject-icon-box">
+                                {% if 'MI' in item.subject.name or 'Machine' in item.subject.name %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path></svg>
+                                {% elif 'OOP' in item.subject.name or 'Object' in item.subject.name %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                {% elif 'DBMS' in item.subject.name or 'Database' in item.subject.name %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                                {% elif 'FODS' in item.subject.name or 'Data Science' in item.subject.name %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                {% else %}
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="progress-container">
+                            <div class="progress-labels">
+                                <span class="progress-txt">Progress</span>
+                                <span class="percent">{{ item.percentage }}%</span>
+                            </div>
+                            <div class="custom-progress">
+                                <div class="progress-fill" style="width: 0%" data-width="{{ item.percentage }}%"></div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                {% empty %}
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--medium-blue); background: rgba(255,255,255,0.5); border-radius: 16px;">
+                    No subjects added yet. Time to start learning!
+                </div>
+                {% endfor %}
+                <div class="no-results-msg" id="noResultsMsg">No subjects match your search or filters.</div>
             </div>
         </div>
     </div>
-
     {% include 'core/footer.html' %}
-
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Staggered animation for subject cards
-            const cards = document.querySelectorAll('.subject-card');
-            cards.forEach((card, index) => {
-                card.style.animationDelay = `${index * 0.1}s`;
+            const waBanner = document.getElementById('wa-banner');
+            const waDismissBtn = document.getElementById('wa-dismiss-btn');
+            const hasJoined = localStorage.getItem('studypalz_whatsapp_joined');
+            if (waBanner && !hasJoined) { waBanner.style.display = 'flex'; }
+            if (waDismissBtn) {
+                waDismissBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    waBanner.style.opacity = '0';
+                    waBanner.style.transform = 'translateY(-10px)';
+                    localStorage.setItem('studypalz_whatsapp_joined', 'true');
+                    setTimeout(() => { waBanner.remove(); }, 500);
+                });
+            }
+        });
+
+        const streakIncreased = {{ streak_increased|yesno:"true,false" }};
+        const trueCurrentStreak = parseInt("{{ current_streak }}") || 0;
+        const todayStr = new Date().toISOString().split('T')[0];
+        const storageKey = `streak-played-${todayStr}`;
+        const hasPlayedToday = localStorage.getItem(storageKey) === 'true';
+        const shouldAnimate = streakIncreased && !hasPlayedToday && trueCurrentStreak > 0;
+        const startStreak = shouldAnimate ? (trueCurrentStreak - 1) : trueCurrentStreak;
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const osc = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+            osc.connect(gainNode);
+            gainNode.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+            if (type === 'charge') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(200, now);
+                osc.frequency.linearRampToValueAtTime(800, now + 1.5);
+                gainNode.gain.setValueAtTime(0, now);
+                gainNode.gain.linearRampToValueAtTime(0.3, now + 1.0);
+                gainNode.gain.linearRampToValueAtTime(0, now + 1.5);
+                osc.start(now); osc.stop(now + 1.5);
+            } else if (type === 'impact') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(150, now);
+                osc.frequency.exponentialRampToValueAtTime(0.01, now + 0.4);
+                gainNode.gain.setValueAtTime(1, now);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+                osc.start(now); osc.stop(now + 0.4);
+            }
+        }
+
+        const firePaths = {
+            ember: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 22C10 22 8.5 20.5 8.5 18C8.5 15.5 10.5 13 12 9C13.5 13 15.5 15.5 15.5 18C15.5 20.5 14 22 12 22Z" fill="#fb923c" stroke="#c2410c" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
+            blaze: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 17C12.38 17 13.5 15.88 13.5 14.5C13.5 13.12 12.38 12 11 12C9.62 12 8.5 13.12 8.5 14.5Z" fill="#fff7ed"/><path d="M19.5 14C19.5 18.5 16 22 12 22C8 22 4.5 18.5 4.5 14C4.5 10.5 6 7 12 2C18 7 19.5 10.5 19.5 14Z" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 12L12 16" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/></svg>`,
+            inferno: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 22C16.5 22 20 18.5 20 14C20 9 16 7 12 2C8 7 4 9 4 14C4 18.5 7.5 22 12 22Z" fill="#ea580c" fill-opacity="0.2"/><path d="M12 22C15 22 17.5 19 17.5 15.5C17.5 12 15 9 12 4C9 9 6.5 12 6.5 15.5C6.5 19 9 22 12 22Z" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18C13.5 18 14.5 16.5 14.5 15C14.5 13.5 13.5 12 12 12C10.5 12 9.5 13.5 9.5 15C9.5 16.5 10.5 18 12 18Z" fill="#fbbf24"/><path d="M16 8L17 6" stroke="#ea580c" stroke-width="2" stroke-linecap="round"/></svg>`,
+            blueNova: `<svg width="28" height="28" viewBox="0 0 24 24" fill="none"><path d="M12 22C16.5 22 20 18.5 20 14C20 9 16 7 12 2C8 7 4 9 4 14C4 18.5 7.5 22 12 22Z" fill="#3b82f6" fill-opacity="0.1"/><path d="M12 22C15 22 17.5 19 17.5 15.5C17.5 12 15 9 12 4C9 9 6.5 12 6.5 15.5C6.5 19 9 22 12 22Z" stroke="#3b82f6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18C13.5 18 14.5 16.5 14.5 15C14.5 13.5 13.5 12 12 12C10.5 12 9.5 13.5 9.5 15C9.5 16.5 10.5 18 12 18Z" fill="#dbeafe"/><path d="M16 8L17 6" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/><path d="M8 10L7 8" stroke="#60a5fa" stroke-width="2" stroke-linecap="round"/></svg>`,
+            cosmicGod: `<svg width="32" height="32" viewBox="0 0 24 24" fill="none"><defs><linearGradient id="cosmic-grad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f0abfc"/><stop offset="50%" stop-color="#d946ef"/><stop offset="100%" stop-color="#fbbf24"/></linearGradient><filter id="glow"><feGaussianBlur stdDeviation="1.5" result="coloredBlur"/><feMerge><feMergeNode in="coloredBlur"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><path d="M12 1L15 8L23 9L17 14.5L18.5 22L12 18L5.5 22L7 14.5L1 9L9 8L12 1Z" fill="url(#cosmic-grad)" filter="url(#glow)"/><circle cx="12" cy="12" r="3" fill="#fff" opacity="0.9"/></svg>`
+        };
+
+        function getStreakInfo(num) {
+            if (num < 4) return { svg: firePaths.ember, title: "Spark Starter", theme: 'fire' };
+            if (num < 15) return { svg: firePaths.blaze, title: "Flame Keeper", theme: 'fire' };
+            if (num < 30) return { svg: firePaths.inferno, title: "Inferno Master", theme: 'fire' };
+            if (num < 50) return { svg: firePaths.blueNova, title: "Blue Nova Legend", theme: 'blue' };
+            return { svg: firePaths.cosmicGod, title: "Cosmic Deity", theme: 'cosmic' };
+        }
+
+        function updateStreakVisuals(num, container, titleEl, numberEls) {
+            const info = getStreakInfo(num);
+            container.innerHTML = info.svg;
+            titleEl.textContent = info.title;
+            container.classList.remove('blue-mode-wrapper', 'blue-mode-idle', 'cosmic-mode-wrapper', 'cosmic-mode-idle');
+            titleEl.classList.remove('blue-mode-text', 'cosmic-mode-text');
+            numberEls.forEach(el => el.classList.remove('blue-mode-text', 'cosmic-mode-text'));
+            if (info.theme === 'blue') {
+                container.classList.add('blue-mode-wrapper', 'blue-mode-idle');
+                titleEl.classList.add('blue-mode-text');
+                numberEls.forEach(el => el.classList.add('blue-mode-text'));
+            } else if (info.theme === 'cosmic') {
+                container.classList.add('cosmic-mode-wrapper', 'cosmic-mode-idle');
+                titleEl.classList.add('cosmic-mode-text');
+                numberEls.forEach(el => el.classList.add('cosmic-mode-text'));
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const streakCard = document.getElementById('streakCard');
+            const iconContainer = document.getElementById('streakIconContainer');
+            const currentNumEl = document.getElementById('currentNumDisplay');
+            const nextNumEl = document.getElementById('nextNumDisplay');
+            const streakRankEl = document.getElementById('streakRank');
+            const flash = document.getElementById('flashOverlay');
+            const floatText = document.getElementById('floatText');
+            const godRays = document.getElementById('godRays');
+            const congratsMsg = document.getElementById('congratsMsg');
+
+            currentNumEl.textContent = startStreak;
+            const initialVisualStreak = shouldAnimate ? startStreak : trueCurrentStreak;
+            updateStreakVisuals(initialVisualStreak, iconContainer, streakRankEl, [currentNumEl, nextNumEl]);
+
+            const username = '{{ user.first_name|default:user.username }}';
+            const hour = new Date().getHours();
+            const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+            document.getElementById('greeting').textContent = `${greeting}, ${username}`;
+
+            const motivationalQuotes = [
+                "Consistency is the superpower of the ordinary.",
+                "Small steps every day lead to big results.",
+                "Discipline is choosing between what you want now and what you want most.",
+                "The secret of getting ahead is getting started.",
+                "Success is the sum of small efforts, repeated daily.",
+                "Don't watch the clock; do what it does. Keep going.",
+                "Your future is created by what you do today, not tomorrow.",
+                "Push yourself, because no one else is going to do it for you.",
+                "Progress, not perfection.",
+                "Focus on being productive instead of busy."
+            ];
+            document.getElementById('quote').textContent =
+                motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
+
+            setTimeout(() => {
+                document.querySelectorAll('.progress-fill').forEach(fill => {
+                    fill.style.width = fill.getAttribute('data-width');
+                });
+            }, 500);
+
+            if (shouldAnimate) {
+                setTimeout(() => {
+                    streakCard.classList.add('tension-build');
+                    iconContainer.classList.remove('fire-idle');
+                    iconContainer.classList.add('fire-rapid-pulse');
+                    try { playSound('charge'); } catch(e) {}
+                }, 100);
+
+                setTimeout(() => {
+                    nextNumEl.textContent = trueCurrentStreak;
+                    currentNumEl.classList.add('slot-slide-out');
+                    nextNumEl.classList.remove('number-hidden');
+                    nextNumEl.classList.add('slot-slide-in');
+                    streakCard.classList.remove('tension-build');
+                    streakCard.classList.add('card-slam');
+                    flash.classList.add('do-flash');
+                    document.body.classList.add('body-shake-active');
+                    try { playSound('impact'); } catch(e) {}
+                    updateStreakVisuals(trueCurrentStreak, iconContainer, streakRankEl, [currentNumEl, nextNumEl]);
+                    iconContainer.classList.remove('fire-rapid-pulse');
+                    if (trueCurrentStreak >= 50) iconContainer.classList.add('cosmic-mode-idle');
+                    else if (trueCurrentStreak >= 30) iconContainer.classList.add('blue-mode-idle');
+                    else iconContainer.classList.add('fire-idle');
+                    floatText.classList.add('animate-float');
+                    if (congratsMsg) congratsMsg.classList.add('show-msg');
+                    const isCosmic = trueCurrentStreak >= 50;
+                    const isMilestone = (trueCurrentStreak % 7 === 0) || (trueCurrentStreak === 10) || (trueCurrentStreak >= 30);
+                    if (trueCurrentStreak % 7 === 0) floatText.textContent = "WEEK COMPLETE!";
+                    if (trueCurrentStreak === 30) floatText.textContent = "LEGEND STATUS!";
+                    if (isCosmic) floatText.textContent = "GOD TIER +1!";
+                    const rect = streakCard.getBoundingClientRect();
+                    const x = (rect.left + rect.width / 2) / window.innerWidth;
+                    const y = (rect.top + rect.height / 2) / window.innerHeight;
+                    if (isMilestone || isCosmic) godRays.classList.add('do-god-rays');
+                    let confettiColors = ['#ea580c', '#fbbf24'];
+                    let particleCount = 80;
+                    let spread = 60;
+                    if (isMilestone) { confettiColors = ['#FFD700', '#FFFFFF', '#06b6d4']; particleCount = 200; spread = 120; }
+                    if (trueCurrentStreak >= 30 && !isCosmic) { confettiColors = ['#60a5fa', '#3b82f6', '#ffffff']; }
+                    if (isCosmic) { confettiColors = ['#f0abfc', '#d946ef', '#fbbf24', '#ffffff', '#8b5cf6']; particleCount = 300; spread = 160; }
+                    confetti({ particleCount, spread, origin: { x, y }, colors: confettiColors, startVelocity: isMilestone || isCosmic ? 45 : 30, gravity: 0.8, zIndex: 9999 });
+                    if (isCosmic) {
+                        setTimeout(() => {
+                            confetti({ particleCount: 150, spread: 100, origin: { x, y }, colors: confettiColors, startVelocity: 60, gravity: 1.1, zIndex: 9999 });
+                        }, 350);
+                    }
+                    localStorage.setItem(storageKey, 'true');
+                }, 1500);
+            } else {
+                if (trueCurrentStreak >= 50) iconContainer.classList.add('cosmic-mode-idle');
+                else if (trueCurrentStreak >= 30) iconContainer.classList.add('blue-mode-idle');
+                else iconContainer.classList.add('fire-idle');
+            }
+        });
+
+        // --- SUBJECT SEARCH / SORT / HIDE / SHOW-ALL-DEPT ---
+        document.addEventListener('DOMContentLoaded', () => {
+            const grid = document.getElementById('subjectsGrid');
+            if (!grid) return;
+
+            const searchInput = document.getElementById('subjectSearch');
+            const sortSelect = document.getElementById('subjectSort');
+            const toggleHiddenBtn = document.getElementById('toggleHiddenBtn');
+            const toggleHiddenLabel = document.getElementById('toggleHiddenLabel');
+            const toggleAllDeptBtn = document.getElementById('toggleAllDeptBtn');
+            const toggleAllDeptLabel = document.getElementById('toggleAllDeptLabel');
+            const noResultsMsg = document.getElementById('noResultsMsg');
+
+            const HIDDEN_KEY = 'studypalz_hidden_subjects';
+            const SORT_KEY = 'studypalz_subject_sort';
+
+            function getHiddenIds() {
+                try { return JSON.parse(localStorage.getItem(HIDDEN_KEY)) || []; }
+                catch (e) { return []; }
+            }
+            function setHiddenIds(list) { localStorage.setItem(HIDDEN_KEY, JSON.stringify(list)); }
+
+            let showingHidden = false;
+            let showingAllDept = false;
+            const cards = Array.from(grid.querySelectorAll('.subject-card'));
+
+            function applySort() {
+                const mode = sortSelect.value;
+                localStorage.setItem(SORT_KEY, mode);
+                cards.sort((a, b) => {
+                    const aOrder = parseInt(a.dataset.order, 10) || 0;
+                    const bOrder = parseInt(b.dataset.order, 10) || 0;
+                    return mode === 'oldest' ? aOrder - bOrder : bOrder - aOrder;
+                });
+                cards.forEach(card => grid.appendChild(card));
+            }
+
+            function refreshHideButton(card, isHidden) {
+                const btn = card.querySelector('.hide-btn');
+                if (!btn) return;
+                btn.title = isHidden ? 'Unhide this subject' : 'Hide this subject';
+                btn.innerHTML = isHidden
+                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>'
+                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.62 21.62 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-2.29 3.5M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+            }
+
+            function applyFilters() {
+                const hiddenIds = getHiddenIds();
+                const query = searchInput.value.trim().toLowerCase();
+                let visibleCount = 0;
+
+                cards.forEach(card => {
+                    const id = card.dataset.subjectId;
+                    const name = card.dataset.name || '';
+                    const isHiddenByUser = hiddenIds.includes(id);
+                    const isOwnDept = card.dataset.ownDept === 'true';
+                    const isPinned = card.dataset.pinned === 'true';
+                    const matchesSearch = !query || name.includes(query);
+                    const matchesDept = showingAllDept || isOwnDept || isPinned;
+
+                    const shouldShow = showingHidden
+                        ? (isHiddenByUser && matchesSearch && matchesDept)
+                        : (!isHiddenByUser && matchesSearch && matchesDept);
+
+                    card.classList.toggle('subject-is-hidden', !shouldShow);
+                    refreshHideButton(card, isHiddenByUser);
+                    if (shouldShow) visibleCount++;
+                });
+
+                noResultsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
+                toggleHiddenLabel.textContent = showingHidden ? 'Back to Subjects' : `Show Hidden (${hiddenIds.length})`;
+                toggleHiddenBtn.classList.toggle('active', showingHidden);
+                toggleAllDeptLabel.textContent = showingAllDept ? 'My Department Only' : 'Show All Departments';
+                toggleAllDeptBtn.classList.toggle('active', showingAllDept);
+            }
+
+            grid.addEventListener('click', (e) => {
+                const btn = e.target.closest('.hide-btn');
+                if (!btn) return;
+                e.preventDefault();
+                e.stopPropagation();
+                const id = btn.dataset.hideId;
+                let hidden = getHiddenIds();
+                hidden = hidden.includes(id) ? hidden.filter(h => h !== id) : [...hidden, id];
+                setHiddenIds(hidden);
+                applyFilters();
             });
 
-            // Animate progress bars
-            const progressBars = document.querySelectorAll('.progress-bar');
-            progressBars.forEach(bar => {
-                const value = bar.getAttribute('value');
-                bar.setAttribute('value', 0);
-                setTimeout(() => {
-                    bar.setAttribute('value', value);
-                }, 600 + Math.random() * 400);
-            });
+            searchInput.addEventListener('input', applyFilters);
+            sortSelect.addEventListener('change', () => { applySort(); applyFilters(); });
+            toggleHiddenBtn.addEventListener('click', () => { showingHidden = !showingHidden; applyFilters(); });
+            toggleAllDeptBtn.addEventListener('click', () => { showingAllDept = !showingAllDept; applyFilters(); });
+
+            const savedSort = localStorage.getItem(SORT_KEY);
+            if (savedSort === 'oldest' || savedSort === 'newest') { sortSelect.value = savedSort; }
+
+            applySort();
+            applyFilters();
         });
     </script>
 </body>

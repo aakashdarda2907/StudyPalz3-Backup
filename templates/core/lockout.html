@@ -1,0 +1,331 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whoa! Too Many Attempts</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-teal: #06b6d4;
+            --primary-teal-dark: #0891b2;
+            --primary-teal-light: #67e8f9;
+            --light-teal: #ecfeff;
+            --dark-blue: #0f1729;
+            --medium-blue: #475569;
+            --text-muted: #64748b;
+            --danger: #dc2626;
+            --danger-light: #fee2e2;
+
+            /* Gradients */
+            --hero-gradient: linear-gradient(135deg, var(--dark-blue) 20%, var(--primary-teal) 80%);
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+
+            /* UI Elements */
+            --white: #ffffff;
+            --surface-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --shadow-glow: 0 0 40px rgba(6, 182, 212, 0.2);
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.07);
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
+            --border-radius: 20px;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            line-height: 1.7;
+            color: var(--dark-blue);
+            background-color: var(--white);
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Background Blobs */
+        .blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.3; z-index: -1; pointer-events: none; }
+        .blob-1 { top: -5%; left: -5%; width: 400px; height: 400px; background: var(--primary-teal-light); }
+        .blob-2 { bottom: 15%; right: -5%; width: 450px; height: 450px; background: #dbeafe; }
+
+        .lockout-container {
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem 1.5rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .lockout-card {
+            background: var(--white);
+            border-radius: var(--border-radius);
+            padding: 2.5rem 2rem;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid var(--border-light);
+        }
+
+        .lockout-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .lockout-icon {
+            width: 50px;
+            height: 50px;
+            min-width: 50px;
+            border-radius: 12px;
+            background: var(--danger-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            flex-shrink: 0;
+        }
+
+        .header-content h1 {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--dark-blue);
+            margin-bottom: 0.3rem;
+            letter-spacing: -0.02em;
+        }
+
+        .security-badge {
+            display: inline-block;
+            background: var(--danger-light);
+            color: var(--danger);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            padding: 0.35rem 0.75rem;
+            border-radius: 6px;
+            letter-spacing: 0.5px;
+        }
+
+        .lockout-body {
+            margin-bottom: 1.75rem;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        .lockout-body strong {
+            color: var(--dark-blue);
+            font-weight: 600;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.75rem;
+        }
+
+        .info-card {
+            background: var(--surface-light);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 1rem;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-muted);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .info-value {
+            font-size: 0.9rem;
+            color: var(--dark-blue);
+            font-weight: 500;
+        }
+
+        .mistake-alert {
+            background: var(--light-teal);
+            border: 1px solid rgba(6, 182, 212, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.75rem;
+            font-size: 0.9rem;
+            line-height: 1.6;
+            color: var(--primary-teal-dark);
+        }
+
+        .mistake-alert strong {
+            color: var(--primary-teal-dark);
+            font-weight: 600;
+        }
+
+        .actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+            text-decoration: none;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: var(--accent-gradient);
+            color: white;
+            box-shadow: 0 2px 8px rgba(6, 182, 212, 0.2);
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            box-shadow: 0 4px 12px rgba(6, 182, 212, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--surface-light);
+            color: var(--primary-teal-dark);
+            border: 1px solid var(--border-light);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--primary-teal);
+            background: var(--light-teal);
+        }
+
+        .footer-note {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-light);
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeInUp 0.6s ease forwards;
+        }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .lockout-container {
+                padding: 1.5rem 1rem;
+            }
+
+            .lockout-card {
+                padding: 1.75rem 1.25rem;
+            }
+
+            .lockout-header {
+                gap: 0.75rem;
+            }
+
+            .lockout-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 1.5rem;
+            }
+
+            .header-content h1 {
+                font-size: 1.2rem;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .actions {
+                gap: 0.6rem;
+            }
+
+            .btn {
+                padding: 0.65rem 1.25rem;
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+
+    <div class="lockout-container">
+        <div class="lockout-card fade-in-up">
+            
+            <div class="lockout-header">
+                <div class="lockout-icon">🚨</div>
+                <div class="header-content">
+                    <h1>Whoa! Too Many Requests</h1>
+                    <span class="security-badge">Safety Protocol Active</span>
+                </div>
+            </div>
+
+            <p class="lockout-body">
+                It looks like you've been **refreshing the page** or making **too many requests** to our server in a short period. We've temporarily paused access to your StudyPalz account (or IP address) for a few minutes as a **safety protocol** to protect the stability of the website.
+            </p>
+
+            <div class="info-grid">
+                <div class="info-card">
+                    <div class="info-label">Why this happened</div>
+                    <div class="info-value">High rate of page requests detected</div>
+                </div>
+                <div class="info-card">
+                    <div class="info-label">What to do now</div>
+                    <div class="info-value">Wait 5-10 minutes, then try again</div>
+                </div>
+            </div>
+
+            <div class="mistake-alert">
+                <strong>If this was a mistake, don't worry! mail to : aakashdardaconstruct@gmail.com</strong> This is just a safety protocol. Your account is secure, and access will be automatically restored very soon. If the issue persists for more than 15 minutes, please contact support.
+            </div>
+
+            <div class="actions">
+                <a href="{% url 'home' %}" class="btn btn-primary">
+                    <span>🏠</span>
+                    <span>Return to Home</span>
+                </a>
+                <a href="mailto:aakashdardaconstruct@gmail.com?subject=Rate%20Limit%20Lockout%20Assistance" class="btn btn-secondary">
+                    <span>📧</span>
+                    <span>Contact Support</span>
+                </a>
+            </div>
+
+            <div class="footer-note">
+                This temporary lock is necessary to maintain service quality and prevent denial-of-service attacks. Thank you for your patience.
+            </div>
+
+        </div>
+    </div>
+
+</body>
+</html>
