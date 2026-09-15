@@ -1,0 +1,84 @@
+{# core/templates/core/captcha_challenge.html #}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Quick check</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background: #0f1115;
+            color: #e6e6e6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: #1a1d24;
+            border: 1px solid #2a2e37;
+            border-radius: 12px;
+            padding: 2.5rem;
+            max-width: 380px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 { font-size: 1.25rem; margin-bottom: 0.5rem; }
+        p.sub { color: #9aa0ab; font-size: 0.9rem; margin-bottom: 1.5rem; }
+        .sum {
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            border: 1px solid #2a2e37;
+            background: #0f1115;
+            color: #fff;
+            box-sizing: border-box;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+        button {
+            width: 100%;
+            padding: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            background: #4f7cff;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover { background: #3f68e0; }
+        .error {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Just checking you're human</h1>
+        <p class="sub">We're seeing a lot of traffic right now — solve this to continue.</p>
+
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+
+        <div class="sum">{{ num1 }} + {{ num2 }} = ?</div>
+
+        <form method="post" action="{% url 'verify_human' %}">
+            {% csrf_token %}
+            <input type="number" name="answer" autofocus required>
+            <button type="submit">Continue</button>
+        </form>
+    </div>
+</body>
+</html>

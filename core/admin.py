@@ -42,17 +42,52 @@ class ContentInline(admin.TabularInline):
     extra = 1
 
 
+from django import forms
+from .models import Subject, Content, UserContentState, Department, UserProfile, BlockedIP, Category
+
+
+class CategoryAdmin(admin.ModelAdmin):
+    list_display = ('name', 'slug', 'is_premium', 'order', 'subject_count')
+    list_editable = ('is_premium', 'order')
+    prepopulated_fields = {'slug': ('name',)}
+
+    def subject_count(self, obj):
+        return obj.subjects.count()
+    subject_count.short_description = 'Subjects'
+
+
+class SubjectAdminForm(forms.ModelForm):
+    class Meta:
+        model = Subject
+        fields = '__all__'
+
+    def clean_categories(self):
+        categories = self.cleaned_data.get('categories')
+        if not categories or categories.count() == 0:
+            raise forms.ValidationError("Select at least one category (e.g. '5th Sem', 'Premium').")
+        return categories
+
+
 class SubjectAdmin(admin.ModelAdmin):
+    form = SubjectAdminForm
     inlines = [ContentInline]
-    list_display = ('name', 'department', 'is_pinned', 'created_at', 'content_count')
-    list_filter = ('department', 'is_pinned')
+    list_display = ('name', 'department', 'is_pinned', 'category_list', 'created_at', 'content_count')
+    list_filter = ('department', 'categories', 'is_pinned')
     list_editable = ('is_pinned',)
+    filter_horizontal = ('categories',)
     search_fields = ('name',)
     ordering = ('-is_pinned', '-created_at')
+
+    def category_list(self, obj):
+        return ", ".join(c.name for c in obj.categories.all())
+    category_list.short_description = 'Categories'
 
     def content_count(self, obj):
         return obj.contents.count()
     content_count.short_description = 'Number of Content Items'
+
+
+admin.site.register(Category, CategoryAdmin)
 
 
 # ↓↓↓ MUST be defined before ContentAdmin uses it ↓↓↓

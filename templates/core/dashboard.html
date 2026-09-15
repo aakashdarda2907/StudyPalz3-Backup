@@ -34,7 +34,7 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html, body {
+        html, body {
             max-width: 100vw;
             overflow-x: hidden;
             position: relative;
@@ -439,7 +439,7 @@ html, body {
             top: 1rem; right: 1rem;
             display: flex;
             gap: 0.4rem;
-            z-index: 3;
+            z-index: 6;
         }
         .icon-action-btn {
             width: 32px; height: 32px;
@@ -454,8 +454,6 @@ html, body {
         }
         .subject-card:hover .icon-action-btn,
         .subject-card:focus-within .icon-action-btn { opacity: 1; }
-        .icon-action-btn.pin-btn.pinned { opacity: 1; color: #d97706; background: #fffbeb; border-color: #fbbf24; }
-        .icon-action-btn.pin-btn:hover { background: #fef3c7; color: #d97706; border-color: rgba(245, 158, 11, 0.3); }
         .icon-action-btn.hide-btn:hover { background: #fee2e2; color: #dc2626; border-color: rgba(220, 38, 38, 0.2); }
         .icon-action-btn svg { width: 15px; height: 15px; }
         .subject-card.subject-is-hidden,
@@ -479,17 +477,12 @@ html, body {
             padding: 1.75rem;
             border: var(--glass-border);
             box-shadow: var(--shadow-sm);
-            text-decoration: none;
             position: relative;
             transition: var(--transition);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             height: 100%;
-        }
-        .subject-card.is-pinned-card {
-            border: 1px solid rgba(245, 158, 11, 0.45);
-            box-shadow: 0 4px 16px rgba(245, 158, 11, 0.12);
         }
         .subject-card:hover {
             transform: translateY(-8px);
@@ -516,7 +509,7 @@ html, body {
             vertical-align: middle;
             margin-left: 0.4rem;
         }
-        .pinned-badge {
+        .premium-tag-badge {
             display: inline-flex;
             align-items: center;
             gap: 0.2rem;
@@ -524,8 +517,8 @@ html, body {
             font-weight: 700;
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            color: #b45309;
-            background: #fef3c7;
+            color: #78350f;
+            background: linear-gradient(135deg, #fde68a, #fbbf24);
             padding: 0.15rem 0.5rem;
             border-radius: 8px;
             vertical-align: middle;
@@ -569,6 +562,101 @@ html, body {
         @media (max-width: 768px) {
             .container { padding: 0 1rem 3rem; }
         }
+
+        /* ==================== CATEGORY CHIPS ==================== */
+        .category-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1rem; }
+        .category-chip {
+            padding: 0.55rem 1.1rem; border-radius: 50px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            background: rgba(255,255,255,0.8);
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.83rem;
+            color: var(--medium-blue); cursor: pointer; transition: var(--transition);
+            display: flex; align-items: center; gap: 0.4rem;
+        }
+        .category-chip:hover { background: #fff; color: var(--dark-blue); }
+        .category-chip.active {
+            background: var(--accent-gradient); color: #fff; border-color: transparent;
+            box-shadow: 0 6px 14px rgba(6,182,212,0.25);
+        }
+        .category-chip.premium-chip { border-color: #fbbf24; color: #b45309; }
+        .category-chip.premium-chip.active {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; box-shadow: 0 6px 14px rgba(245,158,11,0.35);
+        }
+
+        /* ==================== PREMIUM SPLASH ==================== */
+        .premium-splash {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
+            border-radius: 24px; padding: 1.75rem 2rem; margin-bottom: 2rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+            box-shadow: 0 12px 30px rgba(217,119,6,0.25); flex-wrap: wrap; cursor: pointer;
+            position: relative; overflow: hidden;
+        }
+        .premium-splash::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 15% 20%, rgba(255,255,255,0.15) 0%, transparent 45%),
+                        radial-gradient(circle at 85% 80%, rgba(251,191,36,0.25) 0%, transparent 50%);
+        }
+        .premium-splash-text { position: relative; z-index: 1; }
+        .premium-splash-title { color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.2rem; margin-bottom: 0.3rem; }
+        .premium-splash-sub { color: rgba(255,255,255,0.8); font-size: 0.88rem; }
+        .premium-splash-btn {
+            position: relative; z-index: 1; background: #fff; color: #78350f;
+            font-weight: 800; padding: 0.7rem 1.4rem; border-radius: 50px; font-size: 0.85rem;
+            white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        /* ==================== LOCKED / BLURRED SUBJECT CARDS ==================== */
+        /*
+           A card only gets the department-scope lock treatment when JS (or the
+           server, on first paint) adds .locked-card to it. Premium-category
+           subjects NEVER receive this class — per Category.is_premium's design
+           intent, they ignore department restrictions entirely. Real content
+           gating for premium chapters still happens per-item in subject_detail
+           and content_detail views.
+        */
+        .card-blur-wrap {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            text-decoration: none;
+            color: inherit;
+            transition: filter 0.25s ease;
+        }
+        .locked-card .card-blur-wrap {
+            filter: blur(6px);
+            pointer-events: none;
+            user-select: none;
+        }
+        .locked-card-overlay {
+            display: none;
+        }
+        .subject-card.locked-card .locked-card-overlay {
+            position: absolute; inset: 0; z-index: 5;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.6rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 24px;
+            text-align: center;
+            padding: 1rem;
+        }
+        .locked-card-overlay svg { color: #b45309; }
+        .locked-card-label {
+            font-size: 0.72rem; font-weight: 800; color: #78350f;
+            text-transform: uppercase; letter-spacing: 0.04em;
+            max-width: 160px; line-height: 1.4;
+        }
+        .buy-premium-btn {
+            background: linear-gradient(135deg, #fbbf24, #f59e0b);
+            color: #78350f; font-weight: 800; font-size: 0.78rem;
+            padding: 0.55rem 1.1rem; border-radius: 50px;
+            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(245, 158, 11, 0.35);
+            transition: transform 0.2s ease;
+            white-space: nowrap;
+        }
+        .buy-premium-btn:hover { transform: translateY(-2px); }
+
+
     </style>
 </head>
 <body>
@@ -610,6 +698,17 @@ html, body {
                 <button id="wa-dismiss-btn" class="wa-btn-dismiss">Joined already</button>
             </div>
         </div>
+
+        {% if not is_premium_user and premium_category %}
+        <div class="premium-splash" id="premiumSplash">
+            <div class="premium-splash-text">
+                <div class="premium-splash-title">{{ premium_subject_count }} Premium Subjects Await</div>
+                <div class="premium-splash-sub">Exam prep, interview prep & aptitude — same across every department. Tap to explore.</div>
+            </div>
+            <div class="premium-splash-btn">Explore Premium →</div>
+        </div>
+        {% endif %}
+
 
         <div class="dashboard-welcome-grid">
             <div class="daily-banner">
@@ -661,36 +760,47 @@ html, body {
                 </button>
             </div>
 
+        <div class="category-chips" id="categoryChips">
+            {% for cat in categories %}
+            <button type="button"
+                    class="category-chip {% if cat.is_premium %}premium-chip{% endif %} {% if cat.id in active_category_ids %}active{% endif %}"
+                    data-category-id="{{ cat.id }}"
+                    data-is-premium="{{ cat.is_premium|yesno:'true,false' }}">
+                {% if cat.is_premium %}⭐ {% endif %}{{ cat.name }}
+            </button>
+            {% endfor %}
+        </div>
+
             <div class="subjects-grid" id="subjectsGrid">
                 {% for item in subject_progress %}
-                <div class="subject-card fade-in-up {% cycle 'card-blue' 'card-green' 'card-orange' 'card-purple' %} {% if item.is_pinned %}is-pinned-card{% endif %}"
+                {% comment %}
+                A subject is department-locked only when: it isn't in the
+                user's own department, isn't a premium-category subject
+                (those always ignore department scope), and the viewer isn't
+                a premium member. This initial server-rendered class prevents
+                any flash-of-unlocked-content before JS runs; the JS below
+                recomputes the same rule for search/hide/filter.
+                {% endcomment %}
+                <div class="subject-card fade-in-up {% cycle 'card-blue' 'card-green' 'card-orange' 'card-purple' %} {% if not item.is_own_department and not item.is_premium_subject and not is_premium_user %}locked-card{% endif %}"
                      data-subject-id="{{ item.subject.id }}"
                      data-order="{{ item.subject.id }}"
                      data-name="{{ item.subject.name|lower }}"
                      data-own-dept="{{ item.is_own_department|yesno:'true,false' }}"
-                     data-pinned="{{ item.is_pinned|yesno:'true,false' }}">
+                     data-premium-subject="{{ item.is_premium_subject|yesno:'true,false' }}"
+                     data-categories="{% for cid in item.category_ids %}{{ cid }}{% if not forloop.last %},{% endif %}{% endfor %}">
 
                     <div class="card-actions-top">
-                        {% if not item.is_own_department %}
-                        <form method="post" action="{% url 'toggle_pin_subject' item.subject.id %}" style="display:inline;">
-                            {% csrf_token %}
-                            <button type="submit" class="icon-action-btn pin-btn {% if item.is_pinned %}pinned{% endif %}"
-                                    title="{% if item.is_pinned %}Unpin from dashboard{% else %}Pin to dashboard{% endif %}">
-                                <svg viewBox="0 0 24 24" fill="{% if item.is_pinned %}currentColor{% else %}none{% endif %}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M8 3h8l-1 6 3 3v2H6v-2l3-3-1-6z"/></svg>
-                            </button>
-                        </form>
-                        {% endif %}
                         <button type="button" class="icon-action-btn hide-btn" data-hide-id="{{ item.subject.id }}" title="Hide this subject" aria-label="Hide subject">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.62 21.62 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-2.29 3.5M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
                         </button>
                     </div>
 
-                    <a href="{% url 'subject_detail' item.subject.id %}" style="text-decoration:none; color:inherit; display:flex; flex-direction:column; flex:1;">
+                    <a href="{% url 'subject_detail' item.subject.id %}" class="card-blur-wrap">
                         <div class="subject-header">
                             <h3 class="subject-name">
                                 {{ item.subject.name }}
                                 {% if not item.is_own_department %}<span class="dept-badge">{{ item.subject.department.name }}</span>{% endif %}
-                                {% if item.is_pinned %}<span class="pinned-badge">📌 Pinned</span>{% endif %}
+                                {% if item.is_premium_subject %}<span class="premium-tag-badge">⭐ Premium</span>{% endif %}
                             </h3>
                             <div class="subject-icon-box">
                                 {% if 'MI' in item.subject.name or 'Machine' in item.subject.name %}
@@ -716,6 +826,12 @@ html, body {
                             </div>
                         </div>
                     </a>
+
+                    <div class="locked-card-overlay">
+                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        <div class="locked-card-label">Unlock subjects from every department</div>
+                        <a href="{% url 'premium_upgrade' %}" class="buy-premium-btn">Buy Premium – ₹499/yr</a>
+                    </div>
                 </div>
                 {% empty %}
                 <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--medium-blue); background: rgba(255,255,255,0.5); border-radius: 16px;">
@@ -908,7 +1024,7 @@ html, body {
             }
         });
 
-        // --- SUBJECT SEARCH / SORT / HIDE / SHOW-ALL-DEPT ---
+        // --- SUBJECT SEARCH / SORT / HIDE / SHOW-ALL-DEPT / CATEGORY FILTERS ---
         document.addEventListener('DOMContentLoaded', () => {
             const grid = document.getElementById('subjectsGrid');
             if (!grid) return;
@@ -920,9 +1036,12 @@ html, body {
             const toggleAllDeptBtn = document.getElementById('toggleAllDeptBtn');
             const toggleAllDeptLabel = document.getElementById('toggleAllDeptLabel');
             const noResultsMsg = document.getElementById('noResultsMsg');
+            const chipsContainer = document.getElementById('categoryChips');
+            const premiumSplash = document.getElementById('premiumSplash');
 
             const HIDDEN_KEY = 'studypalz_hidden_subjects';
             const SORT_KEY = 'studypalz_subject_sort';
+            const isPremiumUser = {{ is_premium_user|yesno:"true,false" }};
 
             function getHiddenIds() {
                 try { return JSON.parse(localStorage.getItem(HIDDEN_KEY)) || []; }
@@ -931,8 +1050,22 @@ html, body {
             function setHiddenIds(list) { localStorage.setItem(HIDDEN_KEY, JSON.stringify(list)); }
 
             let showingHidden = false;
-            let showingAllDept = false;
+            let showingAllDept = {{ show_all_departments|yesno:"true,false" }};
+            let activeCategoryIds = new Set([{% for cid in active_category_ids %}"{{ cid }}"{% if not forloop.last %},{% endif %}{% endfor %}]);
+
             const cards = Array.from(grid.querySelectorAll('.subject-card'));
+            if (toggleAllDeptBtn) toggleAllDeptBtn.classList.toggle('active', showingAllDept);
+
+            function saveFiltersToServer() {
+                const formData = new FormData();
+                activeCategoryIds.forEach(id => formData.append('category_ids[]', id));
+                formData.append('show_all_departments', showingAllDept ? 'true' : 'false');
+                fetch("{% url 'update_dashboard_filters' %}", {
+                    method: 'POST',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    body: formData,
+                }).catch(() => {});
+            }
 
             function applySort() {
                 const mode = sortSelect.value;
@@ -964,13 +1097,29 @@ html, body {
                     const name = card.dataset.name || '';
                     const isHiddenByUser = hiddenIds.includes(id);
                     const isOwnDept = card.dataset.ownDept === 'true';
-                    const isPinned = card.dataset.pinned === 'true';
+                    const isPremiumSubject = card.dataset.premiumSubject === 'true';
+                    const cardCategoryIds = (card.dataset.categories || '').split(',').filter(Boolean);
+
                     const matchesSearch = !query || name.includes(query);
-                    const matchesDept = showingAllDept || isOwnDept || isPinned;
+
+                    // Department scope: premium-category subjects always ignore it,
+                    // same as the user's own department.
+                    const matchesDept = showingAllDept || isOwnDept || isPremiumSubject;
+
+                    // Category chips: any active chip (including the premium one)
+                    // matches by simple category-id containment.
+                    const matchesCategory = activeCategoryIds.size === 0
+                        || Array.from(activeCategoryIds).some(cid => cardCategoryIds.includes(cid));
 
                     const shouldShow = showingHidden
                         ? (isHiddenByUser && matchesSearch && matchesDept)
-                        : (!isHiddenByUser && matchesSearch && matchesDept);
+                        : (!isHiddenByUser && matchesSearch && matchesDept && matchesCategory);
+
+                    // A card is locked (blurred + gated) only if it's outside the
+                    // user's department, isn't a premium-category subject, and
+                    // the viewer isn't a premium member.
+                    const shouldLock = !isPremiumUser && !isOwnDept && !isPremiumSubject;
+                    card.classList.toggle('locked-card', shouldLock);
 
                     card.classList.toggle('subject-is-hidden', !shouldShow);
                     refreshHideButton(card, isHiddenByUser);
@@ -996,10 +1145,44 @@ html, body {
                 applyFilters();
             });
 
+            if (chipsContainer) {
+                chipsContainer.addEventListener('click', (e) => {
+                    const chip = e.target.closest('.category-chip');
+                    if (!chip) return;
+                    const cid = chip.dataset.categoryId;
+                    if (activeCategoryIds.has(cid)) {
+                        activeCategoryIds.delete(cid);
+                        chip.classList.remove('active');
+                    } else {
+                        activeCategoryIds.add(cid);
+                        chip.classList.add('active');
+                    }
+                    applyFilters();
+                    saveFiltersToServer();
+                });
+            }
+
+            if (premiumSplash) {
+                premiumSplash.addEventListener('click', () => {
+                    const premiumChip = chipsContainer.querySelector('.premium-chip');
+                    if (premiumChip && !premiumChip.classList.contains('active')) {
+                        premiumChip.classList.add('active');
+                        activeCategoryIds.add(premiumChip.dataset.categoryId);
+                        applyFilters();
+                        saveFiltersToServer();
+                    }
+                    document.querySelector('.subjects-section').scrollIntoView({ behavior: 'smooth' });
+                });
+            }
+
             searchInput.addEventListener('input', applyFilters);
             sortSelect.addEventListener('change', () => { applySort(); applyFilters(); });
             toggleHiddenBtn.addEventListener('click', () => { showingHidden = !showingHidden; applyFilters(); });
-            toggleAllDeptBtn.addEventListener('click', () => { showingAllDept = !showingAllDept; applyFilters(); });
+            toggleAllDeptBtn.addEventListener('click', () => {
+                showingAllDept = !showingAllDept;
+                applyFilters();
+                saveFiltersToServer();
+            });
 
             const savedSort = localStorage.getItem(SORT_KEY);
             if (savedSort === 'oldest' || savedSort === 'newest') { sortSelect.value = savedSort; }

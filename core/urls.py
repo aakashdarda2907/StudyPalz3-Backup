@@ -33,6 +33,9 @@ urlpatterns = [
     path('forgot-password/', views.forgot_password_view, name='forgot_password'),
 
     path('subject/<int:subject_id>/toggle_pin/', views.toggle_pin_subject_view, name='toggle_pin_subject'),
+    path('dashboard/update-filters/', views.update_dashboard_filters_view, name='update_dashboard_filters'),
+    path('premium/', views.premium_upgrade_view, name='premium_upgrade'),
+    path('verify-human/', views.verify_human_view, name='verify_human'),
 ]
 
 

@@ -164,7 +164,7 @@
         .heart-icon { width: 24px; height: 24px; }
         .fb-quote { font-size: 1.1rem; line-height: 1.6; color: var(--dark-blue); font-weight: 450; }
         .marker-highlight { background: linear-gradient(to top, rgba(165, 243, 252, 0.7) 40%, transparent 40%); font-weight: 700; color: var(--dark-blue); padding: 0 2px; -webkit-box-decoration-break: clone; box-decoration-break: clone; }
-        
+
         .fb-user-row { display: flex; align-items: center; gap: 12px; margin-top: 1.5rem; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 1rem; }
         .fb-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--surface-light); display: flex; align-items: center; justify-content: center; font-size: 0.9rem; font-weight: 700; color: var(--medium-blue); border: 1px solid var(--border-light); }
         .fb-info h5 { margin: 0; font-size: 0.9rem; font-weight: 700; }
@@ -205,6 +205,40 @@
         .fade-in-up { opacity: 0; transform: translateY(25px); transition: opacity 0.5s ease, transform 0.5s ease; }
         .fade-in-up.visible { opacity: 1; transform: translateY(0); }
 
+        .premium-banner-section { padding: 2rem 0; }
+.premium-banner {
+    background: var(--hero-gradient);
+    border-radius: var(--border-radius);
+    padding: 2.5rem;
+    text-align: center;
+    color: var(--white);
+    box-shadow: var(--shadow-soft);
+}
+.premium-banner h2 { color: var(--white); font-size: 1.6rem; margin-bottom: 0.5rem; }
+.premium-banner p { color: rgba(255,255,255,0.85); margin-bottom: 1.5rem; }
+.premium-tags { display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; }
+.premium-tag {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 0.4rem 0.9rem;
+    border-radius: 50px;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--white);
+}
+.premium-cta {
+    display: inline-block;
+    margin-top: 1.75rem;
+    background: var(--white);
+    color: var(--primary-teal-dark);
+    font-weight: 800;
+    padding: 0.8rem 1.8rem;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: var(--transition);
+}
+.premium-cta:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.15); }
+
         @media (max-width: 900px) {
             .feedback-grid { grid-template-columns: repeat(2, 1fr); }
             .fb-tall { grid-row: span 1; }
@@ -220,6 +254,9 @@
             .bento-card.tall { grid-row: span 1; }
             .feedback-grid { grid-template-columns: 1fr; }
             .fb-wide { grid-column: span 1; }
+
+            /* Premium Banner */
+
         }
     </style>
 </head>
@@ -248,7 +285,7 @@
             <div class="container">
                 <div class="fade-in-up">
                     <h1>Stop Cramming.<br>Start Learning.</h1>
-                    <p class="subtitle">Exclusive for <strong>VIT Pune Second Year</strong>. We cover all major subjects across CSAI, CS-Core, AIDS, IOT, and CSAIML. Master your syllabus in just 10 minutes a day.</p>
+                    <p class="subtitle">Exclusive for <strong>VIT Pune </strong>. We cover all major subjects across CSAI, CS-Core, AIDS, IOT, and CSAIML. Master your syllabus in just 10 minutes a day.</p>
                     <div class="hero-buttons">
                         <a href="{% url 'signup' %}" class="btn btn-primary">Start for Free Today</a>
                         <a href="#features" class="btn btn-secondary">Explore Features</a>
@@ -263,6 +300,25 @@
                 <div class="ticker-item">VIT PUNE</div><div class="ticker-item ticker-highlight">SEMESTER 4 RESULTS OUT!</div><div class="ticker-item">CSAI</div><div class="ticker-item">CS-CORE</div><div class="ticker-item">AIDS</div><div class="ticker-item">CS-IOT</div><div class="ticker-item">CSAIML</div>
             </div>
         </section>
+
+
+
+  {% if premium_subject_count %}
+<section class="premium-banner-section container">
+    <div class="premium-banner">
+        <h2>{{ premium_subject_count }} Premium Subjects — One Plan Unlocks Them All</h2>
+        <p>Exam prep, interview prep &amp; aptitude — the same across every department, for ₹499/year.</p>
+        <div class="premium-tags">
+            {% for s in premium_subjects %}
+            <span class="premium-tag">{{ s.name }}</span>
+            {% endfor %}
+        </div>
+        <a href="{% url 'signup' %}" class="premium-cta">Sign Up &amp; Explore →</a>
+    </div>
+</section>
+{% endif %}
+
+
 
         <section id="hall-of-fame" class="leaderboard-section">
             <div class="container">
@@ -330,7 +386,7 @@
                             <div class="podium-card rank-3"><div class="rank-badge">3</div><div class="student-name">Pranav Bhosale</div><div class="student-score">9.52</div></div>
                         </div>
                     </div>
-                    
+
                     <div class="dept-group" style="margin-bottom: 5rem;">
                         <h4 style="text-align: center; margin-bottom: 1.5rem;">AIDS</h4>
                         <div class="podium-container fade-in-up" style="margin-bottom: 2rem;">
@@ -348,7 +404,7 @@
                             <div class="podium-card rank-3"><div class="rank-badge">3</div><div class="student-name">Harshwardhan Patil</div><div class="student-score">9.30</div></div>
                         </div>
                     </div>
-                    
+
                     <div class="dept-group" style="margin-bottom: 5rem;">
                         <h4 style="text-align: center; margin-bottom: 1.5rem;">IOT & CSAIML Top Performers</h4>
                         <div class="podium-container fade-in-up" style="margin-bottom: 2rem;">
@@ -361,7 +417,7 @@
 
                 <div id="sem3" class="sem-content">
                     <h3 style="text-align: center; margin-bottom: 3rem; color: var(--dark-blue);">Overall College Rankings</h3>
-            
+
                     <div class="podium-container" style="margin-bottom: 3rem;">
                         <div class="podium-card rank-2">
                             <div class="rank-badge">2</div>
@@ -385,7 +441,7 @@
                             <div class="student-score">9.43 GPA</div>
                         </div>
                     </div>
-            
+
                     <div class="list-container" style="max-width: 850px; margin-bottom: 5rem;">
                         <div class="list-header"><span>Rank</span><span>Student (Branch)</span><span style="text-align: right;">GPA</span></div>
                         <div class="list-item"><span class="list-rank">04</span><div class="list-user">Aakash Darda (CSAI)</div><span class="list-score">9.38</span></div>
@@ -434,6 +490,7 @@
                 </div>
             </div>
         </section>
+
 
         <section id="features" class="features-section">
             <div class="container">

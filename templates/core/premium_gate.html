@@ -4,467 +4,265 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Premium Content – StudyPalz</title>
+    <title>Go Premium | StudyPalz</title>
     <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-gradient: radial-gradient(circle at top center, #f0f9ff 0%, #f8fafc 100%);
-            --glass-bg: rgba(255, 255, 255, 0.85);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.9);
-            --shadow-sm: 0 4px 6px -1px rgba(15, 23, 42, 0.05);
-            --shadow-md: 0 12px 24px -4px rgba(15, 23, 42, 0.06);
-            --shadow-hover: 0 20px 30px -4px rgba(6, 182, 212, 0.15);
-            --card-radius: 24px;
-            --cyan: #06b6d4;
-            --blue: #3b82f6;
-            --amber: #f59e0b;
-            --red: #ef4444;
+            --primary-teal: #06b6d4;
+            --primary-teal-dark: #0891b2;
+            --dark-blue: #0f1729;
+            --medium-blue: #475569;
+            --text-muted: #64748b;
+            --white: #ffffff;
+            --surface-light: #f8fafc;
+            --border-light: #e2e8f0;
+            --light-teal: #ecfeff;
+            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
+            --border-radius: 16px;
+            --transition: all 0.2s ease;
+            --amber-light: #fffbeb;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: var(--bg-gradient);
-            background-attachment: fixed;
-            color: #0f172a;
-            min-height: 100vh;
-            -webkit-font-smoothing: antialiased;
+            line-height: 1.65;
+            color: var(--dark-blue);
+            background-color: var(--surface-light);
         }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
+        h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--dark-blue); }
 
-        .gate-wrapper {
-            min-height: calc(100vh - 80px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem 1rem;
-        }
+        /* Header */
+        .header { background: var(--white); border-bottom: 1px solid var(--border-light); padding: 1rem 0; }
+        .header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--dark-blue); text-decoration: none; }
+        .logo span { color: var(--primary-teal); }
+        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1.4rem; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: var(--transition); border: none; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
+        .btn-primary { background: var(--primary-teal); color: var(--white); }
+        .btn-primary:hover { background: var(--primary-teal-dark); }
+        .btn-secondary { background: var(--white); color: var(--dark-blue); border: 1px solid var(--border-light); }
+        .btn-secondary:hover { border-color: var(--primary-teal); color: var(--primary-teal-dark); }
+        .btn-whatsapp { background: #16a34a; color: var(--white); width: 100%; }
+        .btn-whatsapp:hover { background: #15803d; }
+        .btn:focus-visible { outline: 2px solid var(--primary-teal); outline-offset: 2px; }
 
-        .gate-card {
-            background: var(--glass-bg);
-            border: var(--glass-border);
-            border-radius: var(--card-radius);
-            box-shadow: var(--shadow-md);
-            width: 100%;
-            max-width: 560px;
+        /* Page intro */
+        .page-header { padding: 2.5rem 0 1.5rem; }
+        .page-header h1 { font-size: 1.9rem; margin-bottom: 0.5rem; }
+        .page-header p { color: var(--text-muted); font-size: 1rem; max-width: 620px; }
+
+        /* Included list */
+        .included-section { padding: 1rem 0 2rem; }
+        .included-section h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+        .included-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+        .included-item { background: var(--white); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem 1.1rem; display: flex; align-items: center; gap: 0.7rem; font-size: 0.92rem; font-weight: 500; }
+        .included-item svg { flex-shrink: 0; color: var(--primary-teal-dark); }
+
+        /* Subjects covered */
+        .subjects-section { padding: 0 0 2rem; }
+        .subjects-section h2 { font-size: 1.2rem; margin-bottom: 0.35rem; }
+        .subjects-section > p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
+        .subjects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
+        .subject-card { background: var(--white); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem 1.1rem; }
+        .subject-card h3 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+        .subject-card p { font-size: 0.82rem; color: var(--text-muted); }
+
+        /* Pricing */
+        .pricing-section { padding: 1rem 0 2.5rem; }
+        .price-card {
+            display: grid; grid-template-columns: 1.1fr 1fr;
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-card);
             overflow: hidden;
-            animation: slideUp 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
         }
+        .price-left { padding: 2rem; display: flex; flex-direction: column; justify-content: center; }
+        .price-amount { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 2.4rem; line-height: 1; color: var(--dark-blue); margin-bottom: 0.5rem; }
+        .price-amount span { font-size: 1rem; font-weight: 600; color: var(--text-muted); }
+        .price-left > p { color: var(--text-muted); font-size: 0.92rem; }
 
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(28px); }
-            to   { opacity: 1; transform: translateY(0); }
-        }
+        .price-right { background: var(--light-teal); border-left: 1px solid var(--border-light); padding: 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.85rem; }
+        .qr-frame { background: var(--white); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.75rem; }
+        .qr-frame img { width: 150px; height: 150px; border-radius: 8px; display: block; }
+        .upi-pill { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--medium-blue); background: var(--white); border: 1px solid var(--border-light); border-radius: 50px; padding: 0.35rem 0.9rem; }
+        .price-hint { font-size: 0.75rem; color: var(--text-muted); }
 
-        .gate-banner {
-            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
-            padding: 2.2rem 2.5rem 1.8rem;
-            position: relative;
-            overflow: hidden;
+        /* How to activate */
+        .how-section { padding: 0 0 2rem; }
+        .how-section h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+        .how-list { list-style: none; counter-reset: step; }
+        .how-list li { counter-increment: step; display: flex; gap: 0.9rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.92rem; }
+        .how-list li:last-child { border-bottom: none; }
+        .how-list li::before {
+            content: counter(step);
+            flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
+            background: var(--light-teal); color: var(--primary-teal-dark);
+            font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;
         }
+        .how-list li strong { color: var(--dark-blue); }
+        .how-list li span { color: var(--text-muted); }
 
-        .gate-banner::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 15% 20%, rgba(255,255,255,0.18) 0%, transparent 45%),
-                radial-gradient(circle at 85% 80%, rgba(251,191,36,0.25) 0%, transparent 50%);
-        }
+        /* Legal notice */
+        .legal-notice { background: var(--amber-light); border: 1px solid #fde68a; border-radius: 12px; padding: 1rem 1.25rem; display: flex; gap: 0.85rem; align-items: flex-start; margin-bottom: 2rem; }
+        .legal-notice .legal-icon { width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; }
+        .legal-notice h4 { font-size: 0.85rem; font-weight: 700; color: #78350f; margin-bottom: 0.2rem; }
+        .legal-notice p { font-size: 0.8rem; color: #78350f; line-height: 1.5; opacity: 0.9; }
 
-        .lock-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: rgba(255,255,255,0.18);
-            border: 1px solid rgba(255,255,255,0.3);
-            color: #fde68a;
-            font-size: 0.78rem;
-            font-weight: 700;
-            letter-spacing: 0.08em;
-            text-transform: uppercase;
-            padding: 0.4rem 0.9rem;
-            border-radius: 50px;
-            margin-bottom: 1rem;
-            position: relative;
-        }
+        /* FAQ */
+        .faq-section { padding: 0 0 3rem; }
+        .faq-section h2 { font-size: 1.2rem; margin-bottom: 1rem; }
+        .faq-item { border-bottom: 1px solid var(--border-light); }
+        .faq-question { padding: 0.9rem 0; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--dark-blue); }
+        .faq-question:hover { color: var(--primary-teal-dark); }
+        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.25s ease-out; color: var(--text-muted); }
+        .faq-answer p { padding-bottom: 0.9rem; font-size: 0.9rem; }
+        .faq-icon { transition: transform 0.25s; font-size: 0.75rem; color: var(--text-muted); }
+        .faq-item.active .faq-icon { transform: rotate(180deg); color: var(--primary-teal); }
+        .faq-item.active .faq-answer { max-height: 200px; }
 
-        .gate-banner h1 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 1.7rem;
-            font-weight: 800;
-            color: #fff;
-            line-height: 1.25;
-            position: relative;
-            margin-bottom: 0.4rem;
-        }
-
-        .gate-banner p {
-            color: rgba(255,255,255,0.75);
-            font-size: 0.9rem;
-            position: relative;
-        }
-
-        .gate-body {
-            padding: 2rem 2.5rem 2.5rem;
-        }
-
-        /* All-access notice — the key message, made bold & unmissable */
-        .allaccess-note {
-            background: #fffbeb;
-            border: 1px solid #fde68a;
-            border-radius: 16px;
-            padding: 1rem 1.2rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            gap: 0.75rem;
-            align-items: flex-start;
-        }
-        .allaccess-note .allaccess-icon {
-            width: 30px; height: 30px; flex-shrink: 0;
-            border-radius: 50%;
-            background: #fef3c7;
-            color: var(--amber);
-            display: flex; align-items: center; justify-content: center;
-        }
-        .allaccess-note p {
-            font-size: 0.85rem;
-            color: #78350f;
-            line-height: 1.55;
-        }
-        .allaccess-note strong { color: #78350f; font-weight: 800; }
-
-        .perks-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0.6rem;
-            margin-bottom: 1.5rem;
-        }
-        .perk-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.82rem;
-            color: #334155;
-            font-weight: 500;
-        }
-        .perk-item svg { flex-shrink: 0; color: #16a34a; }
-
-        .steps {
-            display: flex;
-            flex-direction: column;
-            gap: 0;
-            margin-bottom: 1.5rem;
-        }
-
-        .step {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            padding: 1rem 0;
-            border-bottom: 1px solid #f1f5f9;
-        }
-        .step:last-child { border-bottom: none; }
-
-        .step-num {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--cyan), var(--blue));
-            color: #fff;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 800;
-            font-size: 0.85rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            box-shadow: 0 4px 10px rgba(6,182,212,0.25);
-        }
-
-        .step-text strong {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 700;
-            color: #1e293b;
-            font-size: 0.95rem;
-            margin-bottom: 0.15rem;
-            flex-wrap: wrap;
-        }
-
-        .step-text span {
-            color: #64748b;
-            font-size: 0.85rem;
-            line-height: 1.5;
-        }
-
-        .price-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            background: linear-gradient(135deg, #ecfeff, #eff6ff);
-            border: 1px solid #bae6fd;
-            border-radius: 16px;
-            padding: 1.2rem 1.5rem;
-            margin-bottom: 1.8rem;
-        }
-
-        .price-label { font-size: 0.85rem; color: #64748b; font-weight: 500; }
-
-        .price-amount {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 2rem;
-            font-weight: 800;
-            color: #0369a1;
-            letter-spacing: -0.02em;
-            display: flex;
-            align-items: baseline;
-            gap: 0.4rem;
-        }
-
-        .price-per { font-size: 0.95rem; color: #64748b; font-weight: 600; }
-
-        .price-note { font-size: 0.75rem; color: #94a3b8; margin-top: 0.2rem; }
-
-        .qr-box {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 20px;
-            padding: 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.04);
-        }
-
-        .qr-box img {
-            width: 190px;
-            height: 190px;
-            border-radius: 12px;
-            object-fit: cover;
-        }
-
-        .upi-id-pill {
-            background: #f8fafc;
-            border: 1px solid #e2e8f0;
-            border-radius: 50px;
-            padding: 0.5rem 1.2rem;
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #475569;
-            letter-spacing: 0.02em;
-        }
-
-        .qr-hint { font-size: 0.8rem; color: #94a3b8; text-align: center; }
-
-        /* ── Legal / anti-piracy notice ── */
-        .legal-notice {
-            background: #fef2f2;
-            border: 1px solid #fecaca;
-            border-radius: 16px;
-            padding: 1.1rem 1.3rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            gap: 0.85rem;
-            align-items: flex-start;
-        }
-        .legal-notice .legal-icon {
-            width: 34px; height: 34px; flex-shrink: 0;
-            border-radius: 50%;
-            background: #fee2e2;
-            color: #dc2626;
-            display: flex; align-items: center; justify-content: center;
-        }
-        .legal-notice h4 {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 0.88rem;
-            font-weight: 800;
-            color: #991b1b;
-            margin-bottom: 0.3rem;
-        }
-        .legal-notice p {
-            font-size: 0.78rem;
-            color: #7f1d1d;
-            line-height: 1.55;
-        }
-
-        .wa-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            width: 100%;
-            background: linear-gradient(135deg, #22c55e, #16a34a);
-            color: #fff;
-            text-decoration: none;
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-weight: 700;
-            font-size: 1rem;
-            padding: 1rem;
-            border-radius: 14px;
-            box-shadow: 0 6px 16px rgba(34,197,94,0.25);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
-            margin-bottom: 1.2rem;
-        }
-
-        .wa-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 24px rgba(34,197,94,0.3); }
-        .wa-btn:focus-visible, .back-link:focus-visible {
-            outline: 2px solid var(--cyan);
-            outline-offset: 3px;
-        }
-
-        .back-link {
-            display: block;
-            text-align: center;
-            color: #94a3b8;
-            font-size: 0.88rem;
-            text-decoration: none;
-            transition: color 0.2s;
-        }
-        .back-link:hover { color: var(--cyan); }
-
-        @media (prefers-reduced-motion: reduce) {
-            .gate-card { animation: none; }
-            .wa-btn { transition: none; }
-        }
-
-        @media (max-width: 560px) {
-            .gate-banner { padding: 1.8rem 1.5rem 1.5rem; }
-            .gate-body { padding: 1.5rem 1.5rem 2rem; }
-            .gate-banner h1 { font-size: 1.4rem; }
-            .perks-grid { grid-template-columns: 1fr; }
+        @media (max-width: 700px) {
+            .included-grid { grid-template-columns: 1fr; }
+            .price-card { grid-template-columns: 1fr; }
+            .price-right { border-left: none; border-top: 1px solid var(--border-light); }
+            .nav { display: none; }
         }
     </style>
 </head>
 <body>
-    {% include 'core/navbar.html' %}
+    <header class="header">
+        <div class="container">
+            <a href="{% url 'home' %}" class="logo">Study<span>Palz</span></a>
+            <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
+        </div>
+    </header>
 
-    <div class="gate-wrapper">
-        <div class="gate-card">
+    <main class="container">
+        <section class="page-header">
+            <h1>Go Premium</h1>
+            <p>Upgrade to unlock every subject, across CSAI, CS-Core, AIDS, IoT and CSAIML — exam prep, interview prep and aptitude included, for a full year.</p>
+        </section>
 
-            <div class="gate-banner">
-                <div class="lock-badge">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                    Premium Content
+        <section class="subjects-section">
+            <h2>Subjects we dedicatedly cover</h2>
+            <p>Premium isn't just "more of a syllabus" — these are the areas we build focused content for.</p>
+            <div class="subjects-grid">
+                <div class="subject-card">
+                    <h3>DSA</h3>
+                    <p>Data Structures &amp; Algorithms.</p>
                 </div>
-                <h1>{{ content.title }}</h1>
-                <p>{{ content.subject.name }} &nbsp;·&nbsp; {{ content.content_type }}</p>
+                <div class="subject-card">
+                    <h3>MERN &amp; Full Stack</h3>
+                    <p>MERN stack and full stack development, combined into one track.</p>
+                </div>
+                <div class="subject-card">
+                    <h3>QuantAptitude</h3>
+                    <p>Logical reasoning, verbal ability and quantitative aptitude.</p>
+                </div>
+                <div class="subject-card">
+                    <h3>Core Subjects</h3>
+                    <p>The four core subjects — OOP, DBMS, OS and Computer Networks.</p>
+                </div>
+                <div class="subject-card">
+                    <h3>ML &amp; AI</h3>
+                    <p>Machine Learning and Artificial Intelligence.</p>
+                </div>
+                <div class="subject-card">
+                    <h3>Deep Learning</h3>
+                    <p>Dedicated Deep Learning track.</p>
+                </div>
             </div>
+        </section>
 
-            <div class="gate-body">
+        <section class="included-section">
+            <h2>What's included</h2>
+            <div class="included-grid">
+                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> All subjects, all departments</div>
+                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Complete exam prep</div>
+                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Interview &amp; aptitude prep</div>
+                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Full video library</div>
+                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Full solved questions</div>
+                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Valid for 1 full year</div>
+            </div>
+        </section>
 
-                <div class="allaccess-note">
-                    <div class="allaccess-icon">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-5.82 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-                    </div>
-                    <p><strong>One StudyPalz Premium plan unlocks everything.</strong> ₹499/year gives you full access to every subject, across every department — not just this one. No more buying subjects one at a time.</p>
+        <section class="pricing-section">
+            <div class="price-card">
+                <div class="price-left">
+                    <div class="price-amount">₹499<span>/ year</span></div>
+                    <p>One-time payment, full access for a full academic year. Free access covers one subject at a time — Premium unlocks everything immediately.</p>
                 </div>
-
-                <div class="perks-grid">
-                    <div class="perk-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        Complete Exam Prep
+                <div class="price-right">
+                    <h3 style="font-size: 0.95rem;">Scan to Pay</h3>
+                    <div class="qr-frame">
+                        <img src="{% static 'core/upi_qr.jpeg' %}" alt="UPI QR Code – aakashdarda225@okicici">
                     </div>
-                    <div class="perk-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        Interview Prep
-                    </div>
-                    <div class="perk-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        Aptitude Prep
-                    </div>
-                    <div class="perk-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        Video Lessons
-                    </div>
-                    <div class="perk-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        Solved Questions
-                    </div>
-                    <div class="perk-item">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
-                        All Subjects, All Departments
-                    </div>
+                    <div class="upi-pill">aakashdarda225@okicici</div>
+                    <a href="https://wa.me/919529307125?text=Hi%2C%20I%20just%20paid%20%E2%82%B9499%20for%20StudyPalz%20Premium%20(1%20year%2C%20all%20subjects)%20%E2%80%94%20attaching%20screenshot.%20My%20username%3A%20{{ request.user.username|urlencode }}"
+                       target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+                            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.523 5.847L.057 23.986l6.305-1.453A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.371l-.36-.213-3.73.859.933-3.636-.235-.374A9.818 9.818 0 1112 21.818z"/>
+                        </svg>
+                        Send Payment Screenshot
+                    </a>
+                    <div class="price-hint">We usually activate access within a few hours.</div>
                 </div>
+            </div>
+        </section>
 
-                <div class="steps">
-                    <div class="step">
-                        <div class="step-num">1</div>
-                        <div class="step-text">
-                            <strong>Scan & Pay ₹499</strong>
-                            <span>Use any UPI app — GPay, PhonePe, Paytm, or your bank app.</span>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">2</div>
-                        <div class="step-text">
-                            <strong>Send Screenshot on WhatsApp</strong>
-                            <span>Share your payment screenshot + your username to get access.</span>
-                        </div>
-                    </div>
-                    <div class="step">
-                        <div class="step-num">3</div>
-                        <div class="step-text">
-                            <strong>Everything Unlocked</strong>
-                            <span>We'll activate Premium on your account — unlocking every subject, in every department, for a full year.</span>
-                        </div>
-                    </div>
-                </div>
+        <section class="how-section">
+            <h2>How activation works</h2>
+            <ul class="how-list">
+                <li><span><strong>Pay via UPI</strong> — scan the QR code above with any UPI app (GPay, PhonePe, Paytm, or your bank app) and pay ₹499.</span></li>
+                <li><span><strong>Send your screenshot</strong> — message us on WhatsApp with your payment screenshot and your username.</span></li>
+                <li><span><strong>Get unlocked</strong> — we activate Premium on your account: every subject, every department, for a year.</span></li>
+            </ul>
+        </section>
 
-                <div class="price-row">
-                    <div>
-                        <div class="price-label">StudyPalz Premium</div>
-                        <div class="price-note">Full platform access · valid for 1 year</div>
-                    </div>
-                    <div class="price-amount">
-                        ₹499<span class="price-per">/year</span>
-                    </div>
-                </div>
-
-                <div class="qr-box">
-                    <img src="{% static 'core/upi_qr.jpeg' %}" alt="UPI QR Code – aakashdarda225@okicici">
-                    <div class="upi-id-pill">aakashdarda225@okicici</div>
-                    <p class="qr-hint">Scan with any UPI app to pay instantly</p>
-                </div>
-
-                <div class="legal-notice">
-                    <div class="legal-icon">
-                        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.16 14.14A1.5 1.5 0 0 0 3.4 20.4h17.2a1.5 1.5 0 0 0 1.27-2.4L13.71 3.86a1.5 1.5 0 0 0-2.42 0z"/></svg>
-                    </div>
-                    <div>
-                        <h4>Personal access only — no sharing</h4>
-                        <p>
-                            Premium access is issued to one account only and is non-transferable. Sharing your login,
-                            forwarding premium notes/videos, or letting a non-paying student use your access is a violation
-                            of our terms of service. It may result in immediate suspension of your account without refund,
-                            and StudyPalz reserves the right to pursue legal action against accounts found distributing
-                            paid content to non-paying users.
-                        </p>
-                    </div>
-                </div>
-
-                <a href="https://wa.me/919529307125?text=Hi%2C%20I%20just%20paid%20%E2%82%B9499%20for%20StudyPalz%20Premium%20(1%20year%2C%20all%20subjects)%20%E2%80%94%20attaching%20screenshot.%20My%20username%3A%20{{ request.user.username|urlencode }}"
-                   target="_blank"
-                   rel="noopener noreferrer"
-                   class="wa-btn">
-                    <svg width="22" height="22" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.523 5.847L.057 23.986l6.305-1.453A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.371l-.36-.213-3.73.859.933-3.636-.235-.374A9.818 9.818 0 1112 21.818z"/>
-                    </svg>
-                    Send Payment Screenshot
-                </a>
-
-                <a href="javascript:history.back()" class="back-link">← Go back</a>
-
+        <div class="legal-notice">
+            <div class="legal-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.16 14.14A1.5 1.5 0 0 0 3.4 20.4h17.2a1.5 1.5 0 0 0 1.27-2.4L13.71 3.86a1.5 1.5 0 0 0-2.42 0z"/></svg>
+            </div>
+            <div>
+                <h4>Personal access only — no sharing</h4>
+                <p>Premium access is issued to one account and is non-transferable. Sharing your login or forwarding paid content to a non-paying student breaks our terms of service and can lead to immediate suspension without refund, along with possible legal action for distributing paid content to non-paying users.</p>
             </div>
         </div>
-    </div>
+
+        <section id="faq" class="faq-section">
+            <h2>Frequently Asked Questions</h2>
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">Does Premium cover every subject in my department?<span class="faq-icon">▼</span></div>
+                    <div class="faq-answer"><p>Yes. One Premium plan unlocks every subject across every department — CSAI, CS-Core, AIDS, IoT and CSAIML — not just the one you're currently viewing.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">How long does activation take?<span class="faq-icon">▼</span></div>
+                    <div class="faq-answer"><p>We usually activate Premium on your account within a few hours of receiving your payment screenshot on WhatsApp.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">Can I share my Premium account with a friend?<span class="faq-icon">▼</span></div>
+                    <div class="faq-answer"><p>No. Premium access is issued to one account only. Sharing logins or forwarding paid content violates our terms and can lead to suspension.</p></div>
+                </div>
+                <div class="faq-item">
+                    <div class="faq-question">What happens after a year?<span class="faq-icon">▼</span></div>
+                    <div class="faq-answer"><p>Your Premium access covers a full year from activation. We'll notify you before it lapses so you can renew.</p></div>
+                </div>
+            </div>
+        </section>
+    </main>
 
     {% include 'core/footer.html' %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.faq-item').forEach(item => {
+                item.querySelector('.faq-question').addEventListener('click', () => item.classList.toggle('active'));
+            });
+        });
+    </script>
 </body>
 </html>
