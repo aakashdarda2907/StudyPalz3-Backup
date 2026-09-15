@@ -2,6 +2,7 @@
 
 from django.urls import path
 from . import views
+from . import views_public_catalog, views_payments
 
 urlpatterns = [
     # Main pages
@@ -36,6 +37,17 @@ urlpatterns = [
     path('dashboard/update-filters/', views.update_dashboard_filters_view, name='update_dashboard_filters'),
     path('premium/', views.premium_upgrade_view, name='premium_upgrade'),
     path('verify-human/', views.verify_human_view, name='verify_human'),
+
+    path('courses/', views_public_catalog.courses_catalog_view, name='courses_catalog'),
+    path('course/<slug:slug>/', views_public_catalog.public_subject_view, name='public_subject'),
+    path('c/<slug:slug>/', views_public_catalog.public_content_view, name='public_content'),
+    # ^ this is the short one you'll put in YouTube descriptions / pinned comments
+
+    # Payments — create_order_view is @login_required, this is where
+    # "must log in before buying" is actually enforced
+    path('payments/create-order/', views_payments.create_order_view, name='create_order'),
+    path('payments/verify/', views_payments.verify_payment_view, name='verify_payment'),
+    path('payments/webhook/', views_payments.razorpay_webhook_view, name='razorpay_webhook'),
 ]
 
 

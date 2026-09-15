@@ -1,0 +1,237 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ subject.name }} - StudyPalz</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <style>
+        :root {
+            --primary-teal: #06b6d4; --dark-blue: #0f172a; --medium-blue: #64748b;
+            --bg-gradient: radial-gradient(circle at top left, #f0f9ff 0%, #f8fafc 100%);
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --gold-gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --glass-bg: rgba(255, 255, 255, 0.75); --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+            --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
+            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.03); --shadow-md: 0 12px 24px -4px rgba(15, 23, 42, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body {
+            font-family: 'Inter', sans-serif; color: var(--dark-blue);
+            background: var(--bg-gradient); background-attachment: fixed;
+            min-height: 100vh; padding-top: 80px; -webkit-font-smoothing: antialiased;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 0 2rem 5rem; }
+
+        .mini-nav { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.75rem; font-size: 0.85rem; color: var(--medium-blue); font-weight: 600; }
+        .mini-nav a { color: var(--medium-blue); text-decoration: none; }
+        .mini-nav a:hover { color: var(--primary-teal); }
+        .mini-nav .sep { opacity: 0.4; }
+        .mini-nav .current { color: var(--dark-blue); }
+
+        .course-hero {
+            background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(20px); border-radius: 24px;
+            border: var(--glass-border); box-shadow: var(--shadow-md), var(--glass-highlight);
+            padding: 2rem; margin-bottom: 2rem; display: flex; gap: 1.75rem; align-items: center; flex-wrap: wrap;
+        }
+        .course-hero-icon {
+            width: 72px; height: 72px; border-radius: 20px; background: var(--accent-gradient);
+            display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0;
+            box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);
+        }
+        .course-hero-text h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.6rem; margin-bottom: 0.4rem; }
+        .course-hero-text p { color: var(--medium-blue); font-size: 0.92rem; max-width: 480px; }
+        .course-hero-tags { display: flex; gap: 0.5rem; margin-top: 0.7rem; flex-wrap: wrap; }
+        .tag { font-size: 0.72rem; font-weight: 700; padding: 0.25rem 0.65rem; border-radius: 8px; background: rgba(100,116,139,0.12); color: var(--medium-blue); }
+        .course-hero-buy { margin-left: auto; text-align: center; }
+        .course-hero-price { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.5rem; color: var(--dark-blue); }
+        .course-hero-price span { display: block; font-size: 0.7rem; font-weight: 600; color: var(--medium-blue); }
+        .buy-course-btn {
+            margin-top: 0.6rem; background: var(--gold-gradient); color: #78350f; font-weight: 800;
+            padding: 0.7rem 1.4rem; border-radius: 50px; border: none; cursor: pointer; font-size: 0.85rem;
+            box-shadow: 0 6px 14px rgba(245, 158, 11, 0.3); transition: var(--transition);
+        }
+        .buy-course-btn:hover { transform: translateY(-2px); }
+
+        .chapter-list h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; }
+        .chapter-item {
+            background: rgba(255, 255, 255, 0.8); border: var(--glass-border); border-radius: 16px;
+            padding: 1.1rem 1.4rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 1rem;
+            text-decoration: none; color: inherit; transition: var(--transition); box-shadow: var(--shadow-sm);
+        }
+        .chapter-item:hover { transform: translateX(4px); box-shadow: var(--shadow-md); }
+        .chapter-num {
+            width: 38px; height: 38px; border-radius: 12px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.9rem;
+            background: rgba(6, 182, 212, 0.1); color: #0891b2;
+        }
+        .chapter-item.locked .chapter-num { background: rgba(245, 158, 11, 0.12); color: #b45309; }
+        .chapter-info { flex: 1; }
+        .chapter-title { font-weight: 700; font-size: 0.96rem; margin-bottom: 0.15rem; }
+        .chapter-sub { font-size: 0.78rem; color: var(--medium-blue); }
+        .chapter-status { flex-shrink: 0; }
+        .status-free { font-size: 0.75rem; font-weight: 700; color: #059669; background: rgba(16,185,129,0.1); padding: 0.35rem 0.7rem; border-radius: 8px; }
+        .status-locked { font-size: 0.75rem; font-weight: 700; color: #b45309; background: rgba(245,158,11,0.12); padding: 0.35rem 0.7rem; border-radius: 8px; }
+        .status-owned { font-size: 0.75rem; font-weight: 700; color: #0891b2; background: rgba(6,182,212,0.1); padding: 0.35rem 0.7rem; border-radius: 8px; }
+        .empty-state { text-align: center; padding: 3rem; color: var(--medium-blue); background: rgba(255,255,255,0.5); border-radius: 16px; }
+
+        .modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.55); backdrop-filter: blur(4px);
+            z-index: 1000; align-items: center; justify-content: center; padding: 1.5rem;
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: 24px; max-width: 420px; width: 100%; padding: 2rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center; animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
+        }
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-icon { width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; }
+        .modal-icon.processing { background: rgba(59,130,246,0.1); color: #2563eb; }
+        .modal-icon.success { background: rgba(16,185,129,0.1); color: #059669; }
+        .modal-icon.error { background: rgba(239,68,68,0.1); color: #dc2626; }
+        .modal-box h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.2rem; margin-bottom: 0.4rem; }
+        .modal-box p { color: var(--medium-blue); font-size: 0.88rem; margin-bottom: 1.5rem; }
+        .spinner { width: 22px; height: 22px; border: 3px solid rgba(37,99,235,0.2); border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .modal-close-btn { background: var(--accent-gradient); color: #fff; border: none; padding: 0.75rem 1.6rem; border-radius: 50px; font-weight: 700; font-size: 0.88rem; cursor: pointer; width: 100%; }
+        .modal-cancel { background: none; border: none; color: var(--medium-blue); font-size: 0.82rem; margin-top: 0.8rem; cursor: pointer; text-decoration: underline; }
+    </style>
+</head>
+<body>
+    {% include 'core/navbar.html' %}
+
+    <div class="container">
+        <div class="mini-nav">
+            <a href="{% url 'courses_catalog' %}">Open Catalog</a> <span class="sep">/</span> <span class="current">{{ subject.name }}</span>
+        </div>
+
+        <div class="course-hero">
+            <div class="course-hero-icon">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+            </div>
+            <div class="course-hero-text">
+                <h1>{{ subject.name }}</h1>
+                {% if subject.syllabus %}<p>{{ subject.syllabus|truncatewords:28 }}</p>{% endif %}
+                <div class="course-hero-tags"><span class="tag">{{ chapters|length }} Chapter{{ chapters|length|pluralize }}</span></div>
+            </div>
+            {% if subject.price %}
+            <div class="course-hero-buy">
+                <div class="course-hero-price">₹{{ subject.price }}<span>unlock all {{ chapters|length }} chapters</span></div>
+                <button class="buy-course-btn" onclick="buy('subject', {{ subject.id }}, '{{ subject.name|escapejs }} (full course)', {{ subject.price }})">Buy Full Course</button>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="chapter-list">
+            <h2>Chapters</h2>
+
+            {% for ch in chapters %}
+            <a href="{% url 'public_content' ch.content.slug %}" class="chapter-item {% if not ch.has_access %}locked{% endif %}">
+                <div class="chapter-num">{{ forloop.counter }}</div>
+                <div class="chapter-info">
+                    <div class="chapter-title">{{ ch.content.title }}</div>
+                    <div class="chapter-sub">{{ ch.content.content_type }} · Notes{% if ch.content.youtube_link %} · Video{% endif %}</div>
+                </div>
+                <div class="chapter-status">
+                    {% if ch.has_access %}
+                        {% if ch.content.price or ch.content.is_premium %}
+                            <span class="status-owned">✓ Owned</span>
+                        {% else %}
+                            <span class="status-free">Free</span>
+                        {% endif %}
+                    {% else %}
+                        <span class="status-locked">🔒 ₹{{ ch.content.price|default:"—" }}</span>
+                    {% endif %}
+                </div>
+            </a>
+            {% empty %}
+            <div class="empty-state">Chapters coming soon.</div>
+            {% endfor %}
+        </div>
+    </div>
+
+    {% include 'core/footer.html' %}
+
+    <div class="modal-overlay" id="modal-overlay">
+        <div class="modal-box" id="modal-box"></div>
+    </div>
+
+    <script>
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+        function buy(purchaseType, objectId, label, displayAmount) {
+            {% if not request.user.is_authenticated %}
+                window.location.href = "{% url 'login' %}?next=" + encodeURIComponent(window.location.pathname);
+                return;
+            {% endif %}
+
+            const overlay = document.getElementById('modal-overlay');
+            const box = document.getElementById('modal-box');
+
+            box.innerHTML = `
+                <div class="modal-icon processing"><div class="spinner"></div></div>
+                <h3>Opening secure checkout…</h3>
+                <p>${label} · ₹${displayAmount}</p>
+                <button class="modal-cancel" onclick="closeModal()">Cancel</button>
+            `;
+            overlay.classList.add('open');
+
+            fetch("{% url 'create_order' %}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
+                body: JSON.stringify({ purchase_type: purchaseType, object_id: objectId }),
+            })
+            .then(r => r.json())
+            .then(order => {
+                const rzp = new Razorpay({
+                    key: order.key, amount: order.amount, currency: order.currency,
+                    name: order.name, description: order.description, order_id: order.order_id,
+                    prefill: order.prefill,
+                    handler: function (response) {
+                        box.innerHTML = `<div class="modal-icon processing"><div class="spinner"></div></div><h3>Confirming payment…</h3><p>Almost done.</p>`;
+                        fetch("{% url 'verify_payment' %}", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
+                            body: JSON.stringify(response),
+                        })
+                        .then(r => r.json())
+                        .then(result => {
+                            if (result.status === "paid") {
+                                box.innerHTML = `
+                                    <div class="modal-icon success"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+                                    <h3>Payment successful</h3>
+                                    <p>${label} is unlocked on your account.</p>
+                                    <button class="modal-close-btn" onclick="window.location.reload()">Continue</button>
+                                `;
+                            } else {
+                                box.innerHTML = `
+                                    <div class="modal-icon error"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                                    <h3>Couldn't verify payment</h3>
+                                    <p>If money was deducted, it'll be auto-refunded — contact support if it isn't reflected within 24h.</p>
+                                    <button class="modal-close-btn" onclick="closeModal()">Close</button>
+                                `;
+                            }
+                        });
+                    },
+                    modal: { ondismiss: function () { closeModal(); } },
+                });
+                overlay.classList.remove('open');
+                rzp.open();
+            });
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('open');
+        }
+    </script>
+</body>
+</html>

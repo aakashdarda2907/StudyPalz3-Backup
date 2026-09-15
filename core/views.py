@@ -324,7 +324,7 @@ def dashboard_view(request):
     ) if user_department else set()
     pinned_subject_ids = set(profile.pinned_subjects.values_list('id', flat=True))
 
-    all_subjects = Subject.objects.select_related('department').prefetch_related('categories').all()
+    all_subjects = Subject.objects.filter(access_type="college").select_related('department').prefetch_related('categories').all()
     user_states = UserContentState.objects.filter(user=request.user).select_related('content__subject')
 
     total_content_counts = Content.objects.filter(subject__in=all_subjects).values('subject').annotate(total=Count('id'))

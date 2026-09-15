@@ -18,3 +18,5 @@ staticfiles/
 # IDE files
 .idea/
 *.swp
+.env
+.env
