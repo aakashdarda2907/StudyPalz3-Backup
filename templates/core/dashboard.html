@@ -36,7 +36,6 @@
 
         html, body {
             max-width: 100vw;
-            overflow-x: hidden;
             position: relative;
         }
         body {
@@ -47,14 +46,22 @@
             min-height: 100vh;
             padding-top: 80px;
             -webkit-font-smoothing: antialiased;
-            overflow-x: hidden;
         }
         .container {
-            max-width: 1200px;
+            max-width: 1300px;
             margin: 0 auto;
             padding: 0 2rem 4rem;
         }
 
+        /* The streak "god rays" are 250% wide and spilled past the screen on phones,
+           creating sideways scroll (which pushed the hamburger off-screen).
+           overflow-x: clip hides that WITHOUT making a scroll container, so the
+           sticky sidebar and the fixed mobile menu keep working. */
+        .container { overflow-x: clip; }
+        @supports not (overflow-x: clip) { .container { overflow-x: hidden; } }
+
+                .dashboard-welcome-grid > *, .dashboard-split > * { min-width: 0; }
+        .subject-name { overflow-wrap: anywhere; }
         /* ==================== PREMIUM MEMBER BANNER ==================== */
         .premium-banner {
             background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
@@ -159,6 +166,26 @@
             .whatsapp-banner { flex-direction: column; text-align: center; gap: 1rem; padding: 1.25rem; }
             .wa-content { flex-direction: column; }
             .wa-actions { width: 100%; justify-content: center; }
+        }
+
+        /* ==================== DECLUTTER INSTRUCTIONS BANNER ==================== */
+        .declutter-banner {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            padding: 1.1rem 1.4rem;
+            margin-bottom: 2rem;
+            display: none;
+            align-items: flex-start;
+            gap: 0.9rem;
+        }
+        .declutter-banner.show { display: flex; }
+        .declutter-banner-icon { flex-shrink: 0; color: var(--medium-blue); margin-top: 0.1rem; }
+        .declutter-banner-text { flex: 1; font-size: 0.86rem; color: var(--medium-blue); line-height: 1.6; }
+        .declutter-banner-text strong { color: var(--dark-blue); }
+        .declutter-banner-close {
+            background: none; border: none; color: var(--medium-blue); font-size: 1.3rem; cursor: pointer;
+            line-height: 1; padding: 0 0.25rem; flex-shrink: 0;
         }
 
         /* ==================== LAYOUT GRID ==================== */
@@ -365,111 +392,168 @@
             display: flex;
             opacity: 1; transform: translateY(0);
         }
-        .subjects-section h2 { font-size: 1.5rem; margin-bottom: 1.5rem; color: var(--dark-blue); font-weight: 800; }
 
-        /* ==================== SUBJECT CONTROLS ==================== */
-        .subject-controls {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            align-items: center;
-            margin-bottom: 1.5rem;
+        /* ==================== PREMIUM SPLASH ==================== */
+        .premium-splash {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
+            border-radius: 24px; padding: 1.75rem 2rem; margin-bottom: 2rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+            box-shadow: 0 12px 30px rgba(217,119,6,0.25); flex-wrap: wrap; cursor: pointer;
+            position: relative; overflow: hidden;
         }
-        .search-box {
-            position: relative;
-            flex: 1 1 240px;
-            max-width: 360px;
+        .premium-splash::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 15% 20%, rgba(255,255,255,0.15) 0%, transparent 45%),
+                        radial-gradient(circle at 85% 80%, rgba(251,191,36,0.25) 0%, transparent 50%);
         }
-        .search-box svg {
-            position: absolute; left: 0.85rem; top: 50%; transform: translateY(-50%);
-            width: 16px; height: 16px; color: var(--medium-blue); pointer-events: none;
+        .premium-splash-text { position: relative; z-index: 1; }
+        .premium-splash-title { color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.2rem; margin-bottom: 0.3rem; }
+        .premium-splash-sub { color: rgba(255,255,255,0.8); font-size: 0.88rem; }
+        .premium-splash-btn {
+            position: relative; z-index: 1; background: #fff; color: #78350f;
+            font-weight: 800; padding: 0.7rem 1.4rem; border-radius: 50px; font-size: 0.85rem;
+            white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
         }
-        .search-box input {
-            width: 100%;
-            padding: 0.7rem 1rem 0.7rem 2.5rem;
-            border-radius: 12px;
-            border: 1px solid rgba(15, 23, 42, 0.1);
-            background: rgba(255, 255, 255, 0.8);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.9rem;
-            color: var(--dark-blue);
-            outline: none;
+
+        /* ==================== TWO-COLUMN DASHBOARD SPLIT ==================== */
+        .dashboard-split {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 2rem;
+            align-items: start;
+        }
+        @media (max-width: 1000px) {
+            .dashboard-split { grid-template-columns: 1fr; }
+        }
+        .main-column { min-width: 0; }
+        .main-column h2 { font-size: 1.5rem; margin-bottom: 0.3rem; color: var(--dark-blue); font-weight: 800; letter-spacing: -0.01em; }
+        .main-column-sub { color: var(--medium-blue); font-size: 0.85rem; margin-bottom: 1.75rem; }
+
+        .pinned-empty-state {
+            text-align: center; padding: 3rem 1.5rem; color: var(--medium-blue);
+            background: rgba(255,255,255,0.5); border-radius: 20px; border: 1px dashed rgba(100,116,139,0.3);
+        }
+        .pinned-empty-state .icon { font-size: 2rem; margin-bottom: 0.75rem; }
+        .pinned-empty-state p { font-size: 0.92rem; max-width: 320px; margin: 0 auto; }
+
+        /* ==================== SIDEBAR ==================== */
+        .sidebar-column {
+            position: sticky;
+            top: 100px;
+            max-height: calc(100vh - 120px);
+            overflow-y: auto;
+            background: rgba(255,255,255,0.75);
+            backdrop-filter: blur(20px);
+            border-radius: 22px;
+            border: var(--glass-border);
+            box-shadow: var(--shadow-sm);
+            padding: 1.5rem;
+        }
+        @media (max-width: 1000px) {
+            .sidebar-column { position: static; max-height: none; margin-top: 2.5rem; }
+        }
+        .sidebar-column h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 1rem; }
+
+        .sidebar-search-box { position: relative; margin-bottom: 0.75rem; }
+        .sidebar-search-box svg {
+            position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%);
+            width: 14px; height: 14px; color: var(--medium-blue); pointer-events: none;
+        }
+        .sidebar-search-box input {
+            width: 100%; padding: 0.6rem 0.8rem 0.6rem 2.2rem; border-radius: 10px;
+            border: 1px solid rgba(15,23,42,0.1); background: rgba(255,255,255,0.8);
+            font-family: 'Inter', sans-serif; font-size: 0.85rem; outline: none; transition: var(--transition);
+        }
+        .sidebar-search-box input:focus { border-color: var(--primary-teal); box-shadow: 0 0 0 3px rgba(6,182,212,0.15); }
+
+        .sidebar-controls-row { display: flex; gap: 0.5rem; margin-bottom: 0.75rem; }
+        .sidebar-controls-row select {
+            flex: 1; padding: 0.5rem 0.6rem; border-radius: 10px; border: 1px solid rgba(15,23,42,0.1);
+            background: rgba(255,255,255,0.8); font-family: 'Inter', sans-serif; font-weight: 600;
+            font-size: 0.78rem; color: var(--dark-blue); cursor: pointer; outline: none;
+        }
+        .sidebar-toggle-btn {
+            padding: 0.5rem 0.7rem; border-radius: 10px; border: 1px solid rgba(15,23,42,0.1);
+            background: rgba(255,255,255,0.8); font-family: 'Inter', sans-serif; font-weight: 600;
+            font-size: 0.72rem; color: var(--medium-blue); cursor: pointer; white-space: nowrap;
             transition: var(--transition);
         }
-        .search-box input:focus {
-            border-color: var(--primary-teal);
-            box-shadow: 0 0 0 3px rgba(6, 182, 212, 0.15);
+        .sidebar-toggle-btn.active { background: var(--accent-gradient); color: #fff; border-color: transparent; }
+
+        .sidebar-chips { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.9rem; }
+        .sidebar-chip {
+            padding: 0.35rem 0.7rem; border-radius: 50px; border: 1px solid rgba(15,23,42,0.12);
+            background: rgba(255,255,255,0.8); font-family: 'Inter', sans-serif; font-weight: 600;
+            font-size: 0.72rem; color: var(--medium-blue); cursor: pointer; transition: var(--transition);
         }
-        .sort-select {
-            padding: 0.7rem 1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(15, 23, 42, 0.1);
-            background: rgba(255, 255, 255, 0.8);
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: var(--dark-blue);
-            cursor: pointer;
-            outline: none;
-        }
-        .toggle-hidden-btn {
-            padding: 0.7rem 1.1rem;
-            border-radius: 12px;
-            border: 1px solid rgba(15, 23, 42, 0.1);
-            background: rgba(255, 255, 255, 0.8);
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 0.85rem;
-            color: var(--medium-blue);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.4rem;
-            transition: var(--transition);
-        }
-        .toggle-hidden-btn svg { width: 16px; height: 16px; }
-        .toggle-hidden-btn:hover { background: rgba(255, 255, 255, 1); color: var(--dark-blue); }
-        .toggle-hidden-btn.active {
-            background: var(--accent-gradient);
-            color: white;
-            border-color: transparent;
-        }
-        .card-actions-top {
-            position: absolute;
-            top: 1rem; right: 1rem;
-            display: flex;
-            gap: 0.4rem;
-            z-index: 6;
-        }
-        .icon-action-btn {
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(15, 23, 42, 0.08);
-            display: flex; align-items: center; justify-content: center;
-            color: var(--medium-blue);
-            cursor: pointer;
-            opacity: 0;
-            transition: var(--transition);
-        }
-        .subject-card:hover .icon-action-btn,
-        .subject-card:focus-within .icon-action-btn { opacity: 1; }
-        .icon-action-btn.hide-btn:hover { background: #fee2e2; color: #dc2626; border-color: rgba(220, 38, 38, 0.2); }
-        .icon-action-btn svg { width: 15px; height: 15px; }
-        .subject-card.subject-is-hidden,
-        .subject-card.subject-search-hidden { display: none; }
-        .no-results-msg {
-            grid-column: 1/-1; text-align: center; padding: 3rem;
-            color: var(--medium-blue); background: rgba(255,255,255,0.5); border-radius: 16px;
+        .sidebar-chip:hover { background: #fff; color: var(--dark-blue); }
+        .sidebar-chip.active { background: var(--accent-gradient); color: #fff; border-color: transparent; }
+        .sidebar-chip.premium-chip { border-color: #fbbf24; color: #b45309; }
+        .sidebar-chip.premium-chip.active { background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; }
+
+        .active-filter-banner {
             display: none;
+            align-items: center; justify-content: space-between; gap: 0.6rem;
+            background: rgba(15, 23, 42, 0.04); border: 1px solid rgba(15, 23, 42, 0.1);
+            border-radius: 10px; padding: 0.55rem 0.8rem; margin-bottom: 0.9rem;
+            font-size: 0.76rem; font-weight: 700; color: var(--dark-blue);
+        }
+        .active-filter-banner button {
+            background: none; border: 1px solid rgba(15, 23, 42, 0.2); color: var(--medium-blue);
+            padding: 0.25rem 0.6rem; border-radius: 50px; font-size: 0.68rem; font-weight: 700;
+            cursor: pointer; white-space: nowrap;
         }
 
+        .sidebar-list { display: flex; flex-direction: column; gap: 0.35rem; }
+        .sidebar-item {
+            display: flex; align-items: center; gap: 0.7rem;
+            background: transparent; border: 1px solid transparent;
+            border-radius: 12px; padding: 0.6rem 0.7rem; transition: var(--transition);
+            position: relative;
+        }
+        .sidebar-item:hover { background: rgba(255,255,255,0.9); border-color: rgba(15,23,42,0.06); box-shadow: var(--shadow-sm); }
+        .sidebar-item.sidebar-item-hidden { display: none; }
+        .sidebar-item-link {
+            display: flex; align-items: center; gap: 0.7rem; flex: 1; min-width: 0;
+            text-decoration: none; color: inherit;
+        }
+        .sidebar-item-icon {
+            width: 32px; height: 32px; border-radius: 9px; flex-shrink: 0;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--medium-blue); background: rgba(15, 23, 42, 0.06);
+        }
+        .sidebar-item-icon svg { width: 16px; height: 16px; }
+        .sidebar-item-info { min-width: 0; flex: 1; }
+        .sidebar-item-name {
+            font-size: 0.82rem; font-weight: 700; color: var(--dark-blue);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .sidebar-item-meta { font-size: 0.68rem; color: var(--medium-blue); }
+        .sidebar-item-lock { color: #b45309; flex-shrink: 0; }
+        .sidebar-item-actions { display: flex; align-items: center; gap: 0.3rem; flex-shrink: 0; }
+        .sidebar-action-btn {
+            width: 26px; height: 26px; border-radius: 50%; border: 1px solid rgba(15,23,42,0.08);
+            background: rgba(255,255,255,0.9); display: flex; align-items: center; justify-content: center;
+            cursor: pointer; color: var(--medium-blue); transition: var(--transition); flex-shrink: 0;
+        }
+        .sidebar-action-btn svg { width: 13px; height: 13px; }
+        .sidebar-action-btn.pin-btn:hover { background: var(--accent-gradient); color: #fff; border-color: transparent; }
+
+        .sidebar-no-results {
+            text-align: center; padding: 2rem 1rem; color: var(--medium-blue); font-size: 0.82rem; display: none;
+        }
+
+        /* ==================== PINNED SUBJECT CARDS (main area) ==================== */
         .subjects-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
             gap: 1.5rem;
         }
-        @media (min-width: 1100px) { .subjects-grid { grid-template-columns: repeat(4, 1fr); } }
+        /* Every subject is rendered in both the pinned grid and the
+           sidebar list — this is what makes pin/unpin instant (no
+           reload, no HTML rebuild): we just flip which version shows. */
+        .subject-card[data-is-pinned="false"] { display: none; }
+        .sidebar-item[data-is-pinned="true"] { display: none; }
         .subject-card {
             background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(20px);
@@ -556,64 +640,31 @@
         .card-green .progress-fill { background: linear-gradient(90deg, #34d399, #10b981); }
         .card-orange .progress-fill { background: linear-gradient(90deg, #fbbf24, #f59e0b); }
         .card-purple .progress-fill { background: linear-gradient(90deg, #a78bfa, #8b5cf6); }
-        @media (max-width: 900px) {
-            .dashboard-welcome-grid { grid-template-columns: 1fr; }
-        }
-        @media (max-width: 768px) {
-            .container { padding: 0 1rem 3rem; }
-        }
 
-        /* ==================== CATEGORY CHIPS ==================== */
-        .category-chips { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-bottom: 1rem; }
-        .category-chip {
-            padding: 0.55rem 1.1rem; border-radius: 50px;
-            border: 1px solid rgba(15, 23, 42, 0.12);
-            background: rgba(255,255,255,0.8);
-            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.83rem;
-            color: var(--medium-blue); cursor: pointer; transition: var(--transition);
-            display: flex; align-items: center; gap: 0.4rem;
+        .card-actions-top {
+            position: absolute;
+            top: 1rem; right: 1rem;
+            display: flex;
+            gap: 0.4rem;
+            z-index: 6;
         }
-        .category-chip:hover { background: #fff; color: var(--dark-blue); }
-        .category-chip.active {
-            background: var(--accent-gradient); color: #fff; border-color: transparent;
-            box-shadow: 0 6px 14px rgba(6,182,212,0.25);
+        .icon-action-btn {
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--medium-blue);
+            cursor: pointer;
+            opacity: 0;
+            transition: var(--transition);
         }
-        .category-chip.premium-chip { border-color: #fbbf24; color: #b45309; }
-        .category-chip.premium-chip.active {
-            background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #78350f; box-shadow: 0 6px 14px rgba(245,158,11,0.35);
-        }
-
-        /* ==================== PREMIUM SPLASH ==================== */
-        .premium-splash {
-            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
-            border-radius: 24px; padding: 1.75rem 2rem; margin-bottom: 2rem;
-            display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
-            box-shadow: 0 12px 30px rgba(217,119,6,0.25); flex-wrap: wrap; cursor: pointer;
-            position: relative; overflow: hidden;
-        }
-        .premium-splash::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(circle at 15% 20%, rgba(255,255,255,0.15) 0%, transparent 45%),
-                        radial-gradient(circle at 85% 80%, rgba(251,191,36,0.25) 0%, transparent 50%);
-        }
-        .premium-splash-text { position: relative; z-index: 1; }
-        .premium-splash-title { color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.2rem; margin-bottom: 0.3rem; }
-        .premium-splash-sub { color: rgba(255,255,255,0.8); font-size: 0.88rem; }
-        .premium-splash-btn {
-            position: relative; z-index: 1; background: #fff; color: #78350f;
-            font-weight: 800; padding: 0.7rem 1.4rem; border-radius: 50px; font-size: 0.85rem;
-            white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
+        .subject-card:hover .icon-action-btn,
+        .subject-card:focus-within .icon-action-btn { opacity: 1; }
+        .icon-action-btn.unpin-btn:hover { background: #fee2e2; color: #dc2626; border-color: rgba(220, 38, 38, 0.2); }
+        .icon-action-btn svg { width: 15px; height: 15px; }
 
         /* ==================== LOCKED / BLURRED SUBJECT CARDS ==================== */
-        /*
-           A card only gets the department-scope lock treatment when JS (or the
-           server, on first paint) adds .locked-card to it. Premium-category
-           subjects NEVER receive this class — per Category.is_premium's design
-           intent, they ignore department restrictions entirely. Real content
-           gating for premium chapters still happens per-item in subject_detail
-           and content_detail views.
-        */
         .card-blur-wrap {
             flex: 1;
             display: flex;
@@ -656,7 +707,12 @@
         }
         .buy-premium-btn:hover { transform: translateY(-2px); }
 
-
+        @media (max-width: 900px) {
+            .dashboard-welcome-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 768px) {
+            .container { padding: 0 1rem 3rem; }
+        }
     </style>
 </head>
 <body>
@@ -709,7 +765,6 @@
         </div>
         {% endif %}
 
-
         <div class="dashboard-welcome-grid">
             <div class="daily-banner">
                 <div class="banner-content">
@@ -738,108 +793,150 @@
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-5.82 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
             Amazing work! You kept your streak alive!
         </div>
-        <div class="subjects-section">
-            <h2>Your Subjects</h2>
 
-            <div class="subject-controls">
-                <div class="search-box">
+        <div class="declutter-banner" id="declutterBanner">
+            <div class="declutter-banner-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+            </div>
+            <div class="declutter-banner-text">
+                <strong>Your dashboard, your way.</strong> Pinned subjects show here, big and front-and-center.
+                Everything else lives in the sidebar, searchable anytime. Use the pin icon on any sidebar
+                subject to bring it here, or the close icon on a card here to send it back.
+            </div>
+            <button class="declutter-banner-close" id="declutterBannerClose" aria-label="Dismiss">×</button>
+        </div>
+
+        <div class="dashboard-split">
+            <div class="main-column">
+                <h2>Your Subjects</h2>
+                <p class="main-column-sub">Pinned subjects — the ones you're actively studying.</p>
+
+                <div class="subjects-grid" id="pinnedGrid">
+                    {% for item in subject_progress %}
+                    <div class="subject-card fade-in-up {% cycle 'card-blue' 'card-green' 'card-orange' 'card-purple' %} {% if not item.is_own_department and not item.is_premium_subject and not is_premium_user %}locked-card{% endif %}"
+                         data-subject-id="{{ item.subject.id }}"
+                         data-is-pinned="{{ item.is_pinned|yesno:'true,false' }}">
+                        <div class="card-actions-top">
+                            <button type="button" class="icon-action-btn unpin-btn pin-toggle-btn" data-subject-id="{{ item.subject.id }}" title="Unpin from dashboard" aria-label="Unpin subject">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            </button>
+                        </div>
+
+                        <a href="{% url 'subject_detail' item.subject.id %}" class="card-blur-wrap">
+                            <div class="subject-header">
+                                <h3 class="subject-name">
+                                    {{ item.subject.name }}
+                                    {% if not item.is_own_department %}<span class="dept-badge">{{ item.subject.department.name }}</span>{% endif %}
+                                    {% if item.is_premium_subject %}<span class="premium-tag-badge">Premium</span>{% endif %}
+                                </h3>
+                                <div class="subject-icon-box">
+                                    {% if 'MI' in item.subject.name or 'Machine' in item.subject.name %}
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path></svg>
+                                    {% elif 'OOP' in item.subject.name or 'Object' in item.subject.name %}
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                    {% elif 'DBMS' in item.subject.name or 'Database' in item.subject.name %}
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
+                                    {% elif 'FODS' in item.subject.name or 'Data Science' in item.subject.name %}
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                                    {% else %}
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="progress-container">
+                                <div class="progress-labels">
+                                    <span class="progress-txt">Progress</span>
+                                    <span class="percent">{{ item.percentage }}%</span>
+                                </div>
+                                <div class="custom-progress">
+                                    <div class="progress-fill" style="width: 0%" data-width="{{ item.percentage }}%"></div>
+                                </div>
+                            </div>
+                        </a>
+
+                        <div class="locked-card-overlay">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            <div class="locked-card-label">Unlock subjects from every department</div>
+                            <a href="{% url 'premium_upgrade' %}" class="buy-premium-btn">Buy Premium – ₹499/yr</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="pinned-empty-state" id="pinnedEmptyState" style="display: none;">
+                    <p>No subjects pinned yet. Browse the sidebar and use the pin icon on anything you're studying to bring it here.</p>
+                </div>
+            </div>
+
+            <aside class="sidebar-column">
+                <h3>All Subjects</h3>
+
+                <div class="sidebar-search-box">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
                     <input type="text" id="subjectSearch" placeholder="Search subjects...">
                 </div>
-                <select id="subjectSort" class="sort-select">
-                    <option value="newest" selected>Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                </select>
-                <button type="button" id="toggleHiddenBtn" class="toggle-hidden-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
-                    <span id="toggleHiddenLabel">Show Hidden (0)</span>
-                </button>
-                <button type="button" id="toggleAllDeptBtn" class="toggle-hidden-btn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><path d="M21 21l-4.35-4.35"></path></svg>
-                    <span id="toggleAllDeptLabel">Show All Departments</span>
-                </button>
-            </div>
 
-        <div class="category-chips" id="categoryChips">
-            {% for cat in categories %}
-            <button type="button"
-                    class="category-chip {% if cat.is_premium %}premium-chip{% endif %} {% if cat.id in active_category_ids %}active{% endif %}"
-                    data-category-id="{{ cat.id }}"
-                    data-is-premium="{{ cat.is_premium|yesno:'true,false' }}">
-                {% if cat.is_premium %}⭐ {% endif %}{{ cat.name }}
-            </button>
-            {% endfor %}
-        </div>
-
-            <div class="subjects-grid" id="subjectsGrid">
-                {% for item in subject_progress %}
-                {% comment %}
-                A subject is department-locked only when: it isn't in the
-                user's own department, isn't a premium-category subject
-                (those always ignore department scope), and the viewer isn't
-                a premium member. This initial server-rendered class prevents
-                any flash-of-unlocked-content before JS runs; the JS below
-                recomputes the same rule for search/hide/filter.
-                {% endcomment %}
-                <div class="subject-card fade-in-up {% cycle 'card-blue' 'card-green' 'card-orange' 'card-purple' %} {% if not item.is_own_department and not item.is_premium_subject and not is_premium_user %}locked-card{% endif %}"
-                     data-subject-id="{{ item.subject.id }}"
-                     data-order="{{ item.subject.id }}"
-                     data-name="{{ item.subject.name|lower }}"
-                     data-own-dept="{{ item.is_own_department|yesno:'true,false' }}"
-                     data-premium-subject="{{ item.is_premium_subject|yesno:'true,false' }}"
-                     data-categories="{% for cid in item.category_ids %}{{ cid }}{% if not forloop.last %},{% endif %}{% endfor %}">
-
-                    <div class="card-actions-top">
-                        <button type="button" class="icon-action-btn hide-btn" data-hide-id="{{ item.subject.id }}" title="Hide this subject" aria-label="Hide subject">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.62 21.62 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-2.29 3.5M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>
-                        </button>
-                    </div>
-
-                    <a href="{% url 'subject_detail' item.subject.id %}" class="card-blur-wrap">
-                        <div class="subject-header">
-                            <h3 class="subject-name">
-                                {{ item.subject.name }}
-                                {% if not item.is_own_department %}<span class="dept-badge">{{ item.subject.department.name }}</span>{% endif %}
-                                {% if item.is_premium_subject %}<span class="premium-tag-badge">⭐ Premium</span>{% endif %}
-                            </h3>
-                            <div class="subject-icon-box">
-                                {% if 'MI' in item.subject.name or 'Machine' in item.subject.name %}
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 1.98-3A2.5 2.5 0 0 1 9.5 2Z"></path><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-1.98-3A2.5 2.5 0 0 0 14.5 2Z"></path></svg>
-                                {% elif 'OOP' in item.subject.name or 'Object' in item.subject.name %}
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
-                                {% elif 'DBMS' in item.subject.name or 'Database' in item.subject.name %}
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>
-                                {% elif 'FODS' in item.subject.name or 'Data Science' in item.subject.name %}
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
-                                {% else %}
-                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="progress-container">
-                            <div class="progress-labels">
-                                <span class="progress-txt">Progress</span>
-                                <span class="percent">{{ item.percentage }}%</span>
-                            </div>
-                            <div class="custom-progress">
-                                <div class="progress-fill" style="width: 0%" data-width="{{ item.percentage }}%"></div>
-                            </div>
-                        </div>
-                    </a>
-
-                    <div class="locked-card-overlay">
-                        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                        <div class="locked-card-label">Unlock subjects from every department</div>
-                        <a href="{% url 'premium_upgrade' %}" class="buy-premium-btn">Buy Premium – ₹499/yr</a>
-                    </div>
+                <div class="sidebar-controls-row">
+                    <select id="subjectSort">
+                        <option value="newest" selected>Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                    </select>
+                    <button type="button" id="toggleAllDeptBtn" class="sidebar-toggle-btn" title="Show all departments">All Depts</button>
                 </div>
-                {% empty %}
-                <div style="grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--medium-blue); background: rgba(255,255,255,0.5); border-radius: 16px;">
-                    No subjects added yet. Time to start learning!
+
+                <div class="sidebar-chips" id="categoryChips">
+                    {% for cat in categories %}
+                    <button type="button"
+                            class="sidebar-chip {% if cat.is_premium %}premium-chip{% endif %} {% if cat.id in active_category_ids %}active{% endif %}"
+                            data-category-id="{{ cat.id }}"
+                            data-is-premium="{{ cat.is_premium|yesno:'true,false' }}">
+                        {{ cat.name }}
+                    </button>
+                    {% endfor %}
                 </div>
-                {% endfor %}
-                <div class="no-results-msg" id="noResultsMsg">No subjects match your search or filters.</div>
-            </div>
+
+                <div class="active-filter-banner" id="activeFilterBanner">
+                    <span id="activeFilterText"></span>
+                    <button type="button" id="clearFilterBtn">Clear</button>
+                </div>
+
+                <div class="sidebar-list" id="sidebarList">
+                    {% for item in subject_progress %}
+                    <div class="sidebar-item"
+                         data-subject-id="{{ item.subject.id }}"
+                         data-is-pinned="{{ item.is_pinned|yesno:'true,false' }}"
+                         data-order="{{ item.subject.id }}"
+                         data-name="{{ item.subject.name|lower }}"
+                         data-own-dept="{{ item.is_own_department|yesno:'true,false' }}"
+                         data-premium-subject="{{ item.is_premium_subject|yesno:'true,false' }}"
+                         data-categories="{% for cid in item.category_ids %}{{ cid }}{% if not forloop.last %},{% endif %}{% endfor %}">
+
+                        <a href="{% url 'subject_detail' item.subject.id %}" class="sidebar-item-link">
+                            <div class="sidebar-item-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                            </div>
+                            <div class="sidebar-item-info">
+                                <div class="sidebar-item-name">{{ item.subject.name }}</div>
+                                <div class="sidebar-item-meta">{{ item.percentage }}% complete{% if not item.is_own_department %} · {{ item.subject.department.name }}{% endif %}{% if item.is_premium_subject %} · Premium{% endif %}</div>
+                            </div>
+                        </a>
+
+                        <div class="sidebar-item-actions">
+                            {% if not item.is_own_department and not item.is_premium_subject and not is_premium_user %}
+                            <span class="sidebar-item-lock" title="Unlock with Premium">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                            </span>
+                            {% endif %}
+                            <button type="button" class="sidebar-action-btn pin-btn pin-toggle-btn" data-subject-id="{{ item.subject.id }}" title="Pin to dashboard">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L9 9l-7 1 5 5-1 7 6-4 6 4-1-7 5-5-7-1z"></path></svg>
+                            </button>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="sidebar-no-results" id="sidebarNoResults">No subjects match your search or filters.</div>
+            </aside>
         </div>
     </div>
     {% include 'core/footer.html' %}
@@ -858,6 +955,63 @@
                     setTimeout(() => { waBanner.remove(); }, 500);
                 });
             }
+
+            const declutterBanner = document.getElementById('declutterBanner');
+            const declutterClose = document.getElementById('declutterBannerClose');
+            if (declutterBanner && !localStorage.getItem('studypalz_declutter_tip_dismissed')) {
+                declutterBanner.classList.add('show');
+            }
+            if (declutterClose) {
+                declutterClose.addEventListener('click', () => {
+                    declutterBanner.classList.remove('show');
+                    localStorage.setItem('studypalz_declutter_tip_dismissed', 'true');
+                });
+            }
+
+            updatePinnedEmptyState();
+        });
+
+        function updatePinnedEmptyState() {
+            const pinnedEmptyState = document.getElementById('pinnedEmptyState');
+            if (!pinnedEmptyState) return;
+            const hasPinned = document.querySelectorAll('.subject-card[data-is-pinned="true"]').length > 0;
+            pinnedEmptyState.style.display = hasPinned ? 'none' : 'block';
+        }
+
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+        // --- PIN / UNPIN, no page reload: flips data-is-pinned on both the
+        // pinned-grid card and the sidebar row for this subject, which the
+        // CSS above uses to instantly show/hide the right one. ---
+        document.addEventListener('click', (e) => {
+            const btn = e.target.closest('.pin-toggle-btn');
+            if (!btn) return;
+            e.preventDefault();
+
+            const subjectId = btn.dataset.subjectId;
+            btn.disabled = true;
+
+            fetch(`/toggle-pin-subject-ajax/${subjectId}/`, {
+                method: 'POST',
+                headers: { 'X-CSRFToken': getCookie('csrftoken') },
+            })
+                .then(r => r.json())
+                .then(data => {
+                    const isPinned = data.is_pinned ? 'true' : 'false';
+                    document.querySelectorAll(`[data-subject-id="${subjectId}"]`).forEach(el => {
+                        if (el.classList.contains('subject-card') || el.classList.contains('sidebar-item')) {
+                            el.dataset.isPinned = isPinned;
+                        }
+                    });
+                    updatePinnedEmptyState();
+                    if (typeof applyFilters === 'function') applyFilters();
+                })
+                .catch(() => {})
+                .finally(() => { btn.disabled = false; });
         });
 
         const streakIncreased = {{ streak_increased|yesno:"true,false" }};
@@ -1024,36 +1178,28 @@
             }
         });
 
-        // --- SUBJECT SEARCH / SORT / HIDE / SHOW-ALL-DEPT / CATEGORY FILTERS ---
+        // --- SIDEBAR: SEARCH / SORT / HIDE / SHOW-ALL-DEPT / CATEGORY FILTERS ---
         document.addEventListener('DOMContentLoaded', () => {
-            const grid = document.getElementById('subjectsGrid');
-            if (!grid) return;
+            const sidebarList = document.getElementById('sidebarList');
+            if (!sidebarList) return;
 
             const searchInput = document.getElementById('subjectSearch');
             const sortSelect = document.getElementById('subjectSort');
-            const toggleHiddenBtn = document.getElementById('toggleHiddenBtn');
-            const toggleHiddenLabel = document.getElementById('toggleHiddenLabel');
             const toggleAllDeptBtn = document.getElementById('toggleAllDeptBtn');
-            const toggleAllDeptLabel = document.getElementById('toggleAllDeptLabel');
-            const noResultsMsg = document.getElementById('noResultsMsg');
+            const sidebarNoResults = document.getElementById('sidebarNoResults');
             const chipsContainer = document.getElementById('categoryChips');
             const premiumSplash = document.getElementById('premiumSplash');
+            const activeFilterBanner = document.getElementById('activeFilterBanner');
+            const activeFilterText = document.getElementById('activeFilterText');
+            const clearFilterBtn = document.getElementById('clearFilterBtn');
 
-            const HIDDEN_KEY = 'studypalz_hidden_subjects';
             const SORT_KEY = 'studypalz_subject_sort';
             const isPremiumUser = {{ is_premium_user|yesno:"true,false" }};
 
-            function getHiddenIds() {
-                try { return JSON.parse(localStorage.getItem(HIDDEN_KEY)) || []; }
-                catch (e) { return []; }
-            }
-            function setHiddenIds(list) { localStorage.setItem(HIDDEN_KEY, JSON.stringify(list)); }
-
-            let showingHidden = false;
             let showingAllDept = {{ show_all_departments|yesno:"true,false" }};
             let activeCategoryIds = new Set([{% for cid in active_category_ids %}"{{ cid }}"{% if not forloop.last %},{% endif %}{% endfor %}]);
 
-            const cards = Array.from(grid.querySelectorAll('.subject-card'));
+            const items = Array.from(sidebarList.querySelectorAll('.sidebar-item'));
             if (toggleAllDeptBtn) toggleAllDeptBtn.classList.toggle('active', showingAllDept);
 
             function saveFiltersToServer() {
@@ -1070,84 +1216,55 @@
             function applySort() {
                 const mode = sortSelect.value;
                 localStorage.setItem(SORT_KEY, mode);
-                cards.sort((a, b) => {
+                items.sort((a, b) => {
                     const aOrder = parseInt(a.dataset.order, 10) || 0;
                     const bOrder = parseInt(b.dataset.order, 10) || 0;
                     return mode === 'oldest' ? aOrder - bOrder : bOrder - aOrder;
                 });
-                cards.forEach(card => grid.appendChild(card));
+                items.forEach(item => sidebarList.appendChild(item));
             }
 
-            function refreshHideButton(card, isHidden) {
-                const btn = card.querySelector('.hide-btn');
-                if (!btn) return;
-                btn.title = isHidden ? 'Unhide this subject' : 'Hide this subject';
-                btn.innerHTML = isHidden
-                    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>'
-                    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.94 10.94 0 0 1 12 20c-7 0-11-8-11-8a21.62 21.62 0 0 1 5.06-6.06M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a21.6 21.6 0 0 1-2.29 3.5M14.12 14.12a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>';
+            function updateFilterBanner() {
+                const activeChips = chipsContainer ? Array.from(chipsContainer.querySelectorAll('.sidebar-chip.active')) : [];
+                if (activeChips.length === 0) {
+                    activeFilterBanner.style.display = 'none';
+                    return;
+                }
+                const names = activeChips.map(c => c.textContent.trim());
+                activeFilterText.textContent = `Showing: ${names.join(', ')}`;
+                activeFilterBanner.style.display = 'flex';
             }
 
             function applyFilters() {
-                const hiddenIds = getHiddenIds();
                 const query = searchInput.value.trim().toLowerCase();
                 let visibleCount = 0;
 
-                cards.forEach(card => {
-                    const id = card.dataset.subjectId;
-                    const name = card.dataset.name || '';
-                    const isHiddenByUser = hiddenIds.includes(id);
-                    const isOwnDept = card.dataset.ownDept === 'true';
-                    const isPremiumSubject = card.dataset.premiumSubject === 'true';
-                    const cardCategoryIds = (card.dataset.categories || '').split(',').filter(Boolean);
+                items.forEach(item => {
+                    const name = item.dataset.name || '';
+                    const isOwnDept = item.dataset.ownDept === 'true';
+                    const isPremiumSubject = item.dataset.premiumSubject === 'true';
+                    const itemCategoryIds = (item.dataset.categories || '').split(',').filter(Boolean);
 
                     const matchesSearch = !query || name.includes(query);
-
-                    // Department scope: premium-category subjects always ignore it,
-                    // same as the user's own department.
                     const matchesDept = showingAllDept || isOwnDept || isPremiumSubject;
-
-                    // Category chips: any active chip (including the premium one)
-                    // matches by simple category-id containment.
                     const matchesCategory = activeCategoryIds.size === 0
-                        || Array.from(activeCategoryIds).some(cid => cardCategoryIds.includes(cid));
+                        || Array.from(activeCategoryIds).some(cid => itemCategoryIds.includes(cid));
 
-                    const shouldShow = showingHidden
-                        ? (isHiddenByUser && matchesSearch && matchesDept)
-                        : (!isHiddenByUser && matchesSearch && matchesDept && matchesCategory);
+                    const isPinned = item.dataset.isPinned === 'true';
+                    const shouldShow = !isPinned && matchesSearch && matchesDept && matchesCategory;
 
-                    // A card is locked (blurred + gated) only if it's outside the
-                    // user's department, isn't a premium-category subject, and
-                    // the viewer isn't a premium member.
-                    const shouldLock = !isPremiumUser && !isOwnDept && !isPremiumSubject;
-                    card.classList.toggle('locked-card', shouldLock);
-
-                    card.classList.toggle('subject-is-hidden', !shouldShow);
-                    refreshHideButton(card, isHiddenByUser);
+                    item.classList.toggle('sidebar-item-hidden', !shouldShow);
                     if (shouldShow) visibleCount++;
                 });
 
-                noResultsMsg.style.display = visibleCount === 0 ? 'block' : 'none';
-                toggleHiddenLabel.textContent = showingHidden ? 'Back to Subjects' : `Show Hidden (${hiddenIds.length})`;
-                toggleHiddenBtn.classList.toggle('active', showingHidden);
-                toggleAllDeptLabel.textContent = showingAllDept ? 'My Department Only' : 'Show All Departments';
+                sidebarNoResults.style.display = visibleCount === 0 ? 'block' : 'none';
                 toggleAllDeptBtn.classList.toggle('active', showingAllDept);
+                updateFilterBanner();
             }
-
-            grid.addEventListener('click', (e) => {
-                const btn = e.target.closest('.hide-btn');
-                if (!btn) return;
-                e.preventDefault();
-                e.stopPropagation();
-                const id = btn.dataset.hideId;
-                let hidden = getHiddenIds();
-                hidden = hidden.includes(id) ? hidden.filter(h => h !== id) : [...hidden, id];
-                setHiddenIds(hidden);
-                applyFilters();
-            });
 
             if (chipsContainer) {
                 chipsContainer.addEventListener('click', (e) => {
-                    const chip = e.target.closest('.category-chip');
+                    const chip = e.target.closest('.sidebar-chip');
                     if (!chip) return;
                     const cid = chip.dataset.categoryId;
                     if (activeCategoryIds.has(cid)) {
@@ -1162,6 +1279,15 @@
                 });
             }
 
+            if (clearFilterBtn) {
+                clearFilterBtn.addEventListener('click', () => {
+                    activeCategoryIds.clear();
+                    chipsContainer.querySelectorAll('.sidebar-chip.active').forEach(c => c.classList.remove('active'));
+                    applyFilters();
+                    saveFiltersToServer();
+                });
+            }
+
             if (premiumSplash) {
                 premiumSplash.addEventListener('click', () => {
                     const premiumChip = chipsContainer.querySelector('.premium-chip');
@@ -1171,13 +1297,12 @@
                         applyFilters();
                         saveFiltersToServer();
                     }
-                    document.querySelector('.subjects-section').scrollIntoView({ behavior: 'smooth' });
+                    document.querySelector('.dashboard-split').scrollIntoView({ behavior: 'smooth' });
                 });
             }
 
             searchInput.addEventListener('input', applyFilters);
             sortSelect.addEventListener('change', () => { applySort(); applyFilters(); });
-            toggleHiddenBtn.addEventListener('click', () => { showingHidden = !showingHidden; applyFilters(); });
             toggleAllDeptBtn.addEventListener('click', () => {
                 showingAllDept = !showingAllDept;
                 applyFilters();
@@ -1189,6 +1314,7 @@
 
             applySort();
             applyFilters();
+            window.applyFilters = applyFilters;
         });
     </script>
 </body>

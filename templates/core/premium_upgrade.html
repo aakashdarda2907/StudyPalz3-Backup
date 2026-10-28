@@ -2,267 +2,184 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Go Premium | StudyPalz</title>
-    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-teal: #06b6d4;
-            --primary-teal-dark: #0891b2;
-            --dark-blue: #0f1729;
-            --medium-blue: #475569;
-            --text-muted: #64748b;
-            --white: #ffffff;
-            --surface-light: #f8fafc;
-            --border-light: #e2e8f0;
-            --light-teal: #ecfeff;
-            --shadow-card: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
-            --border-radius: 16px;
-            --transition: all 0.2s ease;
-            --amber-light: #fffbeb;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyPalz Premium</title>
+<link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+:root{--primary-teal:#06b6d4;--dark-blue:#0f172a;--medium-blue:#64748b;--bg-gradient:radial-gradient(circle at top left,#f0f9ff 0%,#f8fafc 100%);--accent-gradient:linear-gradient(135deg,#06b6d4 0%,#3b82f6 100%);--premium-gradient:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 45%,#b45309 100%);--gold-gradient:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);--glass-border:1px solid rgba(255,255,255,.8);--shadow-sm:0 2px 4px rgba(15,23,42,.03);--shadow-md:0 12px 24px -4px rgba(15,23,42,.08);--transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+*{margin:0;padding:0;box-sizing:border-box}html,body{max-width:100vw}
+body{font-family:'Inter',sans-serif;color:var(--dark-blue);background:var(--bg-gradient);background-attachment:fixed;min-height:100vh;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}a{color:inherit}[hidden]{display:none!important}
+.i{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-.2em}
+.gtext{background:var(--accent-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+
+.pwrap{width:92%;max-width:1000px;margin:0 auto;padding-bottom:5rem}
+.phero{background:var(--premium-gradient);border-radius:28px;padding:clamp(1.8rem,5vw,3.2rem);color:#fff;position:relative;overflow:hidden;box-shadow:var(--shadow-md);display:grid;grid-template-columns:1.2fr 1fr;gap:2rem;align-items:center}
+.phero::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.15),transparent 45%),radial-gradient(circle at 85% 80%,rgba(251,191,36,.25),transparent 50%);pointer-events:none}
+.phero>*{position:relative;z-index:1}
+.badge{display:inline-flex;gap:.4rem;align-items:center;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);padding:.4rem 1rem;border-radius:999px;font-size:.74rem;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:#fde68a;margin-bottom:1.1rem}
+.phero h1{font-weight:800;font-size:clamp(1.9rem,4.8vw,2.9rem);line-height:1.12;margin-bottom:.9rem;color:#fff}
+.lede{color:rgba(255,255,255,.84);max-width:470px;font-size:clamp(.95rem,2.2vw,1.04rem)}
+.pcard{background:rgba(255,255,255,.97);color:var(--dark-blue);border-radius:22px;padding:1.8rem;text-align:center;box-shadow:0 20px 40px -16px rgba(0,0,0,.4)}
+.lbl{font-size:.74rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--medium-blue)}
+.pamt{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:clamp(2.8rem,8vw,3.5rem);line-height:1.05;margin:.3rem 0 1.2rem}.pamt small{font-size:1rem;font-weight:600;color:var(--medium-blue)}
+.pbtn{display:block;width:100%;border:none;border-radius:14px;padding:1rem;font-weight:800;font-size:.97rem;cursor:pointer;background:var(--gold-gradient);color:#78350f;box-shadow:0 8px 18px rgba(245,158,11,.35);text-decoration:none;font-family:inherit;transition:var(--transition)}
+.pbtn:hover{transform:translateY(-2px)}
+.pcard h3{font-weight:800;font-size:1.5rem;margin:.3rem 0 .5rem}.pcard p.t{color:var(--medium-blue);font-size:.92rem;margin-bottom:1.2rem}
+.sec{margin-top:3rem}.sh{font-weight:800;font-size:clamp(1.3rem,3vw,1.7rem);text-align:center;margin-bottom:1.3rem}
+.incgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1rem}
+.inccard{background:rgba(255,255,255,.88);border:var(--glass-border);border-radius:18px;box-shadow:var(--shadow-sm);padding:1.3rem 1.4rem;transition:var(--transition)}
+.inccard:hover{transform:translateY(-4px);box-shadow:var(--shadow-md)}
+.inccard .ic{width:40px;height:40px;border-radius:12px;background:var(--accent-gradient);color:#fff;display:flex;align-items:center;justify-content:center;margin-bottom:.8rem;font-size:1.15rem}
+.inccard h4{font-weight:700;font-size:1rem;margin-bottom:.2rem}.inccard p{font-size:.86rem;color:var(--medium-blue)}
+.lib{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center}
+.lib span{background:rgba(255,255,255,.88);border:var(--glass-border);box-shadow:var(--shadow-sm);border-radius:999px;padding:.45rem 1rem;font-size:.84rem;font-weight:600}
+@media(max-width:820px){.phero{grid-template-columns:1fr}}
+.modal-overlay {
+            display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.55); backdrop-filter: blur(4px);
+            z-index: 1000; align-items: center; justify-content: center; padding: 1.5rem;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'Inter', sans-serif;
-            line-height: 1.65;
-            color: var(--dark-blue);
-            background-color: var(--surface-light);
+        .modal-overlay.open { display: flex; }
+        .modal-box {
+            background: #fff; border-radius: 24px; max-width: 420px; width: 100%; padding: 2rem;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.25); text-align: center; animation: modalIn 0.35s cubic-bezier(0.34,1.56,0.64,1);
         }
-        .container { max-width: 900px; margin: 0 auto; padding: 0 1.5rem; }
-        h1, h2, h3, h4 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; color: var(--dark-blue); }
-
-        /* Header */
-        .header { background: var(--white); border-bottom: 1px solid var(--border-light); padding: 1rem 0; }
-        .header .container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 800; color: var(--dark-blue); text-decoration: none; }
-        .logo span { color: var(--primary-teal); }
-        .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.7rem 1.4rem; border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 0.9rem; transition: var(--transition); border: none; cursor: pointer; font-family: 'Plus Jakarta Sans', sans-serif; }
-        .btn-primary { background: var(--primary-teal); color: var(--white); }
-        .btn-primary:hover { background: var(--primary-teal-dark); }
-        .btn-secondary { background: var(--white); color: var(--dark-blue); border: 1px solid var(--border-light); }
-        .btn-secondary:hover { border-color: var(--primary-teal); color: var(--primary-teal-dark); }
-        .btn-whatsapp { background: #16a34a; color: var(--white); width: 100%; }
-        .btn-whatsapp:hover { background: #15803d; }
-        .btn:focus-visible { outline: 2px solid var(--primary-teal); outline-offset: 2px; }
-
-        /* Page intro */
-        .page-header { padding: 2.5rem 0 1.5rem; }
-        .page-header h1 { font-size: 1.9rem; margin-bottom: 0.5rem; }
-        .page-header p { color: var(--text-muted); font-size: 1rem; max-width: 620px; }
-
-        /* Included list */
-        .included-section { padding: 1rem 0 2rem; }
-        .included-section h2 { font-size: 1.2rem; margin-bottom: 1rem; }
-        .included-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-        .included-item { background: var(--white); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem 1.1rem; display: flex; align-items: center; gap: 0.7rem; font-size: 0.92rem; font-weight: 500; }
-        .included-item svg { flex-shrink: 0; color: var(--primary-teal-dark); }
-
-        /* Subjects covered */
-        .subjects-section { padding: 0 0 2rem; }
-        .subjects-section h2 { font-size: 1.2rem; margin-bottom: 0.35rem; }
-        .subjects-section > p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 1rem; }
-        .subjects-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; }
-        .subject-card { background: var(--white); border: 1px solid var(--border-light); border-radius: 12px; padding: 1rem 1.1rem; }
-        .subject-card h3 { font-size: 0.95rem; margin-bottom: 0.3rem; }
-        .subject-card p { font-size: 0.82rem; color: var(--text-muted); }
-
-        /* Pricing */
-        .pricing-section { padding: 1rem 0 2.5rem; }
-        .price-card {
-            display: grid; grid-template-columns: 1.1fr 1fr;
-            background: var(--white);
-            border: 1px solid var(--border-light);
-            border-radius: var(--border-radius);
-            box-shadow: var(--shadow-card);
-            overflow: hidden;
-        }
-        .price-left { padding: 2rem; display: flex; flex-direction: column; justify-content: center; }
-        .price-amount { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 2.4rem; line-height: 1; color: var(--dark-blue); margin-bottom: 0.5rem; }
-        .price-amount span { font-size: 1rem; font-weight: 600; color: var(--text-muted); }
-        .price-left > p { color: var(--text-muted); font-size: 0.92rem; }
-
-        .price-right { background: var(--light-teal); border-left: 1px solid var(--border-light); padding: 2rem; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 0.85rem; }
-        .qr-frame { background: var(--white); border: 1px solid var(--border-light); border-radius: 12px; padding: 0.75rem; }
-        .qr-frame img { width: 150px; height: 150px; border-radius: 8px; display: block; }
-        .upi-pill { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.8rem; font-weight: 700; color: var(--medium-blue); background: var(--white); border: 1px solid var(--border-light); border-radius: 50px; padding: 0.35rem 0.9rem; }
-        .price-hint { font-size: 0.75rem; color: var(--text-muted); }
-
-        /* How to activate */
-        .how-section { padding: 0 0 2rem; }
-        .how-section h2 { font-size: 1.2rem; margin-bottom: 1rem; }
-        .how-list { list-style: none; counter-reset: step; }
-        .how-list li { counter-increment: step; display: flex; gap: 0.9rem; padding: 0.75rem 0; border-bottom: 1px solid var(--border-light); font-size: 0.92rem; }
-        .how-list li:last-child { border-bottom: none; }
-        .how-list li::before {
-            content: counter(step);
-            flex-shrink: 0; width: 26px; height: 26px; border-radius: 50%;
-            background: var(--light-teal); color: var(--primary-teal-dark);
-            font-weight: 700; font-size: 0.8rem; display: flex; align-items: center; justify-content: center;
-        }
-        .how-list li strong { color: var(--dark-blue); }
-        .how-list li span { color: var(--text-muted); }
-
-        /* Legal notice */
-        .legal-notice { background: var(--amber-light); border: 1px solid #fde68a; border-radius: 12px; padding: 1rem 1.25rem; display: flex; gap: 0.85rem; align-items: flex-start; margin-bottom: 2rem; }
-        .legal-notice .legal-icon { width: 30px; height: 30px; flex-shrink: 0; border-radius: 50%; background: #fef3c7; color: #b45309; display: flex; align-items: center; justify-content: center; }
-        .legal-notice h4 { font-size: 0.85rem; font-weight: 700; color: #78350f; margin-bottom: 0.2rem; }
-        .legal-notice p { font-size: 0.8rem; color: #78350f; line-height: 1.5; opacity: 0.9; }
-
-        /* FAQ */
-        .faq-section { padding: 0 0 3rem; }
-        .faq-section h2 { font-size: 1.2rem; margin-bottom: 1rem; }
-        .faq-item { border-bottom: 1px solid var(--border-light); }
-        .faq-question { padding: 0.9rem 0; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: flex; justify-content: space-between; align-items: center; color: var(--dark-blue); }
-        .faq-question:hover { color: var(--primary-teal-dark); }
-        .faq-answer { max-height: 0; overflow: hidden; transition: max-height 0.25s ease-out; color: var(--text-muted); }
-        .faq-answer p { padding-bottom: 0.9rem; font-size: 0.9rem; }
-        .faq-icon { transition: transform 0.25s; font-size: 0.75rem; color: var(--text-muted); }
-        .faq-item.active .faq-icon { transform: rotate(180deg); color: var(--primary-teal); }
-        .faq-item.active .faq-answer { max-height: 200px; }
-
-        @media (max-width: 700px) {
-            .included-grid { grid-template-columns: 1fr; }
-            .price-card { grid-template-columns: 1fr; }
-            .price-right { border-left: none; border-top: 1px solid var(--border-light); }
-            .nav { display: none; }
-        }
-    </style>
+        @keyframes modalIn { from { opacity: 0; transform: scale(0.9) translateY(10px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .modal-icon { width: 56px; height: 56px; border-radius: 16px; margin: 0 auto 1rem; display: flex; align-items: center; justify-content: center; }
+        .modal-icon.processing { background: rgba(59,130,246,0.1); color: #2563eb; }
+        .modal-icon.success { background: rgba(16,185,129,0.1); color: #059669; }
+        .modal-icon.error { background: rgba(239,68,68,0.1); color: #dc2626; }
+        .modal-box h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.2rem; margin-bottom: 0.4rem; }
+        .modal-box p { color: var(--medium-blue); font-size: 0.88rem; margin-bottom: 1.5rem; }
+        .spinner { width: 22px; height: 22px; border: 3px solid rgba(37,99,235,0.2); border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .modal-close-btn { background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff; border: none; padding: 0.75rem 1.6rem; border-radius: 50px; font-weight: 700; font-size: 0.88rem; cursor: pointer; width: 100%; }
+    
+</style>
 </head>
 <body>
-    <header class="header">
-        <div class="container">
-            <a href="{% url 'home' %}" class="logo">Study<span>Palz</span></a>
-            <a href="javascript:history.back()" class="btn btn-secondary">Back</a>
-        </div>
-    </header>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+</defs></svg>
+{% include 'core/navbar.html' %}
+<main class="pwrap">
+  <section class="phero">
+    <div>
+      <div class="badge"><svg class="i"><use href="#i-zap"/></svg>Premium</div>
+      <h1>The entire platform, for 1 full year.</h1>
+      <p class="lede">Every department, every subject, every note, video and lab solution. Not just a few subjects, the whole of StudyPalz, unlocked for twelve months.</p>
+    </div>
+    {% if is_already_premium %}
+    <div class="pcard">
+      <p class="lbl">Your plan</p>
+      <h3>You're Premium</h3>
+      <p class="t">Everything on StudyPalz is already unlocked for you.</p>
+      <a class="pbtn" href="{% url 'dashboard' %}">Go to dashboard</a>
+    </div>
+    {% else %}
+    <div class="pcard">
+      <p class="lbl">Full platform access</p>
+      <div class="pamt">₹499<small> / year</small></div>
+      <button class="pbtn" onclick="buyPremium()">Unlock everything</button>
+    </div>
+    {% endif %}
+  </section>
 
-    <main class="container">
-        <section class="page-header">
-            <h1>Go Premium</h1>
-            <p>Upgrade to unlock every subject, across CSAI, CS-Core, AIDS, IoT and CSAIML — exam prep, interview prep and aptitude included, for a full year.</p>
-        </section>
+  <section class="sec">
+    <h2 class="sh">What you get</h2>
+    <div class="incgrid">
+      <div class="inccard"><div class="ic"><svg class="i"><use href="#i-globe"/></svg></div><h4>Every department</h4><p>All branches, not just your own.</p></div>
+      <div class="inccard"><div class="ic"><svg class="i"><use href="#i-book"/></svg></div><h4>Every subject and chapter</h4><p>Notes, concept videos, viva questions and lab solutions.</p></div>
+      {% if premium_subject_count %}<div class="inccard"><div class="ic"><svg class="i"><use href="#i-layers"/></svg></div><h4>The premium library</h4><p>{{ premium_subject_count }} exam-prep, interview and aptitude subjects.</p></div>{% endif %}
+      <div class="inccard"><div class="ic"><svg class="i"><use href="#i-zap"/></svg></div><h4>No exam-season plans</h4><p>Everything stays open. Nothing to renew.</p></div>
+      <div class="inccard"><div class="ic"><svg class="i"><use href="#i-clock"/></svg></div><h4>12 months</h4><p>One payment for a full year of access.</p></div>
+    </div>
+  </section>
 
-        <section class="subjects-section">
-            <h2>Subjects we dedicatedly cover</h2>
-            <p>Premium isn't just "more of a syllabus" — these are the areas we build focused content for.</p>
-            <div class="subjects-grid">
-                <div class="subject-card">
-                    <h3>DSA</h3>
-                    <p>Data Structures &amp; Algorithms.</p>
-                </div>
-                <div class="subject-card">
-                    <h3>MERN &amp; Full Stack</h3>
-                    <p>MERN stack and full stack development, combined into one track.</p>
-                </div>
-                <div class="subject-card">
-                    <h3>QuantAptitude</h3>
-                    <p>Logical reasoning, verbal ability and quantitative aptitude.</p>
-                </div>
-                <div class="subject-card">
-                    <h3>Core Subjects</h3>
-                    <p>The four core subjects — OOP, DBMS, OS and Computer Networks.</p>
-                </div>
-                <div class="subject-card">
-                    <h3>ML &amp; AI</h3>
-                    <p>Machine Learning and Artificial Intelligence.</p>
-                </div>
-                <div class="subject-card">
-                    <h3>Deep Learning</h3>
-                    <p>Dedicated Deep Learning track.</p>
-                </div>
-            </div>
-        </section>
+  {% if premium_subjects %}
+  <section class="sec">
+    <h2 class="sh">Premium library</h2>
+    <div class="lib">{% for s in premium_subjects %}<span>{{ s.name }}</span>{% endfor %}</div>
+  </section>
+  {% endif %}
+</main>
+{% include 'core/footer.html' %}
 
-        <section class="included-section">
-            <h2>What's included</h2>
-            <div class="included-grid">
-                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> All subjects, all departments</div>
-                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Complete exam prep</div>
-                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Interview &amp; aptitude prep</div>
-                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Full video library</div>
-                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Full solved questions</div>
-                <div class="included-item"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg> Valid for 1 full year</div>
-            </div>
-        </section>
-
-        <section class="pricing-section">
-            <div class="price-card">
-                <div class="price-left">
-                    <div class="price-amount">₹499<span>/ year</span></div>
-                    <p>One-time payment, full access for a full academic year. Free access covers one subject at a time — Premium unlocks everything immediately.</p>
-                </div>
-                <div class="price-right">
-                    <h3 style="font-size: 0.95rem;">Scan to Pay</h3>
-                    <div class="qr-frame">
-                        <img src="{% static 'core/upi_qr.jpeg' %}" alt="UPI QR Code – aakashdarda225@okicici">
-                    </div>
-                    <div class="upi-pill">aakashdarda225@okicici</div>
-                    <a href="https://wa.me/919529307125?text=Hi%2C%20I%20just%20paid%20%E2%82%B9499%20for%20StudyPalz%20Premium%20(1%20year%2C%20all%20subjects)%20%E2%80%94%20attaching%20screenshot.%20My%20username%3A%20{{ request.user.username|urlencode }}"
-                       target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
-                            <path d="M12 0C5.373 0 0 5.373 0 12c0 2.123.554 4.118 1.523 5.847L.057 23.986l6.305-1.453A11.946 11.946 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.007-1.371l-.36-.213-3.73.859.933-3.636-.235-.374A9.818 9.818 0 1112 21.818z"/>
-                        </svg>
-                        Send Payment Screenshot
-                    </a>
-                    <div class="price-hint">We usually activate access within a few hours.</div>
-                </div>
-            </div>
-        </section>
-
-        <section class="how-section">
-            <h2>How activation works</h2>
-            <ul class="how-list">
-                <li><span><strong>Pay via UPI</strong> — scan the QR code above with any UPI app (GPay, PhonePe, Paytm, or your bank app) and pay ₹499.</span></li>
-                <li><span><strong>Send your screenshot</strong> — message us on WhatsApp with your payment screenshot and your username.</span></li>
-                <li><span><strong>Get unlocked</strong> — we activate Premium on your account: every subject, every department, for a year.</span></li>
-            </ul>
-        </section>
-
-        <div class="legal-notice">
-            <div class="legal-icon">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 9v4M12 17h.01M10.29 3.86l-8.16 14.14A1.5 1.5 0 0 0 3.4 20.4h17.2a1.5 1.5 0 0 0 1.27-2.4L13.71 3.86a1.5 1.5 0 0 0-2.42 0z"/></svg>
-            </div>
-            <div>
-                <h4>Personal access only — no sharing</h4>
-                <p>Premium access is issued to one account and is non-transferable. Sharing your login or forwarding paid content to a non-paying student breaks our terms of service and can lead to immediate suspension without refund, along with possible legal action for distributing paid content to non-paying users.</p>
-            </div>
-        </div>
-
-        <section id="faq" class="faq-section">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-container">
-                <div class="faq-item">
-                    <div class="faq-question">Does Premium cover every subject in my department?<span class="faq-icon">▼</span></div>
-                    <div class="faq-answer"><p>Yes. One Premium plan unlocks every subject across every department — CSAI, CS-Core, AIDS, IoT and CSAIML — not just the one you're currently viewing.</p></div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">How long does activation take?<span class="faq-icon">▼</span></div>
-                    <div class="faq-answer"><p>We usually activate Premium on your account within a few hours of receiving your payment screenshot on WhatsApp.</p></div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">Can I share my Premium account with a friend?<span class="faq-icon">▼</span></div>
-                    <div class="faq-answer"><p>No. Premium access is issued to one account only. Sharing logins or forwarding paid content violates our terms and can lead to suspension.</p></div>
-                </div>
-                <div class="faq-item">
-                    <div class="faq-question">What happens after a year?<span class="faq-icon">▼</span></div>
-                    <div class="faq-answer"><p>Your Premium access covers a full year from activation. We'll notify you before it lapses so you can renew.</p></div>
-                </div>
-            </div>
-        </section>
-    </main>
-
-    {% include 'core/footer.html' %}
+<div class="modal-overlay" id="modal-overlay">
+        <div class="modal-box" id="modal-box"></div>
+    </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            document.querySelectorAll('.faq-item').forEach(item => {
-                item.querySelector('.faq-question').addEventListener('click', () => item.classList.toggle('active'));
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(";").shift();
+        }
+
+        function buyPremium() {
+            {% if not request.user.is_authenticated %}
+                window.location.href = "{% url 'login' %}?next=" + encodeURIComponent(window.location.pathname);
+                return;
+            {% endif %}
+
+            const overlay = document.getElementById('modal-overlay');
+            const box = document.getElementById('modal-box');
+
+            box.innerHTML = `<div class="modal-icon processing"><div class="spinner"></div></div><h3>Opening secure checkout…</h3><p>StudyPalz Premium · ₹499</p>`;
+            overlay.classList.add('open');
+
+            fetch("{% url 'create_order' %}", {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
+                body: JSON.stringify({ purchase_type: "college_premium" }),
+            })
+            .then(r => r.json())
+            .then(order => {
+                const rzp = new Razorpay({
+                    key: order.key, amount: order.amount, currency: order.currency,
+                    name: order.name, description: order.description, order_id: order.order_id,
+                    prefill: order.prefill,
+                    handler: function (response) {
+                        box.innerHTML = `<div class="modal-icon processing"><div class="spinner"></div></div><h3>Confirming payment…</h3><p>Almost done.</p>`;
+                        fetch("{% url 'verify_payment' %}", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },
+                            body: JSON.stringify(response),
+                        })
+                        .then(r => r.json())
+                        .then(result => {
+                            if (result.status === "paid") {
+                                box.innerHTML = `
+                                    <div class="modal-icon success"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg></div>
+                                    <h3>You're Premium!</h3>
+                                    <p>All premium subjects are unlocked on your dashboard now.</p>
+                                    <button class="modal-close-btn" onclick="window.location.href='{% url 'dashboard' %}'">Go to Dashboard</button>
+                                `;
+                            } else {
+                                box.innerHTML = `
+                                    <div class="modal-icon error"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></div>
+                                    <h3>Couldn't verify payment</h3>
+                                    <p>If money was deducted, it'll be auto-refunded — contact support if it isn't reflected within 24h.</p>
+                                    <button class="modal-close-btn" onclick="document.getElementById('modal-overlay').classList.remove('open')">Close</button>
+                                `;
+                            }
+                        });
+                    },
+                });
+                overlay.classList.remove('open');
+                rzp.open();
             });
-        });
+        }
     </script>
 </body>
 </html>

@@ -2,96 +2,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Open Courses - StudyPalz</title>
-    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-    <style>
-        :root {
-            --primary-teal: #06b6d4;
-            --dark-blue: #0f172a;
-            --medium-blue: #64748b;
-            --bg-gradient: radial-gradient(circle at top left, #f0f9ff 0%, #f8fafc 100%);
-            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-            --gold-gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            --premium-gradient: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
-            --glass-bg: rgba(255, 255, 255, 0.75);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.8);
-            --glass-highlight: inset 0 1px 0 0 rgba(255, 255, 255, 0.6);
-            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.03);
-            --shadow-md: 0 12px 24px -4px rgba(15, 23, 42, 0.08);
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { max-width: 100vw; overflow-x: hidden; }
-        body {
-            font-family: 'Inter', sans-serif; color: var(--dark-blue);
-            background: var(--bg-gradient); background-attachment: fixed;
-            min-height: 100vh; padding-top: 80px; -webkit-font-smoothing: antialiased;
-        }
-        .container { max-width: 1100px; margin: 0 auto; padding: 0 2rem 5rem; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Courses | StudyPalz</title>
+<link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+:root{--primary-teal:#06b6d4;--dark-blue:#0f172a;--medium-blue:#64748b;--bg-gradient:radial-gradient(circle at top left,#f0f9ff 0%,#f8fafc 100%);--accent-gradient:linear-gradient(135deg,#06b6d4 0%,#3b82f6 100%);--premium-gradient:linear-gradient(135deg,#1e1b4b 0%,#4c1d95 45%,#b45309 100%);--gold-gradient:linear-gradient(135deg,#fbbf24 0%,#f59e0b 100%);--glass-border:1px solid rgba(255,255,255,.8);--shadow-sm:0 2px 4px rgba(15,23,42,.03);--shadow-md:0 12px 24px -4px rgba(15,23,42,.08);--transition:all .3s cubic-bezier(.34,1.56,.64,1)}
+*{margin:0;padding:0;box-sizing:border-box}html,body{max-width:100vw}
+body{font-family:'Inter',sans-serif;color:var(--dark-blue);background:var(--bg-gradient);background-attachment:fixed;min-height:100vh;-webkit-font-smoothing:antialiased}
+h1,h2,h3,h4{font-family:'Plus Jakarta Sans',sans-serif}a{color:inherit}[hidden]{display:none!important}
+.i{width:1.15em;height:1.15em;fill:none;stroke:currentColor;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round;flex-shrink:0;vertical-align:-.2em}
+.gtext{background:var(--accent-gradient);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 
-        .catalog-hero { text-align: center; margin-bottom: 2.5rem; }
-        .catalog-hero h1 {
-            font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;
-            font-size: clamp(1.8rem, 4vw, 2.6rem);
-            background: var(--accent-gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 0.6rem;
-        }
-        .catalog-hero p { color: var(--medium-blue); font-size: 1rem; max-width: 520px; margin: 0 auto; }
-
-        .plan-banner {
-            background: var(--premium-gradient); border-radius: 20px; padding: 1.5rem 2rem; margin-bottom: 2.5rem;
-            display: flex; align-items: center; justify-content: space-between; gap: 1rem;
-            box-shadow: 0 10px 30px rgba(76, 29, 149, 0.25); position: relative; overflow: hidden; flex-wrap: wrap;
-        }
-        .plan-banner::before {
-            content: ''; position: absolute; inset: 0;
-            background: radial-gradient(circle at 15% 20%, rgba(255,255,255,0.18) 0%, transparent 45%),
-                        radial-gradient(circle at 85% 80%, rgba(251,191,36,0.25) 0%, transparent 50%);
-        }
-        .plan-banner-text { position: relative; z-index: 1; }
-        .plan-banner-title { color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.15rem; margin-bottom: 0.3rem; }
-        .plan-banner-sub { color: rgba(255,255,255,0.75); font-size: 0.88rem; }
-        .plan-banner-btn {
-            position: relative; z-index: 1; background: #fff; color: #4c1d95; font-weight: 800;
-            padding: 0.75rem 1.5rem; border-radius: 50px; font-size: 0.88rem; border: none; cursor: pointer;
-            white-space: nowrap; box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        .courses-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
-        .course-card {
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); border-radius: 22px;
-            border: var(--glass-border); box-shadow: var(--shadow-sm); overflow: hidden; cursor: pointer;
-            transition: var(--transition); display: flex; flex-direction: column; text-decoration: none; color: inherit;
-        }
-        .course-card:hover { transform: translateY(-6px); box-shadow: var(--shadow-md); }
-        .course-thumb {
-            height: 130px; background: var(--accent-gradient); position: relative; display: flex;
-            align-items: center; justify-content: center; color: rgba(255,255,255,0.85);
-        }
-        .course-thumb.thumb-green { background: linear-gradient(135deg, #10b981, #059669); }
-        .course-thumb.thumb-orange { background: linear-gradient(135deg, #f59e0b, #d97706); }
-        .course-thumb.thumb-purple { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
-        .course-body { padding: 1.4rem; display: flex; flex-direction: column; gap: 0.6rem; flex: 1; }
-        .course-name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 1.1rem; }
-        .course-meta { font-size: 0.82rem; color: var(--medium-blue); }
-        .course-footer { display: flex; align-items: center; justify-content: space-between; margin-top: auto; padding-top: 0.6rem; }
-        .course-price { font-weight: 800; font-size: 1.05rem; color: var(--dark-blue); }
-        .course-price span { font-size: 0.72rem; color: var(--medium-blue); font-weight: 600; }
-        .view-course-btn {
-            background: rgba(6, 182, 212, 0.1); color: #0891b2; border: none; padding: 0.5rem 1rem;
-            border-radius: 10px; font-weight: 700; font-size: 0.8rem; cursor: pointer; transition: var(--transition);
-        }
-        .course-card:hover .view-course-btn { background: var(--accent-gradient); color: #fff; }
-        .empty-state {
-            grid-column: 1/-1; text-align: center; padding: 3rem; color: var(--medium-blue);
-            background: rgba(255,255,255,0.5); border-radius: 16px;
-        }
-
-        .modal-overlay {
+.cwrap{width:92%;max-width:1240px;margin:0 auto;padding-bottom:5rem}
+.chero{text-align:center;padding:1rem 0 2rem}
+.chero h1{font-weight:800;font-size:clamp(1.9rem,5vw,2.8rem);line-height:1.15;margin-bottom:.6rem}
+.chero p{color:var(--medium-blue);max-width:520px;margin:0 auto 1.4rem}
+.search{position:relative;max-width:520px;margin:0 auto 1.1rem}
+.search .i{position:absolute;left:1.1rem;top:50%;transform:translateY(-50%);color:var(--medium-blue)}
+.search input{width:100%;padding:.95rem 1.2rem .95rem 2.9rem;border-radius:999px;border:var(--glass-border);background:rgba(255,255,255,.92);box-shadow:var(--shadow-sm);font:inherit;font-size:.95rem;color:var(--dark-blue);outline:none;transition:var(--transition)}
+.search input:focus{box-shadow:0 0 0 3px rgba(6,182,212,.25);border-color:var(--primary-teal)}
+.topics{display:flex;flex-wrap:wrap;gap:.55rem;justify-content:center}
+.topics a{background:rgba(255,255,255,.9);border:var(--glass-border);box-shadow:var(--shadow-sm);border-radius:999px;padding:.45rem 1.05rem;font-size:.82rem;font-weight:600;color:var(--medium-blue);text-decoration:none;transition:var(--transition)}
+.topics a:hover{background:var(--accent-gradient);color:#fff}
+.pass{background:var(--premium-gradient);color:#fff;border-radius:22px;padding:1.5rem 2rem;margin:.6rem 0 2.6rem;display:flex;align-items:center;justify-content:space-between;gap:1.2rem;flex-wrap:wrap;box-shadow:0 10px 30px rgba(76,29,149,.25);position:relative;overflow:hidden}
+.pass::before{content:"";position:absolute;inset:0;background:radial-gradient(circle at 15% 20%,rgba(255,255,255,.18),transparent 45%),radial-gradient(circle at 85% 80%,rgba(251,191,36,.25),transparent 50%);pointer-events:none}
+.pass>*{position:relative;z-index:1}
+.pass h2{font-weight:800;font-size:1.2rem;margin-bottom:.25rem}.pass p{color:rgba(255,255,255,.78);font-size:.9rem}
+.pass-buy{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap}
+.was{text-decoration:line-through;color:rgba(255,255,255,.6);font-size:.95rem}
+.amt{font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:1.8rem}
+.pass button{background:#fff;color:#4c1d95;font-weight:800;border:none;border-radius:999px;padding:.8rem 1.6rem;font-size:.88rem;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.15);transition:var(--transition);font-family:inherit}
+.pass button:hover{transform:translateY(-2px)}
+.ctopic{margin-bottom:3rem;scroll-margin-top:100px}
+.ctopic-head{display:flex;align-items:baseline;justify-content:space-between;gap:1rem;margin-bottom:1.2rem;padding-left:.9rem;border-left:3px solid var(--primary-teal)}
+.ctopic-head h2{font-weight:800;font-size:clamp(1.25rem,3vw,1.5rem)}
+.ctopic-head span{font-size:.8rem;color:var(--medium-blue);font-weight:600}
+.rail{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:1.25rem}
+.ccard{background:rgba(255,255,255,.88);border:var(--glass-border);border-radius:22px;box-shadow:var(--shadow-sm);overflow:hidden;text-decoration:none;color:inherit;display:flex;flex-direction:column;transition:var(--transition)}
+.ccard:hover{transform:translateY(-6px);box-shadow:var(--shadow-md)}
+.thumb{height:128px;background:var(--accent-gradient);position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.thumb::before{content:"";position:absolute;width:170px;height:170px;border-radius:50%;background:rgba(255,255,255,.12);top:-70px;right:-50px}
+.thumb::after{content:"";position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.1);bottom:-45px;left:-25px}
+.thumb span{position:relative;z-index:1;font-family:'Plus Jakarta Sans',sans-serif;font-weight:800;font-size:3.6rem;line-height:1;color:rgba(255,255,255,.93)}
+.ccard-body{padding:1.1rem 1.2rem 1.2rem;display:flex;flex-direction:column;gap:.45rem;flex:1}
+.ccard h3{font-weight:700;font-size:1.02rem;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:2.6em}
+.cmeta{font-size:.78rem;color:var(--medium-blue)}
+.ccard-foot{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:.5rem}
+.cprice{font-weight:800;font-size:1rem}.cprice.sub{font-weight:600;color:var(--medium-blue);font-size:.76rem}
+.view{background:rgba(6,182,212,.1);color:#0891b2;font-weight:700;font-size:.78rem;padding:.4rem .85rem;border-radius:10px;transition:var(--transition)}
+.ccard:hover .view{background:var(--accent-gradient);color:#fff}
+.empty{text-align:center;padding:3.5rem 1rem;color:var(--medium-blue);background:rgba(255,255,255,.6);border-radius:20px;margin:1.5rem 0}
+.empty h3{color:var(--dark-blue);margin-bottom:.4rem;font-weight:800}
+@media(max-width:700px){
+  .rail{display:flex;overflow-x:auto;scroll-snap-type:x proximity;gap:1rem;padding-bottom:.8rem;-webkit-overflow-scrolling:touch}
+  .rail .ccard{flex:0 0 74%;scroll-snap-align:start}.ccard:hover{transform:none}
+  .pass{padding:1.3rem}
+}
+.modal-overlay {
             display: none; position: fixed; inset: 0; background: rgba(15,23,42,0.55); backdrop-filter: blur(4px);
             z-index: 1000; align-items: center; justify-content: center; padding: 1.5rem;
         }
@@ -107,65 +77,85 @@
         .modal-icon.error { background: rgba(239,68,68,0.1); color: #dc2626; }
         .modal-box h3 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.2rem; margin-bottom: 0.4rem; }
         .modal-box p { color: var(--medium-blue); font-size: 0.88rem; margin-bottom: 1.5rem; }
-        .spinner {
-            width: 22px; height: 22px; border: 3px solid rgba(37,99,235,0.2); border-top-color: #2563eb;
-            border-radius: 50%; animation: spin 0.8s linear infinite;
-        }
+        .spinner { width: 22px; height: 22px; border: 3px solid rgba(37,99,235,0.2); border-top-color: #2563eb; border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-        .modal-close-btn {
-            background: var(--accent-gradient); color: #fff; border: none; padding: 0.75rem 1.6rem;
-            border-radius: 50px; font-weight: 700; font-size: 0.88rem; cursor: pointer; width: 100%;
-        }
+        .modal-close-btn { background: var(--accent-gradient); color: #fff; border: none; padding: 0.75rem 1.6rem; border-radius: 50px; font-weight: 700; font-size: 0.88rem; cursor: pointer; width: 100%; }
         .modal-cancel { background: none; border: none; color: var(--medium-blue); font-size: 0.82rem; margin-top: 0.8rem; cursor: pointer; text-decoration: underline; }
-    </style>
+
+        
+
+</style>
 </head>
 <body>
-    {% include 'core/navbar.html' %}
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-tag" viewBox="0 0 24 24"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></symbol>
+<symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></symbol>
+<symbol id="i-zap" viewBox="0 0 24 24"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+<symbol id="i-layers" viewBox="0 0 24 24"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></symbol>
+<symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></symbol>
+</defs></svg>
+{% include 'core/navbar.html' %}
+<main class="cwrap">
+  <header class="chero">
+    <h1 class="gtext">The Open Library</h1>
+    <p>Structured notes and videos, organised by topic and open to everyone.</p>
+    <div class="search"><svg class="i"><use href="#i-search"/></svg><input id="cq" type="search" placeholder="Search courses" autocomplete="off"></div>
+    {% if sections %}<nav class="topics" aria-label="Topics">{% for section in sections %}<a href="#topic-{{ forloop.counter }}">{{ section.title }}</a>{% endfor %}</nav>{% endif %}
+  </header>
 
-    <div class="container">
-        <div class="catalog-hero">
-            <h1>The Open Library</h1>
-            <p>Structured, exam-ready notes and videos — organized by course, available to anyone.</p>
-        </div>
-
-        {% for plan in plans %}
-        <div class="plan-banner">
-            <div class="plan-banner-text">
-                <div class="plan-banner-title">{{ plan.name }} — ₹{{ plan.price }}/{{ plan.duration_days }}d</div>
-                <div class="plan-banner-sub">Every chapter, every course, unlocked for as long as your plan is active.</div>
-            </div>
-            <button class="plan-banner-btn" onclick="buy('plan', {{ plan.id }}, '{{ plan.name|escapejs }}', {{ plan.price }})">Get All-Access</button>
-        </div>
-        {% endfor %}
-
-        <div class="courses-grid">
-            {% for subject in open_subjects %}
-            <a href="{% url 'public_subject' subject.slug %}" class="course-card">
-                <div class="course-thumb {% cycle '' 'thumb-green' 'thumb-orange' 'thumb-purple' %}">
-                    <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
-                </div>
-                <div class="course-body">
-                    <div class="course-name">{{ subject.name }}</div>
-                    <div class="course-meta">{{ subject.contents.count }} chapter{{ subject.contents.count|pluralize }} · Video + Notes</div>
-                    <div class="course-footer">
-                        {% if subject.price %}
-                            <div class="course-price">₹{{ subject.price }} <span>full course</span></div>
-                        {% else %}
-                            <div class="course-price"><span>priced per chapter</span></div>
-                        {% endif %}
-                        <span class="view-course-btn">View →</span>
-                    </div>
-                </div>
-            </a>
-            {% empty %}
-            <div class="empty-state">No open courses published yet — check back soon!</div>
-            {% endfor %}
-        </div>
+  {% for plan in plans %}{% if plan.scope == "open" %}
+  <section class="pass">
+    <div><h2>{{ plan.name }}</h2><p>Every chapter of every course, unlocked for {{ plan.duration_days }} days.</p></div>
+    <div class="pass-buy">
+      {% if plan.has_discount %}<span class="was">₹{{ plan.price|floatformat:"-2" }}</span>{% endif %}
+      <span class="amt">₹{{ plan.final_price|floatformat:"-2" }}</span>
+      <button onclick="buy('plan', {{ plan.id }}, '{{ plan.name|escapejs }}', {{ plan.final_price|floatformat:"-2" }})">Get All-Access</button>
     </div>
+  </section>
+  {% endif %}{% endfor %}
 
-    {% include 'core/footer.html' %}
+  {% if not has_any_courses %}<div class="empty"><h3>No open courses published yet</h3><p>Check back soon.</p></div>{% endif %}
+  <div id="cnone" class="empty" hidden><h3>No courses match your search</h3><p>Try a different keyword.</p></div>
 
-    <div class="modal-overlay" id="modal-overlay">
+  {% for section in sections %}
+  <section class="ctopic" id="topic-{{ forloop.counter }}">
+    <div class="ctopic-head"><h2>{{ section.title }}</h2><span>{{ section.subjects|length }} course{{ section.subjects|length|pluralize }}</span></div>
+    <div class="rail">
+      {% for subject in section.subjects %}
+      <a class="ccard" href="{% url 'public_subject' subject.slug %}" data-title="{{ subject.name|lower }}">
+        <div class="thumb"><span>{{ subject.name|first }}</span></div>
+        <div class="ccard-body">
+          <h3>{{ subject.name }}</h3>
+          <div class="cmeta">{{ subject.contents.count }} chapter{{ subject.contents.count|pluralize }}</div>
+          <div class="ccard-foot">
+            {% if subject.price %}<span class="cprice">₹{{ subject.price|floatformat:"-2" }}</span>{% else %}<span class="cprice sub">Priced per chapter</span>{% endif %}
+            <span class="view">View</span>
+          </div>
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </section>
+  {% endfor %}
+</main>
+{% include 'core/footer.html' %}
+<script>
+(function(){
+  var q=document.getElementById('cq');if(!q)return;
+  var cards=[].slice.call(document.querySelectorAll('.ccard')),secs=[].slice.call(document.querySelectorAll('.ctopic')),none=document.getElementById('cnone');
+  q.addEventListener('input',function(){
+    var v=q.value.trim().toLowerCase(),shown=0;
+    cards.forEach(function(c){var ok=!v||c.dataset.title.indexOf(v)>-1;c.style.display=ok?'':'none';if(ok)shown++;});
+    secs.forEach(function(s){var any=[].some.call(s.querySelectorAll('.ccard'),function(c){return c.style.display!=='none'});s.style.display=any?'':'none';});
+    if(none)none.hidden=(shown>0||!cards.length);
+  });
+})();
+</script>
+
+<div class="modal-overlay" id="modal-overlay">
         <div class="modal-box" id="modal-box"></div>
     </div>
 
@@ -178,7 +168,7 @@
 
         function buy(purchaseType, objectId, label, displayAmount) {
             {% if not request.user.is_authenticated %}
-                window.location.href = "{% url 'login' %}?next=" + encodeURIComponent(window.location.pathname);
+                window.location.href = "{% url 'open_signup' %}?next=" + encodeURIComponent(window.location.pathname);
                 return;
             {% endif %}
 
@@ -205,11 +195,7 @@
                     name: order.name, description: order.description, order_id: order.order_id,
                     prefill: order.prefill,
                     handler: function (response) {
-                        box.innerHTML = `
-                            <div class="modal-icon processing"><div class="spinner"></div></div>
-                            <h3>Confirming payment…</h3>
-                            <p>Almost done.</p>
-                        `;
+                        box.innerHTML = `<div class="modal-icon processing"><div class="spinner"></div></div><h3>Confirming payment…</h3><p>Almost done.</p>`;
                         fetch("{% url 'verify_payment' %}", {
                             method: "POST",
                             headers: { "Content-Type": "application/json", "X-CSRFToken": getCookie("csrftoken") },

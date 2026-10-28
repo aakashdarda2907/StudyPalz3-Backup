@@ -15,7 +15,8 @@ import random
 from datetime import timedelta
 from django.http import JsonResponse
 from .middleware import BotBlockerMiddleware
-
+from .views_college_subscription import college_subscription_required
+from .models import user_has_active_college_subscription
 
 # Third-party imports
 from pygments import highlight
@@ -35,6 +36,12 @@ from .models import Department, Subject, Content, UserContentState, UserProfile,
 
 def home_view(request):
     if request.user.is_authenticated:
+        try:
+            profile = UserProfile.objects.get(user=request.user)
+            if profile.department_id is None:
+                return redirect('courses_catalog')
+        except UserProfile.DoesNotExist:
+            pass
         return redirect('dashboard')
 
     premium_category = Category.objects.filter(is_premium=True).first()
@@ -113,7 +120,11 @@ def login_view(request):
             # ==============================
 
             next_url = request.POST.get('next') or request.GET.get('next')
-            return redirect(next_url or 'dashboard')
+            if next_url:
+                return redirect(next_url)
+            if profile.department_id is None:
+                return redirect('courses_catalog')
+            return redirect('dashboard')
 
         return render(request, 'core/login.html', {'form': form})
 
@@ -273,6 +284,7 @@ def logout_view(request):
 # AUTHENTICATED VIEWS
 # -------------------------
 @login_required
+@college_subscription_required
 def dashboard_view(request):
     """
     Dashboard:
@@ -284,6 +296,17 @@ def dashboard_view(request):
         profile = UserProfile.objects.select_related('department').get(user=request.user)
     except UserProfile.DoesNotExist:
         return redirect('logout')
+    if profile.department_id is None:
+        return redirect('courses_catalog')
+
+        # One-time auto-pin: give existing/new students a populated dashboard
+    # on their very first visit, instead of an empty "pin something"
+    # screen. Only ever runs once per account.
+    if not profile.pins_initialized:
+        own_dept_subjects = Subject.objects.filter(department=profile.department, access_type='college')
+        profile.pinned_subjects.set(own_dept_subjects)
+        profile.pins_initialized = True
+        profile.save(update_fields=['pins_initialized'])
 
     # ==============================
     # ✅ DAILY STREAK LOGIC (IST)
@@ -399,6 +422,7 @@ def toggle_pin_subject_view(request, subject_id):
 
 
 @login_required
+@college_subscription_required
 def subject_detail_view(request, subject_id):
     """
     Subject detail:
@@ -411,8 +435,7 @@ def subject_detail_view(request, subject_id):
         viewer_profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
         viewer_profile = None
-    is_premium_user = bool(viewer_profile and viewer_profile.is_premium)
-
+    is_premium_user = bool(viewer_profile and viewer_profile.is_premium) or user_has_active_college_subscription(request.user)
     # No module_number field in Content, so order by created_at and id
     content_list = Content.objects.filter(subject=subject).order_by('unit_number', '-created_at', 'id')
 
@@ -458,6 +481,7 @@ def subject_detail_view(request, subject_id):
 
 
 @login_required
+@college_subscription_required
 def content_detail_view(request, content_id):
     content = get_object_or_404(Content, id=content_id)
 
@@ -465,11 +489,11 @@ def content_detail_view(request, content_id):
         viewer_profile = UserProfile.objects.get(user=request.user)
     except UserProfile.DoesNotExist:
         viewer_profile = None
-    is_premium_user = bool(viewer_profile and viewer_profile.is_premium)
+    is_premium_user = bool(viewer_profile and viewer_profile.is_premium) or user_has_active_college_subscription(request.user)
 
     # 🔒 Premium gate — check the user's own premium status
     if content.is_premium and not is_premium_user:
-        return render(request, 'core/premium_gate.html', {
+        return render(request, 'core/premium_upgrade.html', {
             'content': content,
         })
 
@@ -529,6 +553,7 @@ def toggle_revision_view(request, content_id):
 
 
 @login_required
+@college_subscription_required
 def revision_hub_view(request):
     """
     Shows all content the user has marked for revision.
@@ -627,10 +652,42 @@ def profile_view(request):
     return render(request, 'core/profile.html', context)
 
 def premium_upgrade_view(request):
-    return render(request, 'core/premium_upgrade.html')
+    premium_category = Category.objects.filter(is_premium=True).first()
+    premium_subjects = (
+        premium_category.subjects.select_related('department').all()
+        if premium_category else Subject.objects.none()
+    )
+    is_already_premium = False
+    if request.user.is_authenticated:
+        profile = UserProfile.objects.filter(user=request.user).first()
+        is_already_premium = bool(profile and profile.is_premium)
+
+    context = {
+        'premium_subjects': premium_subjects,
+        'premium_subject_count': premium_subjects.count(),
+        'is_already_premium': is_already_premium,
+    }
+    return render(request, 'core/premium_upgrade.html', context)
 
 def forgot_password_view(request):
     """
     Since we don't collect emails, users must contact admin to reset.
     """
     return render(request, 'core/forgot_password.html')
+
+from django.http import JsonResponse  # add if not already imported
+
+@login_required
+@require_http_methods(["POST"])
+def toggle_pin_subject_ajax_view(request, subject_id):
+    subject = get_object_or_404(Subject, id=subject_id)
+    profile = get_object_or_404(UserProfile, user=request.user)
+
+    if profile.pinned_subjects.filter(id=subject.id).exists():
+        profile.pinned_subjects.remove(subject)
+        is_pinned = False
+    else:
+        profile.pinned_subjects.add(subject)
+        is_pinned = True
+
+    return JsonResponse({'status': 'ok', 'is_pinned': is_pinned})

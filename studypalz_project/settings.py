@@ -150,7 +150,7 @@ AUTHENTICATION_BACKENDS = [
 
 LOGIN_REDIRECT_URL = "dashboard"
 
-LOGIN_URL = "login/"
+LOGIN_URL = "open_signup/"
 
 
 # ------------------------------------------------------------------

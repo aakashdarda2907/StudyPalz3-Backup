@@ -26,9 +26,13 @@ from django.shortcuts import get_object_or_404
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 
-from .models import Content, Subject, SubscriptionPlan, Purchase
+from .models import Content, Subject, SubscriptionPlan, Purchase, UserProfile
 
 client = razorpay.Client(auth=(settings.RAZORPAY_KEY_ID, settings.RAZORPAY_KEY_SECRET))
+
+# Price for the college-dashboard Premium upgrade. Change this one number
+# if you ever reprice it — nothing else needs to change.
+COLLEGE_PREMIUM_PRICE = 499
 
 
 @login_required
@@ -45,7 +49,7 @@ def create_order_view(request):
     try:
         payload = json.loads(request.body)
         purchase_type = payload["purchase_type"]
-        object_id = payload["object_id"]
+        object_id = payload.get("object_id")  # not required for college_premium
     except (KeyError, ValueError, TypeError):
         return HttpResponseBadRequest("Malformed request")
 
@@ -65,9 +69,17 @@ def create_order_view(request):
         description = f"{obj.name} (full course)"
     elif purchase_type == "plan":
         obj = get_object_or_404(SubscriptionPlan, id=object_id, is_active=True)
-        amount = obj.price
+        if obj.scope == "college":
+            profile = UserProfile.objects.filter(user=request.user).first()
+            if profile and profile.is_premium:
+                return HttpResponseBadRequest("Premium members already have full access")
+        amount = obj.final_price
         kwargs = {"plan": obj}
         description = obj.name
+    elif purchase_type == "college_premium":
+        amount = COLLEGE_PREMIUM_PRICE
+        kwargs = {}
+        description = "StudyPalz College Premium (1 year)"
     else:
         return HttpResponseBadRequest("Unknown purchase_type")
 

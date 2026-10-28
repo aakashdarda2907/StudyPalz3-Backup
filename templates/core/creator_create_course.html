@@ -1,0 +1,81 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>New Course | StudyPalz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-teal: #06b6d4; --dark-blue: #0f172a; --medium-blue: #64748b; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif; color: var(--dark-blue);
+            background: radial-gradient(circle at top left, #f0f9ff 0%, #f8fafc 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
+        }
+        .card { background: #fff; border-radius: 22px; box-shadow: 0 12px 24px -4px rgba(15,23,42,0.08); padding: 2.5rem; max-width: 500px; width: 100%; }
+        h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.35rem; margin-bottom: 0.4rem; }
+        .sub { color: var(--medium-blue); font-size: 0.88rem; margin-bottom: 1.75rem; }
+        label { display: block; font-size: 0.82rem; font-weight: 700; margin: 1rem 0 0.4rem; }
+        input, textarea {
+            width: 100%; padding: 0.7rem 0.9rem; border-radius: 10px; border: 1.5px solid rgba(15,23,42,0.12);
+            font-family: 'Inter', sans-serif; font-size: 0.92rem; outline: none;
+        }
+        input:focus, textarea:focus { border-color: var(--primary-teal); }
+        textarea { resize: vertical; min-height: 90px; }
+        .error { color: #dc2626; font-size: 0.78rem; margin-top: 0.3rem; }
+        .hint { color: #94a3b8; font-size: 0.76rem; margin-top: 0.3rem; }
+        .note {
+            background: rgba(6,182,212,0.08); border-radius: 12px; padding: 0.9rem 1.1rem;
+            font-size: 0.82rem; color: #0e7490; margin-top: 1.5rem; line-height: 1.6;
+        }
+        button {
+            width: 100%; margin-top: 1.75rem; background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff;
+            border: none; padding: 0.85rem; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+        }
+        .back { display: block; text-align: center; margin-top: 1.25rem; color: var(--medium-blue); font-size: 0.85rem; text-decoration: none; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <h1>Create a New Course</h1>
+        <p class="sub">You'll add chapters after this — this just sets up the course itself.</p>
+
+        <form method="post">
+            {% csrf_token %}
+
+            <label>Course Name</label>
+            <input type="text" name="name" value="{{ posted.name|default:'' }}" required>
+            {% if errors.name %}<div class="error">{{ errors.name }}</div>{% endif %}
+
+            <label>Description / Syllabus</label>
+            <textarea name="syllabus" placeholder="What will students learn? One line per topic is fine.">{{ posted.syllabus|default:'' }}</textarea>
+
+            <label>Full Course Price (₹)</label>
+            <input type="text" name="price" value="{{ posted.price|default:'' }}" placeholder="Leave blank if you'll only sell individual chapters">
+
+            {% if categories %}
+            <label>Category</label>
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                {% for cat in categories %}
+                <label style="display: flex; align-items: center; gap: 0.4rem; background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.15); border-radius: 10px; padding: 0.5rem 0.8rem; font-size: 0.85rem; font-weight: 600; cursor: pointer;">
+                    <input type="checkbox" name="categories" value="{{ cat.id }}" style="width: auto;">
+                    {{ cat.name }}
+                </label>
+                {% endfor %}
+            </div>
+            <div class="hint">Pick where your course should show up in the catalog. You can select more than one.</div>
+            {% endif %}
+
+            <div class="note">
+                💡 Your course starts as <strong>Pending Review</strong> — it won't be visible on the public catalog until StudyPalz approves it. You can still add chapters and prepare everything while you wait.
+            </div>
+
+            <button type="submit">Create Course</button>
+        </form>
+
+        <a href="{% url 'creator_dashboard' %}" class="back">← Back to dashboard</a>
+    </div>
+</body>
+</html>

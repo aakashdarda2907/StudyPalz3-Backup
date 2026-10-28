@@ -1,0 +1,39 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Submitted | StudyPalz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif; color: #0f172a;
+            background: radial-gradient(circle at top left, #f0f9ff 0%, #f8fafc 100%);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
+        }
+        .card {
+            background: #fff; border-radius: 22px; box-shadow: 0 12px 24px -4px rgba(15,23,42,0.08);
+            padding: 3rem 2.5rem; max-width: 440px; width: 100%; text-align: center;
+        }
+        .icon { font-size: 2.5rem; margin-bottom: 1rem; }
+        h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; margin-bottom: 0.75rem; }
+        p { color: #64748b; font-size: 0.92rem; line-height: 1.7; margin-bottom: 1.75rem; }
+        a {
+            display: inline-block; background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff;
+            text-decoration: none; padding: 0.8rem 1.75rem; border-radius: 50px; font-weight: 700; font-size: 0.88rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="icon">✨</div>
+        <h1>Application received!</h1>
+        <p>Your account is created and you're logged in. Your creator application is now pending review — we'll let you know once it's approved. In the meantime, feel free to browse courses as a student.</p>
+        <a href="{% if next_url %}{{ next_url }}{% else %}{% url 'courses_catalog' %}{% endif %}">
+            {% if next_url %}Continue →{% else %}Explore Courses →{% endif %}
+        </a>
+    </div>
+</body>
+</html>

@@ -26,10 +26,12 @@
 
 import random
 import string
+import uuid
 from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.core.validators import MaxValueValidator
 from django.db import models
 from django.utils import timezone
 from django.utils.text import slugify
@@ -61,6 +63,11 @@ class Category(models.Model):
         help_text="Mark this as the special Premium category — gets splashy treatment and ignores department restrictions."
     )
     order = models.PositiveIntegerField(default=0, help_text="Lower numbers appear first in filter chips.")
+    is_open_category = models.BooleanField(
+        default=False,
+        help_text="Check this for categories meant to organize the Open catalog (e.g. Technical, Lifestyle, Spiritual) — "
+                   "keeps them separate from college-dashboard categories like '4th Sem' or 'Premium'.",
+    )
 
     class Meta:
         ordering = ['order', 'name']
@@ -100,7 +107,7 @@ class Subject(models.Model):
 
     # --- NEW: Open catalog support ---
     access_type = models.CharField(
-        max_length=10, choices=ACCESS_TYPE_CHOICES, default="college",
+        max_length=50, choices=ACCESS_TYPE_CHOICES, default="college",
         help_text="'open' subjects are the public paid catalog — separate from the college dashboard, paid for by everyone.",
     )
     price = models.DecimalField(
@@ -108,6 +115,7 @@ class Subject(models.Model):
         help_text="Price (INR) to unlock the WHOLE subject/course as a bundle. Leave blank if it's not sold as a bundle.",
     )
     slug = models.SlugField(max_length=120, unique=True, blank=True, help_text="Auto-generated if left blank.")
+
     class Meta:
         ordering = ['-is_pinned', '-created_at']
 
@@ -131,6 +139,13 @@ class UserProfile(models.Model):
 
     active_filter_categories = models.ManyToManyField(Category, related_name='active_by_profiles', blank=True)
     show_all_departments = models.BooleanField(default=False)
+
+    # Dashboard declutter: the first time a student ever loads the
+    # dashboard, we auto-pin their own department's subjects so existing
+    # users aren't suddenly staring at an empty main dashboard. This flag
+    # ensures that only ever happens once — if they later unpin
+    # everything on purpose, we don't silently re-pin it for them.
+    pins_initialized = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.user.username}'s Profile"
@@ -164,7 +179,7 @@ class Content(models.Model):
     )
     title = models.CharField(max_length=200)
     unit_number = models.PositiveIntegerField(null=True, blank=True, help_text="Unit/chapter number, used for ordering")
-    content_type = models.CharField(max_length=10, choices=CONTENT_TYPE_CHOICES)
+    content_type = models.CharField(max_length=100, choices=CONTENT_TYPE_CHOICES)
     is_premium = models.BooleanField(default=False)
 
     youtube_link = models.URLField(blank=True, null=True)
@@ -190,7 +205,7 @@ class Content(models.Model):
         help_text="Price (INR) to unlock just THIS chapter individually. Leave blank if not sold on its own.",
     )
     slug = models.SlugField(
-        max_length=20, unique=True, blank=True,
+        max_length=200, unique=True, blank=True,
         help_text="Auto-generated random slug — this is the public link, e.g. studypalz.com/c/<slug>/",
     )
 
@@ -277,13 +292,41 @@ class SubscriptionPlan(models.Model):
     for its duration. College-gated subjects are unaffected either way —
     this plan is only ever relevant to the Open catalog.
     """
+    SCOPE_CHOICES = [("open", "Open Catalog"), ("college", "College")]
+
     name = models.CharField(max_length=100)
     duration_days = models.PositiveIntegerField(default=30)
     price = models.DecimalField(max_digits=8, decimal_places=2)
     is_active = models.BooleanField(default=True)
+    scope = models.CharField(
+        max_length=100, choices=SCOPE_CHOICES, default="open",
+        help_text="'college' plans gate the entire college side (dashboard, subjects, lessons). 'open' plans are the All-Access pass for the Open catalog.",
+    )
+
+    discount_percent = models.PositiveSmallIntegerField(
+        default=0, validators=[MaxValueValidator(100)],
+        help_text="Optional discount (0-100). Students pay price minus this percentage.",
+    )
+    sort_order = models.PositiveIntegerField(default=0, help_text="Lower numbers show first.")
+
+    class Meta:
+        ordering = ["sort_order", "duration_days"]
+
+    @property
+    def final_price(self):
+        """What the student actually pays (whole rupees)."""
+        from decimal import Decimal, ROUND_HALF_UP
+        if not self.discount_percent:
+            return self.price
+        discounted = Decimal(self.price) * (Decimal(100) - Decimal(self.discount_percent)) / Decimal(100)
+        return discounted.quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+
+    @property
+    def has_discount(self):
+        return bool(self.discount_percent)
 
     def __str__(self):
-        return f"{self.name} (₹{self.price} / {self.duration_days}d)"
+        return f"{self.name} (₹{self.final_price} / {self.duration_days}d)"
 
 
 class Purchase(models.Model):
@@ -303,6 +346,7 @@ class Purchase(models.Model):
         ("content", "Single Content"),
         ("subject", "Whole Subject"),
         ("plan", "Subscription Plan"),
+        ("college_premium", "College Premium"),
     ]
     STATUS_CHOICES = [
         ("created", "Created"),
@@ -311,14 +355,14 @@ class Purchase(models.Model):
     ]
 
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="purchases")
-    purchase_type = models.CharField(max_length=10, choices=PURCHASE_TYPE_CHOICES)
+    purchase_type = models.CharField(max_length=100, choices=PURCHASE_TYPE_CHOICES)
 
     content = models.ForeignKey(Content, null=True, blank=True, on_delete=models.SET_NULL, related_name="purchases")
     subject = models.ForeignKey(Subject, null=True, blank=True, on_delete=models.SET_NULL, related_name="purchases")
     plan = models.ForeignKey(SubscriptionPlan, null=True, blank=True, on_delete=models.SET_NULL, related_name="purchases")
 
     amount = models.DecimalField(max_digits=8, decimal_places=2)
-    status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="created")
+    status = models.CharField(max_length=100, choices=STATUS_CHOICES, default="created")
 
     razorpay_order_id = models.CharField(max_length=64, unique=True, blank=True, null=True)
     razorpay_payment_id = models.CharField(max_length=64, blank=True, null=True)
@@ -334,7 +378,28 @@ class Purchase(models.Model):
         self.razorpay_signature = signature
         self.paid_at = timezone.now()
         if self.purchase_type == "plan" and self.plan:
-            self.expires_at = timezone.now() + timedelta(days=self.plan.duration_days)
+            # Buying while a plan is still active extends it instead of
+            # resetting — nobody loses days they already paid for.
+            base = timezone.now()
+            latest = Purchase.objects.filter(
+                user=self.user, status="paid", purchase_type="plan",
+                plan__scope=self.plan.scope, expires_at__gt=base,
+            ).exclude(pk=self.pk).order_by("-expires_at").first()
+            if latest:
+                base = latest.expires_at
+            self.expires_at = base + timedelta(days=self.plan.duration_days)
+        if self.purchase_type == "college_premium":
+            # NOTE: no expiry enforcement yet, even though this is framed
+            # as "₹499/year" — is_premium just stays True once set. If you
+            # want it to actually lapse after a year, that needs a
+            # scheduled task to check premium_since and flip it back —
+            # worth building once this flow is live and tested, not
+            # bundled into this step.
+            profile = UserProfile.objects.filter(user=self.user).first()
+            if profile:
+                profile.is_premium = True
+                profile.premium_since = timezone.now()
+                profile.save(update_fields=["is_premium", "premium_since"])
         self.save()
 
     def __str__(self):
@@ -366,3 +431,90 @@ def user_has_access(user, content):
         | models.Q(purchase_type="subject", subject=content.subject)
         | models.Q(purchase_type="plan", expires_at__gte=now)
     ).exists()
+
+
+def user_has_active_college_subscription(user):
+    """
+    True if this student may use the college side. Two ways in:
+      1. Grandfathered: UserProfile.is_premium is already True (they bought
+         the old College Premium) — treated as permanently active so nobody
+         who already paid gets locked out by this change.
+      2. An active, paid, unexpired college-scope plan Purchase.
+    """
+    if not user or not user.is_authenticated:
+        return False
+
+    if user.is_staff:  # you/admins can always test without buying
+        return True
+
+    profile = UserProfile.objects.filter(user=user).first()
+    if profile and profile.is_premium:
+        return True
+
+    return Purchase.objects.filter(
+        user=user, status="paid", purchase_type="plan",
+        plan__scope="college", expires_at__gte=timezone.now(),
+    ).exists()
+
+
+# =====================================================================
+# NEW: CERTIFICATES
+# =====================================================================
+
+class Certificate(models.Model):
+    """
+    One row per (user, subject) — a certificate is only ever created once
+    a student has genuinely earned it (see user_is_eligible_for_certificate
+    below), and Certificates are immutable once issued: the date and the
+    fact of completion shouldn't silently change later even if the student
+    somehow un-completes a chapter afterward.
+    """
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="certificates")
+    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="certificates")
+    certificate_id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    issued_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ("user", "subject")
+
+    def __str__(self):
+        return f"{self.user.username} — {self.subject.name} ({self.issued_at.date()})"
+
+
+def user_is_eligible_for_certificate(user, subject):
+    """
+    A certificate only means something if it represents genuine PAID
+    completion — not just clicking through a free preview chapter. So
+    eligibility requires, for every single chapter in the subject:
+      1. The student has actually completed it (UserContentState.is_completed)
+      2. The student has real access to it (user_has_access) — which, for
+         any priced chapter, can only be true via an actual Purchase.
+    A subject with zero chapters is never eligible (nothing to complete).
+    """
+    if not user or not user.is_authenticated:
+        return False
+
+    contents = list(subject.contents.all())
+    if not contents:
+        return False
+
+    completed_ids = set(
+        UserContentState.objects.filter(
+            user=user, content__in=contents, is_completed=True
+        ).values_list("content_id", flat=True)
+    )
+
+    for c in contents:
+        if c.id not in completed_ids:
+            return False
+        if not user_has_access(user, c):
+            return False
+
+    return True
+
+
+# Marketplace models (CreatorProfile, CourseOwnership, CreatorEarning) live
+# in their own file — see models_marketplace.py. This import is what makes
+# Django's migration system discover them (they need to be imported
+# somewhere that always loads at startup), without cluttering this file.
+from .models_marketplace import CreatorProfile, CourseOwnership, CreatorEarning  # noqa: F401

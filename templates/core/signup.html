@@ -267,6 +267,8 @@
 
     <div class="ambient-bg"></div>
 
+    <a href="{% url 'home' %}" class="brand-logo">StudyPalz</a>
+
     <div class="back-nav">
         <a href="{% url 'home' %}" class="btn-back">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
@@ -275,9 +277,13 @@
     </div>
 
     <div class="signup-card">
-        <a href="{% url 'home' %}" class="brand-logo">StudyPalz</a>
-        <h1 class="title">Create Account</h1>
-        <p class="subtitle">Join the community learning smarter.</p>
+        <h1 class="title">ONLY FOR VIT STUDENTS</h1>
+        <br>
+       <p style="text-align:center; margin-top:0.5rem; font-size:0.85rem; color:#64748b;">
+
+    Not from VIT Pune? <a href="{% url 'open_signup' %}" style="color:#0891b2; font-weight:600; text-decoration:none;">Sign up here instead →</a>
+</p>
+<br>
 
         <div id="client-error" class="error-message"></div>
         {% if error %}
@@ -346,10 +352,11 @@
 
             <button type="submit" class="btn-submit" id="submitBtn">Create Account</button>
         </form>
-
-        <div class="feature-pill">
-            🚀 Instant access to MI, OOP, DBMS & more
-        </div>
+        <!-- Add this near the footer of your existing signup.html, e.g. right
+     after your "Already have an account? Log in" line -->
+<p style="text-align:center; margin-top:0.5rem; font-size:0.85rem; color:#64748b;">
+    Not from VIT Pune? <a href="{% url 'open_signup' %}" style="color:#0891b2; font-weight:600; text-decoration:none;">Sign up here instead →</a>
+</p>
 
         <div class="footer-links">
             Already have an account? <a href="{% url 'login' %}" class="link">Sign in</a>

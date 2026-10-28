@@ -1,0 +1,133 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Join StudyPalz</title>
+    <link rel="icon" href="{% static 'favicon.ico' %}" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-teal: #06b6d4; --dark-blue: #0f172a; --medium-blue: #64748b;
+            --bg-gradient: radial-gradient(circle at top left, #f0f9ff 0%, #f8fafc 100%);
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --shadow-md: 0 12px 24px -4px rgba(15, 23, 42, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif; color: var(--dark-blue); background: var(--bg-gradient);
+            min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 2rem 1rem;
+        }
+        .card {
+            background: #fff; border-radius: 22px; box-shadow: var(--shadow-md);
+            padding: 2.5rem; max-width: 460px; width: 100%;
+        }
+        .brand { text-align: center; font-weight: 800; font-family: 'Plus Jakarta Sans', sans-serif; margin-bottom: 1.5rem; }
+        h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.4rem; margin-bottom: 0.4rem; text-align: center; }
+        .sub { text-align: center; color: var(--medium-blue); font-size: 0.88rem; margin-bottom: 1.75rem; }
+
+        .type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1.5rem; }
+        .type-option {
+            border: 1.5px solid rgba(15,23,42,0.12); border-radius: 14px; padding: 1rem 0.75rem;
+            cursor: pointer; text-align: center; transition: 0.2s;
+        }
+        .type-option input { display: none; }
+        .type-option .icon { font-size: 1.4rem; margin-bottom: 0.4rem; }
+        .type-option .label { font-weight: 700; font-size: 0.88rem; }
+        .type-option .desc { font-size: 0.74rem; color: var(--medium-blue); margin-top: 0.2rem; }
+        .type-option:has(input:checked) { border-color: var(--primary-teal); background: rgba(6,182,212,0.06); }
+
+        label { display: block; font-size: 0.82rem; font-weight: 700; margin: 1rem 0 0.4rem; }
+        input[type="text"], input[type="email"], input[type="password"], textarea {
+            width: 100%; padding: 0.7rem 0.9rem; border-radius: 10px; border: 1.5px solid rgba(15,23,42,0.12);
+            font-family: 'Inter', sans-serif; font-size: 0.92rem; outline: none;
+        }
+        input:focus, textarea:focus { border-color: var(--primary-teal); }
+        textarea { resize: vertical; min-height: 80px; }
+        .error { color: #dc2626; font-size: 0.78rem; margin-top: 0.3rem; }
+
+        .creator-fields { display: none; }
+        .creator-fields.show { display: block; }
+
+        button[type="submit"] {
+            width: 100%; margin-top: 1.75rem; background: var(--accent-gradient); color: #fff;
+            border: none; padding: 0.85rem; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+        }
+        .footer-link { text-align: center; margin-top: 1.25rem; font-size: 0.85rem; color: var(--medium-blue); }
+        .footer-link a { color: var(--primary-teal); text-decoration: none; font-weight: 600; }
+
+        /* honeypot */
+        .hp { position: absolute; left: -9999px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="brand">📚 StudyPalz</div>
+        <h1>Join StudyPalz</h1>
+        <p class="sub">For everyone outside VIT looking for courses — students and creators alike.</p>
+
+        <form method="post" id="signup-form">
+            {% csrf_token %}
+            <input type="hidden" name="next" value="{{ next_url }}">
+            <input type="text" name="website_url" class="hp" tabindex="-1" autocomplete="off">
+
+            <div class="type-toggle">
+                <label class="type-option" data-type="viewer">
+                    <input type="radio" name="account_type" value="viewer" checked onchange="toggleCreatorFields()">
+                    <div class="icon">🎓</div>
+                    <div class="label">Course Viewer</div>
+                    <div class="desc">I'm here to learn</div>
+                </label>
+                <label class="type-option" data-type="creator">
+                    <input type="radio" name="account_type" value="creator" onchange="toggleCreatorFields()">
+                    <div class="icon">✨</div>
+                    <div class="label">Course Creator</div>
+                    <div class="desc">I want to teach</div>
+                </label>
+            </div>
+            {% if errors.account_type %}<div class="error">{{ errors.account_type }}</div>{% endif %}
+
+            <label>Full Name</label>
+            <input type="text" name="name" value="{{ posted.name|default:'' }}">
+
+            <label>Username</label>
+            <input type="text" name="username" value="{{ posted.username|default:'' }}" required>
+            {% if errors.username %}<div class="error">{{ errors.username }}</div>{% endif %}
+
+            <label>Email</label>
+            <input type="email" name="email" value="{{ posted.email|default:'' }}">
+
+            <label>Password</label>
+            <input type="password" name="password" required>
+
+            <label>Confirm Password</label>
+            <input type="password" name="password_confirm" required>
+            {% if errors.password %}<div class="error">{{ errors.password }}</div>{% endif %}
+
+            <div class="creator-fields" id="creator-fields">
+                <label>What should we call you publicly?</label>
+                <input type="text" name="creator_display_name" value="{{ posted.creator_display_name|default:'' }}" placeholder="Shown as the author on your courses">
+                {% if errors.creator_display_name %}<div class="error">{{ errors.creator_display_name }}</div>{% endif %}
+
+                <label>What do you want to teach, and why should students trust you on it?</label>
+                <textarea name="creator_bio" placeholder="A few sentences is fine — this is what gets reviewed before you're approved.">{{ posted.creator_bio|default:'' }}</textarea>
+                {% if errors.creator_bio %}<div class="error">{{ errors.creator_bio }}</div>{% endif %}
+            </div>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <div class="footer-link">Already have an account? <a href="{% url 'login' %}{% if next_url %}?next={{ next_url }}{% endif %}">Log in</a></div>
+        <div class="footer-link" style="margin-top: 0.5rem;">Studying at VIT Pune? <a href="{% url 'signup' %}">Sign up here instead →</a></div>
+    </div>
+
+    <script>
+        function toggleCreatorFields() {
+            const isCreator = document.querySelector('input[name="account_type"]:checked').value === 'creator';
+            document.getElementById('creator-fields').classList.toggle('show', isCreator);
+        }
+        toggleCreatorFields();
+    </script>
+</body>
+</html>

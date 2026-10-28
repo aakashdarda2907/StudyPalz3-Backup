@@ -1,0 +1,98 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creator Dashboard | StudyPalz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-teal: #06b6d4; --dark-blue: #0f172a; --medium-blue: #64748b;
+            --bg-gradient: radial-gradient(circle at top left, #f0f9ff 0%, #f8fafc 100%);
+            --accent-gradient: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+            --gold-gradient: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.8);
+            --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.03); --shadow-md: 0 12px 24px -4px rgba(15, 23, 42, 0.08);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif; color: var(--dark-blue); background: var(--bg-gradient);
+            min-height: 100vh; padding: 2.5rem 1.5rem 5rem;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+
+        .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .header h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.6rem; }
+        .header p { color: var(--medium-blue); font-size: 0.9rem; margin-top: 0.25rem; }
+        .new-course-btn {
+            background: var(--accent-gradient); color: #fff; text-decoration: none; font-weight: 700;
+            padding: 0.75rem 1.5rem; border-radius: 50px; font-size: 0.88rem; white-space: nowrap;
+        }
+
+        .earnings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 2rem; }
+        .earnings-card {
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border-radius: 18px;
+            border: var(--glass-border); box-shadow: var(--shadow-sm); padding: 1.4rem 1.6rem;
+        }
+        .earnings-label { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--medium-blue); margin-bottom: 0.4rem; }
+        .earnings-amount { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.7rem; }
+        .earnings-card.unpaid .earnings-amount { color: #b45309; }
+        .earnings-card.total .earnings-amount { color: #059669; }
+
+        .course-list h2 { font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; }
+        .course-card {
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); border-radius: 18px;
+            border: var(--glass-border); box-shadow: var(--shadow-sm); padding: 1.25rem 1.5rem;
+            margin-bottom: 0.85rem; display: flex; align-items: center; justify-content: space-between;
+            gap: 1rem; text-decoration: none; color: inherit; transition: 0.2s;
+        }
+        .course-card:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+        .course-name { font-weight: 700; font-size: 1rem; margin-bottom: 0.3rem; }
+        .course-meta { font-size: 0.8rem; color: var(--medium-blue); }
+        .status-pill { font-size: 0.72rem; font-weight: 800; padding: 0.3rem 0.75rem; border-radius: 50px; white-space: nowrap; }
+        .status-pending { background: rgba(245,158,11,0.12); color: #b45309; }
+        .status-approved { background: rgba(16,185,129,0.1); color: #059669; }
+        .status-rejected { background: rgba(239,68,68,0.1); color: #dc2626; }
+
+        .empty-state { text-align: center; padding: 3rem 1rem; color: var(--medium-blue); background: rgba(255,255,255,0.5); border-radius: 16px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div>
+                <h1>Welcome, {{ creator_profile.display_name }}</h1>
+                <p>Manage your courses and track your earnings.</p>
+            </div>
+            <a href="{% url 'creator_create_course' %}" class="new-course-btn">+ New Course</a>
+        </div>
+
+        <div class="earnings-grid">
+            <div class="earnings-card total">
+                <div class="earnings-label">Total Earned</div>
+                <div class="earnings-amount">₹{{ total_earned }}</div>
+            </div>
+            <div class="earnings-card unpaid">
+                <div class="earnings-label">Awaiting Payout</div>
+                <div class="earnings-amount">₹{{ total_unpaid }}</div>
+            </div>
+        </div>
+
+        <div class="course-list">
+            <h2>Your Courses</h2>
+            {% for ownership in ownerships %}
+            <a href="{% url 'creator_course_detail' ownership.subject.slug %}" class="course-card">
+                <div>
+                    <div class="course-name">{{ ownership.subject.name }}</div>
+                    <div class="course-meta">{{ ownership.subject.contents.count }} chapter{{ ownership.subject.contents.count|pluralize }} · {{ ownership.revenue_split_percent }}% your cut</div>
+                </div>
+                <span class="status-pill status-{{ ownership.review_status }}">{{ ownership.get_review_status_display }}</span>
+            </a>
+            {% empty %}
+            <div class="empty-state">You haven't created a course yet. Click "+ New Course" to get started.</div>
+            {% endfor %}
+        </div>
+    </div>
+</body>
+</html>

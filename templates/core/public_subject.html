@@ -20,7 +20,7 @@
             --shadow-sm: 0 2px 4px rgba(15, 23, 42, 0.03); --shadow-md: 0 12px 24px -4px rgba(15, 23, 42, 0.08);
         }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html, body { max-width: 100vw; overflow-x: hidden; }
+        html, body { max-width: 100vw; }
         body {
             font-family: 'Inter', sans-serif; color: var(--dark-blue);
             background: var(--bg-gradient); background-attachment: fixed;
@@ -57,6 +57,26 @@
             box-shadow: 0 6px 14px rgba(245, 158, 11, 0.3); transition: var(--transition);
         }
         .buy-course-btn:hover { transform: translateY(-2px); }
+
+        .cert-banner {
+            border-radius: 20px; padding: 1.4rem 1.75rem; margin-bottom: 2rem;
+            display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap;
+        }
+        .cert-banner-ready {
+            background: linear-gradient(135deg, #1e1b4b 0%, #4c1d95 45%, #b45309 100%);
+            box-shadow: 0 10px 30px rgba(217, 119, 6, 0.25);
+        }
+        .cert-banner-earned {
+            background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+            box-shadow: 0 10px 30px rgba(5, 150, 105, 0.2);
+        }
+        .cert-banner-title { color: #fff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.05rem; margin-bottom: 0.25rem; }
+        .cert-banner-sub { color: rgba(255,255,255,0.8); font-size: 0.85rem; }
+        .cert-banner-btn {
+            background: #fff; color: #78350f; font-weight: 800; padding: 0.7rem 1.4rem; border-radius: 50px;
+            border: none; cursor: pointer; font-size: 0.85rem; white-space: nowrap; text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: inline-block;
+        }
 
         .chapter-list h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 1rem; }
         .chapter-item {
@@ -127,6 +147,27 @@
             {% endif %}
         </div>
 
+        {% if existing_certificate %}
+        <div class="cert-banner cert-banner-earned">
+            <div>
+                <div class="cert-banner-title">🎓 Certificate earned!</div>
+                <div class="cert-banner-sub">You completed this course. View or download your certificate anytime.</div>
+            </div>
+            <a href="{% url 'certificate_view' existing_certificate.certificate_id %}" class="cert-banner-btn">View Certificate</a>
+        </div>
+        {% elif is_eligible_for_certificate %}
+        <div class="cert-banner cert-banner-ready">
+            <div>
+                <div class="cert-banner-title">🎉 You've completed every chapter!</div>
+                <div class="cert-banner-sub">Claim your certificate of completion for this course.</div>
+            </div>
+            <form method="post" action="{% url 'claim_certificate' subject.slug %}">
+                {% csrf_token %}
+                <button type="submit" class="cert-banner-btn">Claim Your Certificate</button>
+            </form>
+        </div>
+        {% endif %}
+
         <div class="chapter-list">
             <h2>Chapters</h2>
 
@@ -170,7 +211,7 @@
 
         function buy(purchaseType, objectId, label, displayAmount) {
             {% if not request.user.is_authenticated %}
-                window.location.href = "{% url 'login' %}?next=" + encodeURIComponent(window.location.pathname);
+                window.location.href = "{% url 'open_signup' %}?next=" + encodeURIComponent(window.location.pathname);
                 return;
             {% endif %}
 

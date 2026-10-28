@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if chapter %}Edit{% else %}Add{% endif %} Chapter | StudyPalz</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-teal: #06b6d4; --dark-blue: #0f172a; --medium-blue: #64748b; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif; color: var(--dark-blue);
+            background: radial-gradient(circle at top left, #f0f9ff 0%, #f8fafc 100%);
+            min-height: 100vh; padding: 2.5rem 1.5rem 5rem;
+        }
+        .container { max-width: 640px; margin: 0 auto; }
+        .back { color: var(--medium-blue); font-size: 0.85rem; text-decoration: none; display: inline-block; margin-bottom: 1rem; }
+        .card { background: #fff; border-radius: 22px; box-shadow: 0 12px 24px -4px rgba(15,23,42,0.08); padding: 2.5rem; }
+        h1 { font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; margin-bottom: 1.5rem; }
+        label { display: block; font-size: 0.82rem; font-weight: 700; margin: 1rem 0 0.4rem; }
+        input, select, textarea {
+            width: 100%; padding: 0.7rem 0.9rem; border-radius: 10px; border: 1.5px solid rgba(15,23,42,0.12);
+            font-family: 'Inter', sans-serif; font-size: 0.92rem; outline: none;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary-teal); }
+        textarea { resize: vertical; min-height: 260px; font-family: 'Menlo', 'Consolas', monospace; font-size: 0.85rem; line-height: 1.6; }
+        .error { color: #dc2626; font-size: 0.78rem; margin-top: 0.3rem; }
+        .hint { color: #94a3b8; font-size: 0.76rem; margin-top: 0.35rem; line-height: 1.5; }
+        .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        button {
+            width: 100%; margin-top: 1.75rem; background: linear-gradient(135deg, #06b6d4, #3b82f6); color: #fff;
+            border: none; padding: 0.85rem; border-radius: 50px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="{% url 'creator_course_detail' subject.slug %}" class="back">← Back to {{ subject.name }}</a>
+
+        <div class="card">
+            <h1>{% if chapter %}Edit Chapter{% else %}Add Chapter{% endif %}</h1>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <label>Chapter Title</label>
+                <input type="text" name="title" value="{{ form_values.title }}" required>
+                {% if errors.title %}<div class="error">{{ errors.title }}</div>{% endif %}
+
+                <div class="row">
+                    <div>
+                        <label>Unit Number</label>
+                        <input type="number" name="unit_number" value="{{ form_values.unit_number|default:'' }}">
+                    </div>
+                    <div>
+                        <label>Type</label>
+                        <select name="content_type">
+                            <option value="Theory" {% if form_values.content_type == 'Theory' %}selected{% endif %}>Theory</option>
+                            <option value="Lab" {% if form_values.content_type == 'Lab' %}selected{% endif %}>Lab</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>YouTube Link (optional)</label>
+                <input type="text" name="youtube_link" value="{{ form_values.youtube_link }}" placeholder="https://youtu.be/...">
+
+                <label>Price for this chapter (₹) — leave blank to make it free</label>
+                <input type="text" name="price" value="{{ form_values.price|default:'' }}">
+
+                <label>Notes</label>
+                <textarea name="notes" placeholder="# Heading&#10;**bold** *italic*&#10;- bullet point&#10;&gt; insight box&#10;! remember box&#10;```&#10;formula sheet&#10;```">{{ form_values.notes }}</textarea>
+                <div class="hint">Use <strong>#</strong> for headings, <strong>**bold**</strong>, <strong>- </strong>for bullets, <strong>&gt; </strong>for an insight box, <strong>! </strong>for a remember box, and a line of <strong>```</strong> before/after for a formula sheet.</div>
+
+                <button type="submit">{% if chapter %}Save Changes{% else %}Add Chapter{% endif %}</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

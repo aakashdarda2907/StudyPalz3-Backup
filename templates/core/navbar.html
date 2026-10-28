@@ -17,7 +17,6 @@
 
     body {
         padding-top: 120px;
-        transition: padding-right 0.3s ease;
     }
 
     /* --- Desktop Navigation --- */
@@ -82,6 +81,14 @@
         background: rgba(6, 182, 212, 0.1);
         font-weight: 600;
     }
+
+    /* NEW: subtly distinguish the Creator Studio link from regular nav links */
+    .nav-link.creator-link {
+        color: #b45309;
+        background: rgba(245, 158, 11, 0.08);
+    }
+    .nav-link.creator-link:hover { color: #92400e; background: rgba(245, 158, 11, 0.15); }
+    .nav-link.creator-link.active { color: #92400e; background: rgba(245, 158, 11, 0.18); }
 
     .auth-buttons { display: flex; gap: 0.8rem; align-items: center; }
 
@@ -161,151 +168,44 @@
     /* --- Mobile Responsive Design --- */
    /* --- Mobile Responsive Design --- */
     @media (max-width: 1024px) {
-        .header {
-            width: 100%;
-            top: 0;
-            left: 0;                  /* ADD THIS to fix the off-screen bug */
-            transform: none;          /* ADD THIS to reset desktop centering */
-            border-radius: 0;
-            border: none;
-            border-bottom: 1px solid rgba(255,255,255,0.3);
-            padding: 0.8rem 0;
-            box-sizing: border-box; /* ADD THIS */
-        }
-
-        /* ... keep the rest of your mobile CSS exactly the same ... */
-        .header .container {
-            padding: 0 1.5rem; /* Better spacing on mobile */
-            box-sizing: border-box;
-        }
-
-        /* Hide desktop elements completely to prevent layout stretching */
-        .nav-wrapper { display: none; }
-        .auth-buttons { display: none; }
-
-        .mobile-menu-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: transparent;
-            border: none;
-            color: var(--dark-blue);
-            cursor: pointer;
-            padding: 0.5rem;
-            transition: var(--transition);
-        }
-
-        .mobile-nav-backdrop {
-            display: block;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(15, 23, 42, 0.4);
-            backdrop-filter: blur(4px);
-            z-index: 1998;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-nav-backdrop.active { opacity: 1; visibility: visible; }
-
-        .mobile-nav-sheet {
-            display: block;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(255, 255, 255, 0.98);
-            backdrop-filter: blur(20px);
-            border-radius: 24px 24px 0 0;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.1);
-            transform: translateY(100%);
-            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            z-index: 1999;
-            padding-bottom: 2rem;
-        }
-
-        .mobile-nav-sheet.active { transform: translateY(0); }
-
-        .sheet-handle {
-            width: 40px;
-            height: 4px;
-            background: #cbd5e1;
-            border-radius: 10px;
-            margin: 1rem auto 0.5rem;
-        }
-
-        .sheet-content { padding: 1.5rem 1.5rem 2rem; }
-
-        .sheet-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
-        }
-
-        .sheet-title {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: var(--dark-blue);
-            margin: 0;
-        }
-
-        .mobile-nav-links { display: flex; flex-direction: column; gap: 0.8rem; }
-
-        .mobile-nav-links .nav-link {
-            background: #f8fafc;
-            border: 1px solid var(--border-light);
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 1rem 1.2rem;
-            border-radius: 16px;
-            font-size: 1rem;
-            color: var(--dark-blue);
-        }
-
-        .mobile-nav-links .nav-link.active {
-            background: #ecfeff;
-            border-color: var(--primary-teal);
-            color: var(--primary-teal-dark);
-        }
-
-        .mobile-nav-links .nav-link svg {
-            width: 20px;
-            height: 20px;
-            opacity: 0.7;
-        }
-
-        .mobile-nav-links .nav-link.active svg {
-            opacity: 1;
-            color: var(--primary-teal);
-        }
-
-        .mobile-account-section {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid var(--border-light);
-        }
-
-        .mobile-account-buttons { display: flex; gap: 1rem; width: 100%; }
-        .mobile-account-buttons .btn { width: 100%; }
+        body { padding-top: 84px; }
+        .header { width:100%; top:0; left:0; transform:none; border-radius:0; border:none; border-bottom:1px solid rgba(15,23,42,.08); padding:.7rem 0; box-sizing:border-box; background:#fff; -webkit-backdrop-filter:none; backdrop-filter:none; box-shadow:none; transition:none; }
+        .header .container { padding:0 1.25rem; box-sizing:border-box; }
+        .nav-wrapper, .auth-buttons { display:none; }
+        .mobile-menu-toggle { display:flex; align-items:center; justify-content:center; background:transparent; border:none; color:var(--dark-blue); cursor:pointer; padding:.5rem; margin-right:-.5rem; -webkit-tap-highlight-color:transparent; }
+        .mobile-nav-backdrop { display:block; position:fixed; inset:0; background:rgba(15,23,42,.45); z-index:1998; opacity:0; visibility:hidden; transition:opacity .25s ease, visibility 0s linear .25s; touch-action:none; }
+        .mobile-nav-backdrop.active { opacity:1; visibility:visible; transition:opacity .25s ease, visibility 0s; }
+        .mobile-nav-sheet { display:block; position:fixed; top:0; left:0; right:0; background:#fff; border-radius:0 0 24px 24px; box-shadow:0 20px 40px rgba(15,23,42,.18); transform:translate3d(0,-105%,0); transition:transform .3s cubic-bezier(.22,.8,.2,1), visibility 0s linear .3s; z-index:1999; will-change:transform; max-height:100vh; overflow-y:auto; -webkit-overflow-scrolling:touch; padding-top:env(safe-area-inset-top); visibility:hidden; }
+        .mobile-nav-sheet.active { transform:translate3d(0,0,0); visibility:visible; transition:transform .3s cubic-bezier(.22,.8,.2,1), visibility 0s; }
+        .sheet-top { display:flex; justify-content:space-between; align-items:center; padding:.8rem 1.25rem; border-bottom:1px solid var(--border-light); }
+        .sheet-brand { font-family:'Plus Jakarta Sans',sans-serif; font-weight:800; font-size:1.3rem; color:var(--dark-blue); text-decoration:none; }
+        .sheet-close { width:40px; height:40px; border-radius:50%; background:#f1f5f9; border:none; display:flex; align-items:center; justify-content:center; color:var(--dark-blue); cursor:pointer; -webkit-tap-highlight-color:transparent; }
+        .sheet-content { padding:1rem 1.25rem 1.5rem; }
+        .mobile-nav-links { display:flex; flex-direction:column; gap:.55rem; }
+        .mobile-nav-links .nav-link { background:#f8fafc; border:1px solid var(--border-light); display:flex; align-items:center; gap:.9rem; padding:.95rem 1.1rem; border-radius:14px; font-size:1rem; color:var(--dark-blue); transition:none; }
+        .mobile-nav-links .nav-link.active { background:#ecfeff; border-color:var(--primary-teal); color:var(--primary-teal-dark); }
+        .mobile-nav-links .nav-link svg { width:20px; height:20px; opacity:.75; flex-shrink:0; }
+        .mobile-nav-links .nav-link.creator-link { background:#fffbeb; border-color:#fbbf24; color:#92400e; }
+        .mobile-nav-links .nav-link.creator-link svg { opacity:1; color:#b45309; }
+        .mobile-account-section { margin-top:1.25rem; padding-top:1.25rem; border-top:1px solid var(--border-light); }
+        .mobile-account-buttons { display:flex; gap:.75rem; }
+        .mobile-account-buttons .btn { flex:1; width:100%; padding:.85rem 1rem; }
     }
 </style>
 
 <nav class="header" id="navbar">
     <div class="container">
-        <a href="{% if user.is_authenticated %}{% url 'dashboard' %}{% else %}{% url 'home' %}{% endif %}" class="logo"> StudyPalz</a>
+        <a href="{% if user.is_authenticated %}{% if user.userprofile.department %}{% url 'dashboard' %}{% else %}{% url 'courses_catalog' %}{% endif %}{% else %}{% url 'home' %}{% endif %}" class="logo"> StudyPalz</a>
 
         <div class="nav-wrapper">
             <div class="nav-links-container">
-                {% if user.is_authenticated %}
+                {% if user.is_authenticated and user.userprofile.department %}
                     <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">Dashboard</a>
                     <a href="{% url 'revision_hub' %}" class="nav-link {% if request.resolver_match.url_name == 'revision_hub' %}active{% endif %}">Revision Hub</a>
+                {% endif %}
+                <a href="{% url 'courses_catalog' %}" class="nav-link {% if request.resolver_match.url_name == 'courses_catalog' or request.resolver_match.url_name == 'public_subject' or request.resolver_match.url_name == 'public_content' %}active{% endif %}">Courses</a>
+                {% if user.creator_profile.status == 'approved' %}
+                    <a href="{% url 'creator_dashboard' %}" class="nav-link creator-link {% if 'creator' in request.resolver_match.url_name %}active{% endif %}">Creator Studio</a>
                 {% endif %}
             </div>
         </div>
@@ -317,7 +217,7 @@
                 </a>
             {% else %}
                 <a href="{% url 'login' %}" class="btn btn-secondary">Log In</a>
-                <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                <a href="{% url 'open_signup' %}" class="btn btn-primary">Sign Up</a>
             {% endif %}
         </div>
 
@@ -328,16 +228,16 @@
 </nav>
 
 <div class="mobile-nav-backdrop" id="mobileNavBackdrop"></div>
-<div class="mobile-nav-sheet" id="mobileNavSheet">
-    <div class="sheet-handle"></div>
+<div class="mobile-nav-sheet" id="mobileNavSheet" role="dialog" aria-modal="true" aria-label="Menu">
+    <div class="sheet-top">
+        <a href="{% if user.is_authenticated %}{% if user.userprofile.department %}{% url 'dashboard' %}{% else %}{% url 'courses_catalog' %}{% endif %}{% else %}{% url 'home' %}{% endif %}" class="sheet-brand">StudyPalz</a>
+        <button class="sheet-close" onclick="closeMobileNav()" aria-label="Close menu">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+        </button>
+    </div>
     <div class="sheet-content">
-        <div class="sheet-header">
-            <h2 class="sheet-title">Menu</h2>
-            <button onclick="closeMobileNav()" style="background:none; border:none; font-size:1.5rem; color:var(--medium-blue); cursor:pointer;">&times;</button>
-        </div>
-
         <div class="mobile-nav-links">
-            {% if user.is_authenticated %}
+            {% if user.is_authenticated and user.userprofile.department %}
                 <a href="{% url 'dashboard' %}" class="nav-link {% if request.resolver_match.url_name == 'dashboard' %}active{% endif %}">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                     Dashboard
@@ -346,10 +246,20 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
                     Revision Hub
                 </a>
-            {% else %}
+            {% elif not user.is_authenticated %}
                 <a href="{% url 'home' %}" class="nav-link">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
                     Home
+                </a>
+            {% endif %}
+            <a href="{% url 'courses_catalog' %}" class="nav-link {% if request.resolver_match.url_name == 'courses_catalog' or request.resolver_match.url_name == 'public_subject' or request.resolver_match.url_name == 'public_content' %}active{% endif %}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                Courses
+            </a>
+            {% if user.creator_profile.status == 'approved' %}
+                <a href="{% url 'creator_dashboard' %}" class="nav-link creator-link {% if 'creator' in request.resolver_match.url_name %}active{% endif %}">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-5.82 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"></path></svg>
+                    Creator Studio
                 </a>
             {% endif %}
         </div>
@@ -360,7 +270,7 @@
                     <a href="{% url 'profile' %}" class="btn btn-primary" style="width: 100%;">My Profile</a>
                 {% else %}
                     <a href="{% url 'login' %}" class="btn btn-secondary">Log In</a>
-                    <a href="{% url 'signup' %}" class="btn btn-primary">Sign Up</a>
+                    <a href="{% url 'open_signup' %}" class="btn btn-primary">Sign Up</a>
                 {% endif %}
             </div>
         </div>
@@ -368,44 +278,24 @@
 </div>
 
 <script>
-    const mobileMenuToggle = document.getElementById('mobileMenuToggle');
-    const mobileNavSheet = document.getElementById('mobileNavSheet');
-    const mobileNavBackdrop = document.getElementById('mobileNavBackdrop');
-    let isNavOpen = false;
-
-    // Calculate scrollbar width to prevent background shifting
-    const getScrollbarWidth = () => window.innerWidth - document.documentElement.clientWidth;
-
-    function openMobileNav() {
-        if (isNavOpen) return;
-        isNavOpen = true;
-        
-        // Add padding equal to scrollbar width before hiding overflow
-        const scrollbarWidth = getScrollbarWidth();
-        document.body.style.paddingRight = `${scrollbarWidth}px`;
-        document.body.style.overflow = 'hidden'; 
-        
-        mobileNavSheet.classList.add('active');
-        mobileNavBackdrop.classList.add('active');
+(function () {
+    var toggle = document.getElementById('mobileMenuToggle'),
+        sheet = document.getElementById('mobileNavSheet'),
+        bd = document.getElementById('mobileNavBackdrop'),
+        open = false;
+    if (!toggle || !sheet || !bd) return;
+    function setOpen(v) {
+        open = v;
+        sheet.classList.toggle('active', v);
+        bd.classList.toggle('active', v);
+        toggle.setAttribute('aria-expanded', v ? 'true' : 'false');
     }
-
-    function closeMobileNav() {
-        if (!isNavOpen) return;
-        isNavOpen = false;
-        
-        mobileNavSheet.classList.remove('active');
-        mobileNavBackdrop.classList.remove('active');
-        
-        // Wait for animation to finish before restoring scroll
-        setTimeout(() => {
-            document.body.style.overflow = '';
-            document.body.style.paddingRight = '0px';
-        }, 300); // matches the CSS transition time
-    }
-
-    mobileMenuToggle.addEventListener('click', () => {
-        isNavOpen ? closeMobileNav() : openMobileNav();
-    });
-
-    mobileNavBackdrop.addEventListener('click', closeMobileNav);
+    window.openMobileNav = function () { setOpen(true); };
+    window.closeMobileNav = function () { setOpen(false); };
+    toggle.addEventListener('click', function () { setOpen(!open); });
+    bd.addEventListener('click', function () { setOpen(false); });
+    sheet.addEventListener('click', function (e) { if (e.target.closest('a')) setOpen(false); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') setOpen(false); });
+    window.addEventListener('resize', function () { if (window.innerWidth > 1024 && open) setOpen(false); });
+})();
 </script>
